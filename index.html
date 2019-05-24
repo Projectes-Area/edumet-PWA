@@ -9,18 +9,19 @@
       <link rel="manifest" href="manifest.json">
       <link rel="stylesheet" type="text/css" href="css/index.css">
       <link rel="stylesheet" type="text/css" href="css/weather-icons.min.css">
-      <link rel="stylesheet" type="text/css" href="assets/leaflet/leaflet.css">
-      <script src="assets/leaflet/leaflet.js"></script>
+      <link rel="stylesheet" type="text/css" href="leaflet/leaflet.css">
+      <script src="leaflet/leaflet.js"></script>
       <link rel="shortcut icon" href="img/favicon.ico">
       <title>Observacions</title>
     </head>
     <body >
       <div id="capsalera">
-        <img id="logo-edumet" src="img/edumet.png">
+        <div><img id="logo-edumet" src="img/edumet.png"></div>
+        <div id="div-icona-login"><i id="icona-login" class="material-icons icona-36" onClick="usuaris();">person</i></div>
       </div>
       <div id="login">
         <div id="iniciar">
-          <h3>INICIAR SESSIÓ</h3>
+          <label class="icona-16">INICIAR SESSIÓ</label>
         </div>        
         <div>
           <input class="marge" id="usuari" placeholder="usuari" type="text" name="usuari">
@@ -39,7 +40,6 @@
           <button class="boto-sup" onClick="enviaActual();"><i class="material-icons icona-36">cloud_upload</i></button>
           <button class="boto-sup" onClick="observa();"><i class="material-icons icona-36">assignment</i></button>
         </div>
-        <input type="file" style='display:none;' accept="image/*" id="fitxer" name="fitxer" capture="camera"/>
         <img id="foto" src= "img/add_photo.svg" onClick="fotografia();">
         <div class="obs-fen">
           <i class="material-icons icona-24" style="margin-right:3px; color:#418ac8;">visibility</i><select id="fenomen"></select> 
@@ -54,7 +54,7 @@
       <div id="prediccio">
           <div id="loaderPrediccio" class="loader"></div>
           <div id="carregant">Carregant ...</div> 
-          <iframe id='frame' src='' hspace='0' marginheight='0' marginwidth='0' vspace='0' frameborder='0' scrolling='yes'></iframe>
+          <iframe id='frame' src='' hspace='0' marginheight='0' marginwidth='0' vspace='0' frameborder='0' scrolling='no'></iframe>
       </div>
       <div id="radar">
         <div id="slideshow-container" class="slideshow-container"></div>         
@@ -99,20 +99,42 @@
       </div>
 
       <div id="fitxa">
-        <div id="nomFenomen"></div>
-        <div id="dataHora"></div>
         <div id="contingutFitxa">
           <div id="edicio_fitxa">
             <img id="fotoFitxa" src="" onClick="fotografia();">
             <div id="botons_edicio">
-              <button id="envia_obs" class="boto-edit" style="color:graytext" onClick="enviaFitxa()"><i class="material-icons icona-24">cloud_upload</i></button>
-              <button id="edita_obs" class="boto-edit" style="color:graytext" onClick="editaObservacio()"><i class="material-icons icona-24">edit</i></button>
+              <button id="envia_obs" class="boto-edit" style="color:#418ac8" onClick="enviaFitxa()"><i class="material-icons icona-24">cloud_upload</i></button>
+              <button id="edita_obs" class="boto-edit" style="color:#418ac8" onClick="editaObservacio()"><i class="material-icons icona-24">edit</i></button>
               <button id="elimina_obs" class="boto-edit" style="color:#418ac8" onClick="eliminaObservacio()"><i class="material-icons icona-24">delete_forever</i></button>
             </div>
           </div>
           <div id="desc_map_fitxa">
+            <div id="nomFenomen" class="icona-16"></div>
             <div id="descripcioFitxa"></div>
+            <div id="dataHora"></div>
             <div id="mapaFitxa"></div>  
+          </div>
+        </div>
+      </div>
+
+      <div id="registra">
+        <div id="nou_registre" style="height:50%">
+          <div class="icona-16">Registre manual de dades</div>
+          <div>Nom de l'estació</div>
+          <div>Data i Hora</div>
+          <div style="width:80%;">
+            <input id="autor" style="width:100%;" placeholder="Escriu el nom dels autors del registre" type="text" name="autor">
+          </div>
+          <div>
+            <button id="enregistra">Enregistra les dades</button>
+          </div>
+        </div>
+        <div id="entrada_dades" style="height:50%">
+          <div id="menu-registra">
+            <button class="boto-sup" onClick="registra_mesures();"><i class="wi wi-thermometer icona-36"></i></button>
+            <button class="boto-sup" onClick="registra_cel();"><i class="wi wi-strong-wind icona-36"></i></button>
+            <button class="boto-sup" onClick="registra_nuvols();"><i class="material-icons icona-36">cloud</i></button>
+            <button class="boto-sup" onClick="registra_fenomens();"><i class="material-icons icona-36">check</i></button>
           </div>
         </div>
       </div>
@@ -120,21 +142,27 @@
       <div id="sector-inferior">
         <div id="hr"></div>
         <div id="menu-inferior">
-          <button id="boto_observacions" class="boto-inf" style="color:graytext" onClick="login();"><i class="material-icons icona-24">camera_alt</i></button>
+          <button id="boto_observacions" class="boto-inf" style="color:graytext;" onClick="login();"><i class="material-icons icona-24">camera_alt</i></button>
           <button id="boto_estacions" class="boto-inf" style="color:#418ac8;" onClick="estacio();"><i class="material-icons icona-24">router</i></button>
-          <button id="boto_prediccio" class="boto-inf" style="color:graytext" onClick="prediccio();"><i class="material-icons icona-24">cloud</i></button>
-          <button id="boto_radar" class="boto-inf" style="color:graytext" onClick="radar();"><i class="material-icons icona-24">rss_feed</i></button>
+          <button id="boto_registra" class="boto-inf" style="color:graytext;" onClick="registra();"><i class="material-icons icona-24">bookmark</i></button>
+          <button id="boto_prediccio" class="boto-inf" style="color:graytext;" onClick="prediccio();"><i class="material-icons icona-24">cloud</i></button>
+          <button id="boto_radar" class="boto-inf" style="color:graytext;" onClick="radar();"><i class="material-icons icona-24">wifi_tethering</i></button>
         </div>  
       </div>   
       <script type="text/javascript" src="cordova.js"></script>
       <script type="text/javascript" src="js/index.js"></script>
       <script>
-        if('serviceWorker' in navigator) {
-          navigator.serviceWorker
-                   .register('sw.js')
-                   .then(function() { console.log("Service Worker Registered"); });
+        if ('serviceWorker' in navigator) {
+          window.addEventListener('load', function() {
+            navigator.serviceWorker.register('/sw.js').then(function(registration) {
+              // Registration was successful
+              console.log('ServiceWorker registration successful with scope: ', registration.scope);
+            }, function(err) {
+              // registration failed :(
+              console.log('ServiceWorker registration failed: ', err);
+            });
+          });
         }
-        </script>
-        
+      </script>
     </body>
 </html> 

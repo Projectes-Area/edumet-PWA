@@ -2,9 +2,23 @@ self.addEventListener('install', function(e) {
     e.waitUntil(
       caches.open('observacions').then(function(cache) {
         return cache.addAll([
+          '/',
           'index.html',
           'css/index.css',
           'js/index.js',
+          'manifest.json',
+          'img/favicon.ico',
+          'img/edumet.png',
+          'img/add_photo.svg',
+          'img/marker-icon-green.png',
+          'css/weather-icons.min.css',
+          'font/MaterialIcons-Regular.ttf',
+          'font/MaterialIcons-Regular.woff',
+          'font/MaterialIcons-Regular.woff2',
+          'font/weathericons-regular-webfont.woff2',
+          'leaflet/leaflet.css',
+          'leaflet/leaflet.js',
+          'json/municipis.geojson'
         ]);
       })
     );
