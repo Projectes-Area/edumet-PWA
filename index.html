@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<meta charset="UTF-8">
+<html>
+    <head>
+      <meta name="format-detection" content="telephone=no">
+      <meta name="msapplication-tap-highlight" content="no">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+      <meta name="theme-color" content="#418ac8">
+      <link rel="manifest" href="manifest.json">
+      <link rel="stylesheet" type="text/css" href="css/index.css">
+      <link rel="stylesheet" type="text/css" href="css/weather-icons.min.css">
+      <link rel="stylesheet" type="text/css" href="assets/leaflet/leaflet.css">
+      <script src="assets/leaflet/leaflet.js"></script>
+      <link rel="shortcut icon" href="img/favicon.ico">
+      <title>Observacions</title>
+    </head>
+    <body >
+      <div id="capsalera">
+        <img id="logo-edumet" src="img/edumet.png">
+      </div>
+      <div id="login">
+        <div id="iniciar">
+          <h3>INICIAR SESSIÓ</h3>
+        </div>        
+        <div>
+          <input class="marge" id="usuari" placeholder="usuari" type="text" name="usuari">
+        </div>
+        <div>
+          <input class="marge" id="password" placeholder="contrasenya" type="password" name="contrasenya"><br>
+        </div>
+        <div>  
+          <button id="valida" class="marge" onClick="valida();">ENTRA</button>
+        </div>
+      </div>
+      <div id="fenologia">
+        <div id="menu-botons">
+          <button class="boto-sup" onClick="fesFoto();"><i class="material-icons icona-36">add_a_photo</i></button>
+          <button class="boto-sup" onClick="actualitzaObservacio();"><i class="material-icons icona-36">save</i></button>
+          <button class="boto-sup" onClick="enviaActual();"><i class="material-icons icona-36">cloud_upload</i></button>
+          <button class="boto-sup" onClick="observa();"><i class="material-icons icona-36">assignment</i></button>
+        </div>
+        <input type="file" style='display:none;' accept="image/*" id="fitxer" name="fitxer" capture="camera"/>
+        <img id="foto" src= "img/add_photo.svg" onClick="fotografia();">
+        <div class="obs-fen">
+          <i class="material-icons icona-24" style="margin-right:3px; color:#418ac8;">visibility</i><select id="fenomen"></select> 
+        </div>
+        <div class="obs-desc">
+          <i class="material-icons icona-24" style="margin-right:3px; color:#418ac8;">assignment</i><textarea id="descripcio" placeholder="Escriu en aquest espai una breu descripció del fenomen observat." onKeyUp="if(this.value.length>250) this.value = this.value.slice(0, -1);"></textarea>
+        </div>
+      </div>
+      <div id="fotografia">
+        <img id="fotoGran" src="">
+      </div>
+      <div id="prediccio">
+          <div id="loaderPrediccio" class="loader"></div>
+          <div id="carregant">Carregant ...</div> 
+          <iframe id='frame' src='' hspace='0' marginheight='0' marginwidth='0' vspace='0' frameborder='0' scrolling='yes'></iframe>
+      </div>
+      <div id="radar">
+        <div id="slideshow-container" class="slideshow-container"></div>         
+        <div id="puntets"></div>
+      </div>
+      <div id="observacions">
+        <div id="fila">
+          <label style="width:25%"><b>FOTO</b></label>
+          <label style="width:25%"><b>DATA</b></label>
+          <label style="width:25%"><b>TIPUS</b></label>
+          <label style="width:25%"><b>PENJADA</b></label>          
+        </div>
+        <div id="llistat"></div>
+      </div>
+      <div id="estacions">
+        <div id="id_estacio">
+          <i id="star" class="material-icons icona-36" style="color:lightgray" onClick="desaPreferida();">star_border</i>
+          <select id="est_nom" onchange="selectEstacio()"></select>
+        </div>
+        <div id="header">
+          <div id="nom_estacio">
+            <div id="est_poblacio"></div>
+            <div id="est_altitud"></div>
+          </div>
+          <div id="logoEstacio">
+            <img id=est_logo src="">
+          </div>
+        </div>
+        <div id="map"></div>
+        <div id="mesurat">
+          <div id="data_mesura"></div>
+          <div class="mesures">
+            <i class="wi wi-sunrise"></i><label id="sunrise"></label><i class="wi wi-sunset"></i><label id="sunset"></label>
+          </div>
+          <div class="mesures">
+            <i class="wi wi-thermometer"></i><label id="temperatura"></label><i class="wi wi-barometer"></i><label id="pressio"></label>
+          </div>
+          <div class="mesures">
+            <i class="wi wi-humidity"></i><label id="humitat"></label><i class="wi wi-umbrella"></i><label id="pluja"></label><i class="wi wi-strong-wind"></i><label id="vent"></label>
+          </div>
+        </div>  
+      </div>
+
+      <div id="fitxa">
+        <div id="nomFenomen"></div>
+        <div id="dataHora"></div>
+        <div id="contingutFitxa">
+          <div id="edicio_fitxa">
+            <img id="fotoFitxa" src="" onClick="fotografia();">
+            <div id="botons_edicio">
+              <button id="envia_obs" class="boto-edit" style="color:graytext" onClick="enviaFitxa()"><i class="material-icons icona-24">cloud_upload</i></button>
+              <button id="edita_obs" class="boto-edit" style="color:graytext" onClick="editaObservacio()"><i class="material-icons icona-24">edit</i></button>
+              <button id="elimina_obs" class="boto-edit" style="color:#418ac8" onClick="eliminaObservacio()"><i class="material-icons icona-24">delete_forever</i></button>
+            </div>
+          </div>
+          <div id="desc_map_fitxa">
+            <div id="descripcioFitxa"></div>
+            <div id="mapaFitxa"></div>  
+          </div>
+        </div>
+      </div>
+
+      <div id="sector-inferior">
+        <div id="hr"></div>
+        <div id="menu-inferior">
+          <button id="boto_observacions" class="boto-inf" style="color:graytext" onClick="login();"><i class="material-icons icona-24">camera_alt</i></button>
+          <button id="boto_estacions" class="boto-inf" style="color:#418ac8;" onClick="estacio();"><i class="material-icons icona-24">router</i></button>
+          <button id="boto_prediccio" class="boto-inf" style="color:graytext" onClick="prediccio();"><i class="material-icons icona-24">cloud</i></button>
+          <button id="boto_radar" class="boto-inf" style="color:graytext" onClick="radar();"><i class="material-icons icona-24">rss_feed</i></button>
+        </div>  
+      </div>   
+      <script type="text/javascript" src="cordova.js"></script>
+      <script type="text/javascript" src="js/index.js"></script>
+      <script>
+        if('serviceWorker' in navigator) {
+          navigator.serviceWorker
+                   .register('sw.js')
+                   .then(function() { console.log("Service Worker Registered"); });
+        }
+        </script>
+        
+    </body>
+</html> 

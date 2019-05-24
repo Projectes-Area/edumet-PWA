@@ -1,0 +1,413 @@
+body {
+    font-size:12px;
+    font-family: Roboto,"Open Sans",Arial,Serif,Times;
+    margin: 0px;
+}
+button, select, input, textarea {
+    font-family: Roboto,"Open Sans",Arial,Serif,Times !important;
+}
+#textarea {
+    resize: none;
+}
+.wi {
+    color:#418ac8;
+    margin-right:7px;
+    margin-left:15px;
+}
+.material-icons {
+    font-family: 'Material Icons';
+    font-weight: normal;
+    font-style: normal;
+    display: inline-block;
+    line-height: 1;
+    text-transform: none;
+    letter-spacing: normal;
+    word-wrap: normal;
+    white-space: nowrap;
+    direction: ltr;  
+    /* Support for all WebKit browsers. */
+    -webkit-font-smoothing: antialiased;
+    /* Support for Safari and Chrome. */
+    text-rendering: optimizeLegibility;  
+    /* Support for Firefox. */
+    -moz-osx-font-smoothing: grayscale;
+}
+.loader {
+    align-self:center;
+    border: 8px solid #f3f3f3;
+    border-radius: 50%;
+    border-top: 8px solid #418ac8;
+    width: 60px;
+    height: 60px;
+    animation: spin 1s linear infinite;
+    animation-play-state: paused;
+}  
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+.icona-16 {
+    font-size:16px; 
+}
+.icona-24 {
+    font-size:24px; 
+}
+.icona-36{
+    font-size:36px; 
+}
+.mesures {
+    display:flex; 
+    justify-content: center;
+}
+.boto-inf {
+    width:20%;
+    background: none;
+    border:none;
+    outline:none;
+}
+.boto-sup {
+    width:25%;
+    background: none;
+    color: #418ac8;
+    border:none;
+    outline:none;
+}
+.boto-edit {
+    width: 75%;
+    height: 25%;
+    border-radius: 8px;
+    outline:none;
+}
+.marge {
+    margin: 1vh;
+}
+.obs-fen {
+    display:flex;
+    height:10vh;
+    align-items:center;
+}
+.obs-desc {
+    display:flex;
+    height:40vh;
+    align-items:center;
+}
+#capsalera {
+    height:10vh;
+    background-color: #418ac8;
+    display: flex;
+    justify-content: center;
+}
+#content {
+    height:80vh;
+}
+#menu-botons {
+    display:flex;
+    width:100%;
+    height:10vh;
+}
+#menu-registra {
+    display:flex;
+    width:100%;
+    height:15vh;
+}
+#nou_registre {
+    height: 100%;
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-evenly;
+}
+#login {
+    display:none;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    font-size:16px;
+    height: 80vh;
+}
+#prediccio {
+    display: none;
+    justify-content: center;
+    align-items: center;
+    flex-direction:column;
+    height: 80vh;
+    width: 100%;
+    background: transparent;
+}
+#carregant {
+    margin: 5vh;
+}
+
+#radar {
+    display: none;
+    height: 80vh;
+    width: 100%;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+}
+
+#fotografia {
+    display:none;
+    height: 80vh;
+    width: 100%;
+}
+#fotoGran {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+#fenologia {
+    display:none;
+    flex-direction:column;
+    align-items:center;
+    height:80vh;
+}
+#observacions, #fitxa, #registra {
+    display:none;
+    height:80vh;    
+    flex-direction:column;
+}
+#fila {
+    height:5vh;
+    display:flex;
+    text-align:center;
+    align-items:center;
+}
+#llistat {
+    height:75vh;
+    overflow-y:scroll;
+    text-align: center;
+}
+#estacions {
+    display:flex;
+    flex-direction:column;
+    height:80vh;
+}
+#foto {
+    width:auto;
+    height:38vh;
+    margin:1vh;
+}
+#fenomen {
+    width:85vw;
+    height:100%;
+    font-size:12px;
+}
+#descripcio {
+    width:85vw;
+    height:90%;
+    font-size:12px;
+}
+#sector-inferior {
+    height:10vh;
+}
+#hr {
+    height: 1px;
+    background-color: lightgray;
+}
+#menu-inferior {
+    height:9vh;
+    display:flex;
+    border: none;
+}
+#logo-edumet {
+    align-self: center;
+    height:10vh;
+}
+#header {
+    display:flex;
+    height:15vh;
+}
+#map {
+    width:100%;
+    height:55vh;
+}
+#mapaFitxa {
+    width:100%;
+    height:40%;
+}
+#descripcioFitxa {
+    height:40%;
+    margin: 10px;
+    overflow-y:scroll;
+}
+#logoEstacio {
+    height:100%;
+    text-align: right;
+}
+#est_nom {
+    height:5vh;
+    width:100%;
+    margin-right:10px;
+}
+#est_logo {
+    height:100%;
+}
+#nom_estacio {
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    margin-left:20px;
+    width:100%;
+}
+#mesurat {
+    display:flex;
+    flex-direction:column;
+    text-align:center;
+    justify-content: space-evenly;
+    height:20vh;
+}
+#contingutFitxa {
+    display: flex;
+    height:80vh;
+}
+#nomFenomen, #dataHora {
+    display: flex;
+    height: 10%;
+    justify-content: center;
+    align-items: center;
+}
+#fotoFitxa{
+    width:70%;
+    object-fit: contain;
+}
+#valida, #enregistra {
+    padding-bottom:12px;
+    padding-top:12px;
+    padding-left:48px;
+    padding-right:48px;
+    margin-top:24px;
+}
+#id_estacio {
+    display:flex;
+    align-items:center;
+    height:10vh;
+}
+#edicio_fitxa {
+    display:flex;
+    height:50%;
+    justify-content: space-around;
+}
+#desc_map_fitxa {
+    display:flex;
+    flex-direction:column;
+    height:50%;
+}
+#botons_edicio {
+    display:flex;
+    flex-direction:column; 
+    justify-content:space-around;
+    align-items: center;
+    width: 20%;
+}
+#frame{
+    margin-top:10px;
+    display: none;
+    height: 100%;
+    width: 100%;
+    z-index: -2;
+}
+#iniciar{
+    margin-bottom:4vh;
+}
+#star{
+    margin-left:5px;
+}
+
+#div-icona-login {
+    display: flex;
+    position: absolute;
+    align-items: center;
+    width: 100%;
+    height: 10vh;
+}
+#icona-login{
+    margin-left:auto;
+    color:white;
+}
+
+@media (min-height: 800px) {
+    body, input, #valida, #est_nom, #fenomen, #descripcio, .boto-inf, .boto-sup {
+        font-size:16px;
+    }
+    .icona-36 {
+        font-size:48px;
+    }
+    .obs-icon, .icona-24 {
+        font-size:36px;
+    }
+    .icona-16 {
+        font-size:24px; 
+    }
+}
+@media (min-height: 1000px) {
+    body, input, #valida, #est_nom, #fenomen, #descripcio, .boto-inf, .boto-sup {
+        font-size:18px;
+    }
+    .icona-36 {
+        font-size:64px;
+    }
+    .obs-icon, .icona-24 {
+        font-size:48px;
+    }
+    .icona-16 {
+        font-size:32px; 
+    }
+}
+@media (min-height: 1200px) {
+    body, input, #valida, #est_nom, #fenomen, #descripcio, .boto-inf, .boto-sup {
+        font-size:24px;
+    }
+    .icona-36 {
+        font-size:96px;
+    }
+    .obs-icon, .icona-24 {
+        font-size:64px;
+    }
+    .icona-16 {
+        font-size:48px; 
+    }
+}
+
+@font-face {
+    font-family: 'Material Icons';
+    font-style: normal;
+    font-weight: 400;
+    src: local('Material Icons'),
+      local('MaterialIcons-Regular'),
+        url(../font/MaterialIcons-Regular.woff2) format('woff2'),
+        url(../font/MaterialIcons-Regular.woff) format('woff'),
+        url(../font/MaterialIcons-Regular.ttf) format('truetype');
+}
+
+/* Slideshow container */
+.slideshow-container {
+    width:100%;
+}  
+/* The dots/bullets/indicators */
+.imgSlidesPortrait, .mySlidesPortrait{
+    width:100%;
+    height:auto;
+}
+.imgSlidesLandscape, .mySlidesLandscape{
+    width:auto;
+    height:80vh;
+}
+#puntets {
+    display:flex;
+    margin:10px;
+}
+.dot {
+    height: 15px;
+    width: 15px;
+    margin: 2px 2px;
+    background-color: #bbb;
+    border-radius: 50%;
+    display: inline-block;
+    transition: background-color 0.6s ease;
+}
+.active {
+    background-color: #717171;
+}
