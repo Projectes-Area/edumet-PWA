@@ -3,16 +3,15 @@ var app = {
     document.addEventListener('deviceready', this.onDeviceReady, false);
   },
   onDeviceReady: function() {
-    watchID = navigator.geolocation.watchPosition(geoSuccess, geoFail);
     if (usuari == "") {
       usuari = storage.getItem("user");
     }
     var online;
-    var stringEstacions = storage.getItem("estacions");
+    var stringDatabase = storage.getItem("database");
     map = L.map('map');
     if (checkConnection() == 'No network connection') {
       online = false;
-      if(stringEstacions == null) {
+      if(stringDatabase == null) {
         navigator.notification.alert("La configuració inicial de l'App precisa una connexió a Internet. Si us plau, reinicia l'App quan en tinguis.", tancar, "Sense connexió", "Tancar");        
       } else {
         navigator.notification.alert("No es pot connectar a Internet. Algunes característiques de l'App no estaran disponibles.", empty, "Sense connexió", "D'acord");
@@ -43,10 +42,16 @@ var app = {
     }); 
     
     var ara = new Date();
-    var dies = (ara - new Date(stringEstacions)) / 36000000;
-    if((stringEstacions == null || dies > 30) && online) {
-      baixaEstacions();
-      baixaFenomens();
+    var dies = (ara - new Date(stringDatabase)) / 36000000;
+    if((stringDatabase == null || dies > 30) && online) {
+      indexedDB.open("eduMET").onupgradeneeded = function(event) { 
+        var db = event.target.result;    
+        db.createObjectStore("Fenomens", {keyPath: "Id_feno"});
+        db.createObjectStore("Estacions", {keyPath: "Codi_estacio"});
+        db.createObjectStore("Observacions", {keyPath: "Local_path"});
+        baixaFenomens();
+        baixaEstacions();
+      };
     } else {
       mostraEstacions();
       getFenomens();
@@ -201,28 +206,22 @@ function baixaFenomens() {
       option.value = response[i]["Id_feno"];
       x.add(option);
     }
-    db.transaction(function (tx) {
-      tx.executeSql('DROP TABLE IF EXISTS Fenomens'); 
-      tx.executeSql('CREATE TABLE Fenomens (Id_feno, Bloc_feno, Titol_feno)');   
+    indexedDB.open("eduMET").onsuccess = function(event) { 
+      var db = event.target.result;    
+      var fenObjStore = db.transaction("Fenomens", "readwrite").objectStore("Fenomens");
       for(i=0;i<response.length;i++){
-        var query = 'INSERT INTO Fenomens (Id_feno, Bloc_feno, Titol_feno) VALUES ("';
-        query += response[i]["Id_feno"] + '","';
-        query += response[i]["Bloc_feno"] + '","';
-        query += response[i]["Titol_feno"] + '")';
-        tx.executeSql(query);    
+        fenObjStore.add(response[i]);
       }
-    });
+    };
   });
 }
 
 function getFenomens() {
-  db.transaction(function (tx) {  
-    var query = 'SELECT * FROM Fenomens'
-    tx.executeSql(query, [], function(tx, results){
-      assignaFenomens(results.rows);
-    },
-    empty);          
-  });
+  indexedDB.open("eduMET").onsuccess = function(event) {
+    event.target.result.transaction(["Fenomens"], "readonly").objectStore("Fenomens").getAll().onsuccess = function(event) {
+      assignaFenomens(event.target.result);
+    };
+  };
 }
 function assignaFenomens(response) {
   fenomens = [];
@@ -249,46 +248,38 @@ function baixaEstacions() {
   .then(response => JSON.parse(response))
   .then(response => {
     console.log("Estacions: Baixades");  
-    db.transaction(function (tx) {
-      tx.executeSql('DROP TABLE IF EXISTS Estacions'); 
-      tx.executeSql('CREATE TABLE Estacions (Id_estacio, Codi_estacio, Nom_centre, Poblacio, Latitud, Longitud, Altitud)');  
+    indexedDB.open("eduMET").onsuccess = function(event) { 
+      var db = event.target.result;    
+      var EstObjStore = db.transaction("Estacions", "readwrite").objectStore("Estacions");
       for(i=0;i<response.length;i++){
-        var query = 'INSERT INTO Estacions (Id_estacio, Codi_estacio, Nom_centre, Poblacio, Latitud, Longitud, Altitud) VALUES ("';
-        query += response[i]["Id_estacio"] + '","';
-        query += response[i]["Codi_estacio"] + '","';
-        query += response[i]["Nom_centre"] + '","';
-        query += response[i]["Poblacio"] + '","';
-        query += response[i]["Latitud"] + '","';
-        query += response[i]["Longitud"] + '","';
-        query += response[i]["Altitud"] + '")';
-        tx.executeSql(query);
+        EstObjStore.add(response[i]);
       }
-    });
-    storage.setItem("estacions", new Date());  
+    };
+    storage.setItem("database", new Date());  
     mostraEstacions();
   });
 }
 
 function mostraEstacions() {
+  watchID = navigator.geolocation.watchPosition(geoSuccess, geoFail);
   var x = document.getElementById("est_nom");
-  db.transaction(function (tx) {
-    var query = 'SELECT * FROM Estacions'
-    tx.executeSql(query, [], function(tx, results){
-      for(i=0;i<results.rows.length;i++){
-        marcador[i] = L.marker(new L.LatLng(results.rows[i]["Latitud"], results.rows[i]["Longitud"])).addTo(map);   
+  indexedDB.open("eduMET").onsuccess = function(event) {
+    event.target.result.transaction(["Estacions"], "readonly").objectStore("Estacions").getAll().onsuccess = function(event) {
+      for(i=0;i<event.target.result.length;i++){
+        marcador[i] = L.marker(new L.LatLng(event.target.result[i]["Latitud"], event.target.result[i]["Longitud"])).addTo(map);   
         marcador[i].i = i
-        marcador[i].Codi_estacio = results.rows[i]["Codi_estacio"];
+        marcador[i].Codi_estacio = event.target.result[i]["Codi_estacio"];
         marcador[i].on('click',function(e) {
           var x = document.getElementById("est_nom");
           x.value = this.Codi_estacio;
           mostra(this.Codi_estacio);
         });   
         var option = document.createElement("option");
-        option.text = results.rows[i]["Nom_centre"];
-        option.value = results.rows[i]["Codi_estacio"];
-        x.add(option);      
+        option.text = event.target.result[i]["Nom_centre"];
+        option.value = event.target.result[i]["Codi_estacio"];
+        x.add(option);
       }
-      preferida = storage.getItem("Codi_estacio");
+      preferida = storage.getItem("estacio");
       if (preferida == null) {
         estacioActual = codiInicial;
         estacioPreferida = codiInicial;
@@ -297,17 +288,11 @@ function mostraEstacions() {
         estacioActual = preferida;
         estacioPreferida = preferida;
         console.log("Preferida (Desada): " + estacioPreferida);
-
-        var query = 'SELECT * FROM Estacions WHERE Codi_estacio="' + estacioPreferida + '"';
-        tx.executeSql(query, [], function(tx, results){
-          document.getElementById("est_nom").value = results.rows[0]["Codi_estacio"];
-        },
-        empty);
+        document.getElementById("est_nom").value = estacioPreferida;
       }
       mostraEstacio();
-    },
-    empty);          
-  });
+    };
+  };
 }
 function mostra(Codi_estacio) {
   estacioActual = Codi_estacio;
@@ -320,20 +305,18 @@ function selectEstacio() {
 }
 
 function mostraEstacio() {
-  db.transaction(function (tx) {
-    var query = 'SELECT * FROM Estacions WHERE Codi_estacio="' + estacioActual + '"';
-    tx.executeSql(query, [], function(tx, results){
-      document.getElementById('est_poblacio').innerHTML = results.rows[0]["Poblacio"];
-      document.getElementById('est_altitud').innerHTML = "Altitud: " + results.rows[0]["Altitud"] + " m";
-      var URLlogo = "https://edumet.cat/edumet-data/" + results.rows[0]["Codi_estacio"] + "/estacio/profile1/imatges/fotocentre.jpg";
+  indexedDB.open("eduMET").onsuccess = function(event) {
+      event.target.result.transaction(["Estacions"], "readonly").objectStore("Estacions").get(estacioActual).onsuccess = function(e) {
+      document.getElementById('est_poblacio').innerHTML = e.target.result["Poblacio"];
+      document.getElementById('est_altitud').innerHTML = "Altitud: " + e.target.result["Altitud"] + " m";
+      var URLlogo = "https://edumet.cat/edumet-data/" + e.target.result["Codi_estacio"] + "/estacio/profile1/imatges/fotocentre.jpg";
       if(checkConnection() != 'No network connection'){
         document.getElementById('est_logo').src = URLlogo;
         getMesures();
       }
-      map.setView(new L.LatLng(results.rows[0]["Latitud"], results.rows[0]["Longitud"]));
-    },
-    empty);
-  });
+      map.setView(new L.LatLng(e.target.result["Latitud"], e.target.result["Longitud"]));
+    }
+  }
   var estrella = document.getElementById('star');
   if(estacioActual == estacioPreferida) {
     estrella.innerHTML = "star";
@@ -347,47 +330,40 @@ function mostraEstacio() {
 function desaPreferida() {
   estacioPreferida = document.getElementById("est_nom").value;
   console.log("Preferida (Triada): " + estacioPreferida);
-  storage.setItem("Codi_estacio", estacioPreferida);  
+  storage.setItem("estacio", estacioPreferida);  
   var estrella = document.getElementById('star');
   estrella.innerHTML = "star";
   estrella.style.color = "yellow";
 }
 
 function getMesures() {
-  db.transaction(function (tx) {  
-    var query = 'SELECT Codi_estacio FROM Estacions WHERE Codi_estacio="' + estacioActual + '"';
-    tx.executeSql(query, [], function(tx, results){
-      var Codi_estacio = results.rows[0]["Codi_estacio"];
-      var url = url_servidor + "?tab=mobilApp&codEst=" + Codi_estacio;
-      fetch(url)
-      .then(response => response.text())
-      .then(response => JSON.parse(response))
-      .then(response => {     
-        document.getElementById('temperatura').innerHTML = response[0]["Temp_ext_actual"]+ " ºC <label style='color:red'>" + response[0]["Temp_ext_max_avui"] + " ºC <label style='color:cyan'>" + response[0]["Temp_ext_min_avui"] + " ºC</label>";
-        document.getElementById('humitat').innerHTML = response[0]["Hum_ext_actual"] + "%";
-        document.getElementById('pressio').innerHTML = response[0]["Pres_actual"] + " HPa";
-        document.getElementById('sunrise').innerHTML = response[0]["Sortida_sol"].slice(0,5);
-        document.getElementById('sunset').innerHTML = response[0]["Posta_sol"].slice(0,5);
-        document.getElementById('pluja').innerHTML = response[0]["Precip_acum_avui"] + " mm";
-        document.getElementById('vent').innerHTML = response[0]["Vent_vel_actual"] + " Km/h";    
-        INEinicial = response[0]["codi_INE"];
-        var stringDataFoto = response[0]["Data_UTC"] + 'T' + response[0]["Hora_UTC"];
-        var interval = (new Date() - new Date(stringDataFoto)) / 3600000;
-        var textDataMesura = document.getElementById('data_mesura');
-        textDataMesura.innerHTML = "Actualitzat a les " + response[0]["Hora_UTC"] + " del " + formatDate(response[0]["Data_UTC"]);
-        if(interval < 2) {
-          textDataMesura.style.color = "#006633";
-        } else {
-          textDataMesura.style.color = "#FF0000";
-        }
-      })
-      .catch(reason => {
-        textDataMesura.style.color = "#FF0000";
-        textDataMesura.innerHTML = "L'estació no proporciona les dades ...";
-        console.log("error:" + reason);
-      });
-    },
-    empty);          
+  var url = url_servidor + "?tab=mobilApp&codEst=" + estacioActual;
+  fetch(url)
+  .then(response => response.text())
+  .then(response => JSON.parse(response))
+  .then(response => {     
+    document.getElementById('temperatura').innerHTML = response[0]["Temp_ext_actual"]+ " ºC <label style='color:red'>" + response[0]["Temp_ext_max_avui"] + " ºC <label style='color:cyan'>" + response[0]["Temp_ext_min_avui"] + " ºC</label>";
+    document.getElementById('humitat').innerHTML = response[0]["Hum_ext_actual"] + "%";
+    document.getElementById('pressio').innerHTML = response[0]["Pres_actual"] + " HPa";
+    document.getElementById('sunrise').innerHTML = response[0]["Sortida_sol"].slice(0,5);
+    document.getElementById('sunset').innerHTML = response[0]["Posta_sol"].slice(0,5);
+    document.getElementById('pluja').innerHTML = response[0]["Precip_acum_avui"] + " mm";
+    document.getElementById('vent').innerHTML = response[0]["Vent_vel_actual"] + " Km/h";    
+    INEinicial = response[0]["codi_INE"];
+    var stringDataFoto = response[0]["Data_UTC"] + 'T' + response[0]["Hora_UTC"];
+    var interval = (new Date() - new Date(stringDataFoto)) / 3600000;
+    var textDataMesura = document.getElementById('data_mesura');
+    textDataMesura.innerHTML = "Actualitzat a les " + response[0]["Hora_UTC"] + " del " + formatDate(response[0]["Data_UTC"]);
+    if(interval < 2) {
+      textDataMesura.style.color = "#006633";
+    } else {
+      textDataMesura.style.color = "#FF0000";
+    }
+  })
+  .catch(reason => {
+    textDataMesura.style.color = "#FF0000";
+    textDataMesura.innerHTML = "L'estació no proporciona les dades ...";
+    console.log("error:" + reason);
   });
 }
 
@@ -439,7 +415,6 @@ function tancar_sessio(buttonIndex) {
   });
 }
 }
-
 
 function fesFoto() {
   if(localitzat) {
@@ -1108,32 +1083,30 @@ function geoSuccess(position){
   longitudActual = position.coords.longitude;
 
   if(!estacioDesada) {
-    var estPreferida = storage.getItem("Codi_estacio");
+    var estPreferida = storage.getItem("estacio");
     if (estPreferida == null) {
       var distanciaPropera = 1000;
       var distanciaProva;
       var estacioPropera = 0;
-      db.transaction(function (tx) {  
-        var query = 'SELECT * FROM Estacions'
-        tx.executeSql(query, [], function(tx, results){
-          console.log("numEstacions:" + results.rows.length);
-          for(i=0;i<results.rows.length;i++){
-            distanciaProva = getDistanceFromLatLonInKm(latitudActual, longitudActual, results.rows[i]["Latitud"], results.rows[i]["Longitud"]);
+      indexedDB.open("eduMET").onsuccess = function(event) {
+        event.target.result.transaction(["Estacions"], "readonly").objectStore("Estacions").getAll().onsuccess = function(event) {
+          console.log("numEstacions:" + event.target.result.length);
+          for(i=0;i<event.target.result.length;i++){
+            distanciaProva = getDistanceFromLatLonInKm(latitudActual, longitudActual, event.target.result[i]["Latitud"], event.target.result[i]["Longitud"]);
             if(distanciaProva < distanciaPropera) {
               distanciaPropera = distanciaProva;
               estacioPropera = i;
             }
           }
-          console.log("Preferida (Propera): " + results.rows[estacioPropera]["Codi_estacio"] + " : " + results.rows[estacioPropera]["Nom_centre"]);
-          estacioActual = results.rows[estacioPropera]["Codi_estacio"];
+          console.log("Preferida (Propera): " + event.target.result[estacioPropera]["Codi_estacio"] + " : " + event.target.result[estacioPropera]["Nom_centre"]);
+          estacioActual = event.target.result[estacioPropera]["Codi_estacio"];
           estacioPreferida = estacioActual;
-          storage.setItem("Codi_estacio", estacioPreferida);
+          storage.setItem("estacio", estacioPreferida);
           estacioDesada = true;
           document.getElementById("est_nom").value = estacioPreferida;
-          mostraEstacio();      
-      },
-      empty);          
-      });
+          mostraEstacio();
+        };
+      };
     }
   }
 
