@@ -48,7 +48,7 @@ var app = {
         var db = event.target.result;    
         db.createObjectStore("Fenomens", {keyPath: "Id_feno"});
         db.createObjectStore("Estacions", {keyPath: "Codi_estacio"});
-        db.createObjectStore("Observacions", {keyPath: "Local_path"});
+        db.createObjectStore("Observacions", {keyPath: "Data_registre"});
         baixaFenomens();
         baixaEstacions();
       };
@@ -79,6 +79,14 @@ var app = {
         valida();
       }
     });
+
+    document.getElementById('fitxer_galeria').addEventListener("change", function(event) {
+      readURL(this);
+    });
+
+    document.getElementById('fitxer').addEventListener("change", function(event) {
+      readURL(this);
+    });
     
     window.addEventListener("orientationchange", function(){
       console.log(screen.orientation.type);
@@ -86,7 +94,19 @@ var app = {
     });
     console.log(screen.orientation.type);
     ajustaOrientacio(screen.orientation.type);
-  }
+  
+    if (navigator.mediaDevices && navigator.mediaDevices.enumerateDevices) {
+      navigator.enumerateDevices = function(callback) {
+          navigator.mediaDevices.enumerateDevices().then(callback);
+      };
+    } 
+    if (typeof MediaStreamTrack !== 'undefined' && 'getSources' in MediaStreamTrack) {
+        canEnumerate = true;
+    } else if (navigator.mediaDevices && !!navigator.mediaDevices.enumerateDevices) {
+        canEnumerate = true;
+    } 
+    checkDeviceSupport();  
+  }  
 };
 
 var storage = window.localStorage;
@@ -119,6 +139,16 @@ var map;
 var slideIndex;
 var flagRadar = false;
 var timeOut;
+var midaFoto = 800;
+
+var MediaDevices = [];
+var isHTTPs = location.protocol === 'https:';
+var canEnumerate = false;
+var hasMicrophone = false;
+var hasSpeakers = false;
+var hasWebcam = false;
+var isMicrophoneAlreadyCaptured = false;
+var isWebcamAlreadyCaptured = false;
 
 app.initialize();
 
@@ -212,7 +242,7 @@ function baixaFenomens() {
       for(i=0;i<response.length;i++){
         fenObjStore.add(response[i]);
       }
-    };
+    }
   });
 }
 
@@ -417,7 +447,17 @@ function tancar_sessio(buttonIndex) {
 }
 
 function fesFoto() {
-  if(localitzat) {
+  if(hasWebcam) {
+    //if(localitzat) {
+      document.getElementById('fitxer').click();
+    //} else {
+      //navigator.notification.alert("No es coneix la ubicació. Si us plau, activa primer GPS.", empty, "GPS", "D'acord");
+    //}
+  } else {
+    document.getElementById('fitxer_galeria').click();
+  }
+
+    /*
     var options = {
       quality: 20, // Some common settings are 20, 50, and 100
       destinationType: Camera.DestinationType.FILE_URI,
@@ -440,10 +480,70 @@ function fesFoto() {
     }  
     function onFail(message) {
       navigator.notification.alert("No s'ha pogut fer la foto.", empty, "Càmera", "D'acord");
-    }
-  }
+    }*/
+ /* }
   else {
     navigator.notification.alert("No es coneix la ubicació. Si us plau, activa primer GPS.", empty, "GPS", "D'acord");
+  }*/
+}
+
+function readURL(input) {   
+  fitxerImg = input.files[0].name;
+  var extn = fitxerImg.substring(fitxerImg.lastIndexOf('.') + 1).toLowerCase();
+  if (extn == "jpg" || extn == "jpeg") {  
+    var canvas = document.getElementById("canvas");
+    var ctx = canvas.getContext("2d");
+    var img = new Image;
+    img.src = URL.createObjectURL(input.files[0]);
+    img.onload = function() {
+      var iw=img.width;
+      var ih=img.height;
+      var scale=Math.min((midaFoto/iw),(midaFoto/ih));
+      var iwScaled=iw*scale;
+      var ihScaled=ih*scale;
+      canvas.width=iwScaled;
+      canvas.height=ihScaled;
+      ctx.drawImage(img,0,0,iwScaled,ihScaled);
+      canvas.style.display = "none";
+      console.log(canvas.toDataURL("image/jpeg",0.5));
+      document.getElementById('foto').src = canvas.toDataURL("image/jpeg",0.5);
+    }
+
+    EXIF.getData(input.files[0], function() {
+      console.log("EXIF data: " + this.exifdata.DateTimeOriginal);
+      if(this.exifdata.GPSLatitude!=undefined) {     
+        var latDegree = this.exifdata.GPSLatitude[0].numerator/this.exifdata.GPSLatitude[0].denominator;
+        var latMinute = this.exifdata.GPSLatitude[1].numerator/this.exifdata.GPSLatitude[1].denominator;
+        var latSecond = this.exifdata.GPSLatitude[2].numerator/this.exifdata.GPSLatitude[2].denominator;
+        var latDirection = this.exifdata.GPSLatitudeRef;
+        GPSlatitud = ConvertDMSToDD(latDegree, latMinute, latSecond, latDirection);        
+        var lonDegree = this.exifdata.GPSLongitude[0].numerator/this.exifdata.GPSLongitude[0].denominator;
+        var lonMinute = this.exifdata.GPSLongitude[1].numerator;this.exifdata.GPSLongitude[1].denominator;
+        var lonSecond = this.exifdata.GPSLongitude[2].numerator/this.exifdata.GPSLongitude[2].denominator;
+        var lonDirection = this.exifdata.GPSLongitudeRef;
+        GPSlongitud = ConvertDMSToDD(lonDegree, lonMinute, lonSecond, lonDirection);
+        console.log("EXIF:"+ GPSlatitud + ","+ GPSlongitud);        
+      }                  
+    });
+  /*}
+   var extn = fitxerImg.substring(fitxerImg.lastIndexOf('.') + 1).toLowerCase();
+   if (extn == "jpg" || extn == "jpeg") {
+    if (typeof(FileReader) != "undefined") {
+      if (input.files && input.files[0]) {
+        var reader = new FileReader();
+        reader.readAsDataURL(input.files[0]);        
+        reader.onload = function (e) {
+          var contingutFitxer = e.target.result;
+          var base64 = contingutFitxer.replace(/^data:image\/[a-z]+;base64,/, "");  
+          console.log("base64:" + base64); 
+          document.getElementById('foto').src = contingutFitxer;                  
+        }       
+      }
+    } else {
+      alert("Aquest navegador no permet aquesta acció (FileReader)");
+    }*/
+  } else {
+    alert("La foto ha de tenir el format JPEG.");
   }
 }
 
@@ -473,6 +573,15 @@ function baixaObsInicial() {
         baixaFoto(response[i]["ID"],response[i]["Fotografia_observacio"]); 
       }
     });
+    indexedDB.open("eduMET").onsuccess = function(event) { 
+      var db = event.target.result;    
+      var obsObjStore = db.transaction("Observacions", "readwrite").objectStore("Observacions");
+      for(i=0;i<response.length;i++){
+        response[i]["Enviat"] = 1;
+        obsObjStore.add(response[i]);
+        console.log("Observació inicial: " + response[i]["ID"]);
+      }
+    }
   });  
 }
 
@@ -1166,4 +1275,87 @@ function formatDate(dia) {
   if (month.length < 2) month = '0' + month;
   if (day.length < 2) day = '0' + day;
   return [day, month, year].join('-');
+}
+
+function checkDeviceSupport(callback) {
+  if (!canEnumerate) {
+      return;
+  }
+  if (!navigator.enumerateDevices && window.MediaStreamTrack && window.MediaStreamTrack.getSources) {
+      navigator.enumerateDevices = window.MediaStreamTrack.getSources.bind(window.MediaStreamTrack);
+  }
+  if (!navigator.enumerateDevices && navigator.enumerateDevices) {
+      navigator.enumerateDevices = navigator.enumerateDevices.bind(navigator);
+  }
+  if (!navigator.enumerateDevices) {
+      if (callback) {
+          callback();
+      }
+      return;
+  }
+  MediaDevices = [];
+  navigator.enumerateDevices(function(devices) {
+      devices.forEach(function(_device) {
+          var device = {};
+          for (var d in _device) {
+              device[d] = _device[d];
+          }
+          if (device.kind === 'audio') {
+              device.kind = 'audioinput';
+          }
+          if (device.kind === 'video') {
+              device.kind = 'videoinput';
+          }
+          var skip;
+          MediaDevices.forEach(function(d) {
+              if (d.id === device.id && d.kind === device.kind) {
+                  skip = true;
+              }
+          });
+          if (skip) {
+              return;
+          }
+          if (!device.deviceId) {
+              device.deviceId = device.id;
+          }
+          if (!device.id) {
+              device.id = device.deviceId;
+          }
+          if (!device.label) {
+              device.label = 'Please invoke getUserMedia once.';
+              if (!isHTTPs) {
+                  device.label = 'HTTPs is required to get label of this ' + device.kind + ' device.';
+              }
+          } else {
+              if (device.kind === 'videoinput' && !isWebcamAlreadyCaptured) {
+                  isWebcamAlreadyCaptured = true;
+              }
+              if (device.kind === 'audioinput' && !isMicrophoneAlreadyCaptured) {
+                  isMicrophoneAlreadyCaptured = true;
+              }
+          }
+          if (device.kind === 'audioinput') {
+              hasMicrophone = true;
+          }
+          if (device.kind === 'audiooutput') {
+              hasSpeakers = true;
+          }
+          if (device.kind === 'videoinput') {
+              hasWebcam = true;
+          }
+          // there is no 'videoouput' in the spec.
+          MediaDevices.push(device);
+      });
+      if (callback) {
+          callback();
+      }
+  });
+}
+
+function ConvertDMSToDD(degrees, minutes, seconds, direction) {    
+  var dd = degrees + (minutes/60) + (seconds/3600);    
+  if (direction == "S" || direction == "W") {
+      dd = dd * -1; 
+  }    
+  return dd;
 }

@@ -11,6 +11,7 @@
       <link rel="stylesheet" type="text/css" href="css/weather-icons.min.css">
       <link rel="stylesheet" type="text/css" href="leaflet/leaflet.css">
       <script src="leaflet/leaflet.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/exif-js/2.3.0/exif.min.js"></script>
       <link rel="shortcut icon" href="img/favicon.ico">
       <title>Observacions</title>
     </head>
@@ -148,6 +149,9 @@
           <button id="boto_prediccio" class="boto-inf" style="color:graytext;" onClick="prediccio();"><i class="material-icons icona-24">cloud</i></button>
           <button id="boto_radar" class="boto-inf" style="color:graytext;" onClick="radar();"><i class="material-icons icona-24">wifi_tethering</i></button>
         </div>  
+        <input type="file" style='display: none;' accept="image/*" id="fitxer" name="fitxer" capture="camera"/>
+        <input type='file' style='display: none;' accept="image/jpeg" id="fitxer_galeria" name="fitxer_galeria" />
+        <canvas id="canvas" style="display:none;"></canvas>
       </div>   
       <script type="text/javascript" src="cordova.js"></script>
       <script type="text/javascript" src="js/index.js"></script>
