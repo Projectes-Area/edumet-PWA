@@ -423,28 +423,15 @@ function usuaris() {
 }
 function tancar_sessio(buttonIndex) {
   if(buttonIndex == 1) {
-    db.transaction(function (tx) {
-    var query = 'SELECT Local_path FROM Observacions';
-    tx.executeSql(query, [], function(tx, rs){
-      for(i=0;i<rs.rows.length;i++) {
-        window.resolveLocalFileSystemURL(rs.rows.item(i)["Local_path"], function success(fileEntry) {   
-          fileEntry.remove(function(file){
-          },function(error){
-            console.log("error deleting the file " + error.code);
-            });
-          },function(){
-            console.log("file does not exist");
-          }
-        );
-      }  
+    indexedDB.open("eduMET").onsuccess = function(event) {
+      var db = event.target.result;
+      var obsObjStore = db.transaction("Observacions", "readwrite").objectStore("Observacions");
+      obsObjStore.clear();    
+    } 
     localStorage.removeItem("user");
     usuari = "";
     estacio();
-    
-      tx.executeSql('DROP TABLE Observacions');   
-    });
-  });
-}
+  }
 }
 
 function fesFoto() {
@@ -706,44 +693,33 @@ function eliminar(buttonIndex) {
   }
 }
 function elimina() {
-  db.transaction(function (tx) {    
-    var query = 'SELECT ID,Enviat,Local_path FROM Observacions WHERE Local_path=\'' + observacioFitxa +'\'';   
-    tx.executeSql(query, [], function(tx, rs){        
-      var fitxaObs = rs.rows.item(0);
+  indexedDB.open("eduMET").onsuccess = function(event) {
+    var db = event.target.result.transaction(["Observacions"], "readwrite");
+    obsObjStore = db.objectStore("Observacions");
+    obsObjStore.get(observacioFitxa).onsuccess = function(e) {
       var eliminarLocal = true;
-      if(fitxaObs["Enviat"] == "1") {
+      if(e.target.result["Enviat"] == "1") {
         if (checkConnection() == 'No network connection') {
           navigator.notification.alert("Les observacions que ja s'han penjat al servidor eduMET no es poden eliminar sense connexió a Internet.", empty, 'Eliminar observació', "D'acord");
           eliminarLocal = false;
         } else {           
-          var url = url_servidor + "?usuari=" + usuari + "&id=" + fitxaObs["ID"] + "&tab=eliminarFenUsu";
+          var url = url_servidor + "?usuari=" + usuari + "&id=" + e.target.result["ID"] + "&tab=eliminarFenUsu";
           fetch(url);
         }
       }
       if(eliminarLocal) {
-        var query = 'DELETE FROM Observacions WHERE Local_path=\'' + observacioFitxa +'\'';
-        tx.executeSql(query);
-        window.resolveLocalFileSystemURL(fitxaObs["Local_path"], function success(fileEntry) {   
-          fileEntry.remove(function(file){
-            navigator.notification.alert("S'ha eliminat l'observació.", empty, 'Eliminar observació', "D'acord");
-            if(observacioActual == observacioFitxa) {
-              document.getElementById("foto").src = "img/launcher-icon-512.png";
-              document.getElementById("descripcio").value = "";
-              document.getElementById("fenomen").value = "0";
-              observacioActual = "";
-            }
-            activa('observacions');
-            llistaObservacions();
-          },function(error){
-            console.log("error deleting the file " + error.code);
-            });
-          },function(){
-            console.log("file does not exist");
-          }
-        );   
-      }        
-    }, empty);      
-  });  
+        obsObjStore.delete(observacioFitxa);
+        if(observacioActual == observacioFitxa) {
+          document.getElementById("foto").src = "img/launcher-icon-512.png";
+          document.getElementById("descripcio").value = "";
+          document.getElementById("fenomen").value = "0";
+          observacioActual = "";
+        }
+        activa('observacions');
+        llistaObservacions();           
+      }
+    }
+  }
 }
 
 function actualitzaObservacio() {
@@ -756,17 +732,11 @@ function actualitzaObservacio() {
       navigator.notification.alert("Si us plau, tria primer el tipus de fenomen i escriu una breu descripció.", empty, 'Desar observació', "D'acord");
     } else {
       indexedDB.open("eduMET").onsuccess = function(event) {
-  nou_registre["ID"] = 0;
         var objStore = event.target.result.transaction(["Observacions"], "readwrite").objectStore("Observacions");
-  nou_registre["ID"] = 0;
         var request = objStore.get(observacioActual);
-  nou_registre["ID"] = 0;
         request.onsuccess = function() {
-  nou_registre["ID"] = 0;
           var data = request.result;
-  nou_registre["ID"] = 0;
           data.Id_feno =  Id_feno;
-  nou_registre["ID"] = 0;
           data.Descripcio_observacio = Descripcio_observacio;
           objStore.put(data);
           navigator.notification.alert("S'ha desat el tipus d'observació i la descripció del fenomen.", empty, 'Desar observació', "D'acord");
