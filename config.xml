@@ -2,7 +2,7 @@
 <widget id="com.edumet.fenologia" version="1.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
     <name>Observacions</name>
     <description>
-        App del projecte eduMET desenvolupada amb Cordova. Permet fer observacions fenològiques i penjarles al servidor eduMET. Mostra les dades atmosfèriques proporcionades per les estacions meteorològiques de la xarxa eduMET. Mostra la predicció del temps i les imatges del radar meteorològic (informació oferta pel Servei Meteorològic de Catalunya).
+        App del projecte eduMET desenvolupada amb Cordova. Permet fer observacions fenològiques i penjar-les al servidor eduMET. Mostra les dades atmosfèriques proporcionades per les estacions meteorològiques de la xarxa eduMET. Mostra la predicció del temps i les imatges del radar meteorològic (informació oferta pel Servei Meteorològic de Catalunya).
     </description>
     <author>Àrea de Cultura Digital</author>
     <preference name="phonegap-version" value="cli-8.1.1" />

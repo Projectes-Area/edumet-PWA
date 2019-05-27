@@ -9,7 +9,7 @@ self.addEventListener('install', function(e) {
           'manifest.json',
           'img/favicon.ico',
           'img/edumet.png',
-          'img/add_photo.svg',
+          'img/launcher-icon-512.png',
           'img/marker-icon-green.png',
           'css/weather-icons.min.css',
           'font/MaterialIcons-Regular.ttf',

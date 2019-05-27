@@ -185,10 +185,15 @@ button, select, input, textarea {
     flex-direction:column;
     height:80vh;
 }
+#div_foto {
+    display: flex;
+    height: 38vh;
+    align-items: center;
+    justify-content: center;
+}
 #foto {
-    width:auto;
-    height:38vh;
-    margin:1vh;
+    max-width:90%;
+    max-height:95%;
 }
 #fenomen {
     width:85vw;
