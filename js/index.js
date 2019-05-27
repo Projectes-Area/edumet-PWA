@@ -3,9 +3,9 @@ var app = {
     document.addEventListener('deviceready', this.onDeviceReady, false);
   },
   onDeviceReady: function() {
-    if (usuari == "") {
+    //if (usuari == "") {
       usuari = storage.getItem("user");
-    }
+    //}
     var online;
     var stringDatabase = storage.getItem("database");
     map = L.map('map');
@@ -34,13 +34,7 @@ var app = {
         attribution: 'Wikimedia'
       }).addTo(map);
 
-    };
-    db = window.openDatabase('Edumet', '', 'Base de dades Edumet', 10000);
-    window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function (fs) {
-      console.log('File system open: ' + fs.name);
-      fileSystem = fs;
-    }); 
-    
+    };   
     var ara = new Date();
     var dies = (ara - new Date(stringDatabase)) / 36000000;
     if((stringDatabase == null || dies > 30) && online) {
@@ -51,13 +45,13 @@ var app = {
         db.createObjectStore("Observacions", {keyPath: "Data_registre"});
         baixaFenomens();
         baixaEstacions();
-      };
+      }
     } else {
       mostraEstacions();
       getFenomens();
     }
 
-    document.addEventListener("backbutton", function(e){
+    /*document.addEventListener("backbutton", function(e){
       switch(vistaActual) {
         case 'fitxa':
           activa('observacions');
@@ -71,7 +65,7 @@ var app = {
         default:
           navigator.notification.confirm("Vols sortir de l'App eduMET?", sortir, "Sortir", ["Sortir","Cancel·lar"]);
       }
-   }, false);
+   }, false);*/
 
     var input = document.getElementById('password');
     input.addEventListener("keyup", function(event) {
@@ -83,16 +77,13 @@ var app = {
     document.getElementById('fitxer_galeria').addEventListener("change", function(event) {
       readURL(this);
     });
-
     document.getElementById('fitxer').addEventListener("change", function(event) {
       readURL(this);
     });
     
     window.addEventListener("orientationchange", function(){
-      console.log(screen.orientation.type);
       ajustaOrientacio(screen.orientation.type);
     });
-    console.log(screen.orientation.type);
     ajustaOrientacio(screen.orientation.type);
   
     if (navigator.mediaDevices && navigator.mediaDevices.enumerateDevices) {
@@ -110,7 +101,6 @@ var app = {
 };
 
 var storage = window.localStorage;
-var db;
 var usuari = "";
 var contrasenya;
 var estacioActual;
@@ -123,8 +113,6 @@ var url_imatges = 'https://edumet.cat/edumet/meteo_proves/imatges/fenologia/';
 var INEinicial = "081234";
 var codiInicial = "08903085";
 var localitzat = false;
-var fotoBaixada;
-var fileSystem;
 var observacioActual = "";
 var observacioFitxa;
 var mapaFitxa;
@@ -145,10 +133,7 @@ var midaFoto = 800;
 var MediaDevices = [];
 var isHTTPs = location.protocol === 'https:';
 var canEnumerate = false;
-var hasMicrophone = false;
-var hasSpeakers = false;
 var hasWebcam = false;
-var isMicrophoneAlreadyCaptured = false;
 var isWebcamAlreadyCaptured = false;
 
 app.initialize();
@@ -157,6 +142,7 @@ function empty() {
 }
 
 function ajustaOrientacio(orientacio) {
+  console.log(orientacio);
   var textBoto = '<i class="material-icons icona-24">';
   if(orientacio == "landscape" || orientacio == "landscape-primary" || orientacio == "landscape-secondary") {
     document.getElementById("boto_observacions").innerHTML = textBoto + 'camera_alt</i>';
@@ -206,11 +192,11 @@ function ajustaOrientacio(orientacio) {
   }
 }
 
-function sortir(buttonIndex) {
+/*function sortir(buttonIndex) {
   if(buttonIndex == 1) {
     tancar();
   }
-}
+}*/
 function tancar() {
   navigator.geolocation.clearWatch(watchID);
   navigator.app.exitApp();
@@ -281,9 +267,9 @@ function baixaEstacions() {
     console.log("Estacions: Baixades");  
     indexedDB.open("eduMET").onsuccess = function(event) { 
       var db = event.target.result;    
-      var EstObjStore = db.transaction("Estacions", "readwrite").objectStore("Estacions");
+      var estObjStore = db.transaction("Estacions", "readwrite").objectStore("Estacions");
       for(i=0;i<response.length;i++){
-        EstObjStore.add(response[i]);
+        estObjStore.add(response[i]);
       }
     };
     storage.setItem("database", new Date());  
@@ -484,7 +470,7 @@ function readURL(input) {
         var lonSecond = this.exifdata.GPSLongitude[2].numerator/this.exifdata.GPSLongitude[2].denominator;
         var lonDirection = this.exifdata.GPSLongitudeRef;
         GPSlongitud = ConvertDMSToDD(lonDegree, lonMinute, lonSecond, lonDirection);
-        console.log("EXIF:"+ GPSlatitud + ","+ GPSlongitud);        
+        console.log("EXIF: "+ GPSlatitud + ", "+ GPSlongitud);        
       }                  
     });
   } else {
@@ -537,48 +523,6 @@ function baixaObsAfegides() {
       }
     }
   });
-}
-
-function compara(local,remote){
-  if(!(remote === null)){
-    for(var i=0;i<remote.length;i++){
-      var nova = true;
-      for(var j=0;j<local.length;j++){
-        if(local[j]["ID"] == remote[i]["ID"]){
-          nova = false;
-        }
-      }
-      if(nova){
-        remote[i]["Enviat"] = 1;
-        console.log("Nova observació: " + remote[i]["ID"]);
-        console.log("Data_registre: " + remote[i]["Data_registre"]);
-        indexedDB.open("eduMET").onsuccess = function(event) { 
-          var db = event.target.result;    
-          var obsObjStore = db.transaction("Observacions", "readwrite").objectStore("Observacions");
-          obsObjStore.add(remote[i]);
-          //event.target.result.transaction("Observacions", "readwrite").objectStore("Observacions").add(nouregistre);
-        }
-
-
-
-        /*var query = 'INSERT INTO Observacions (ID, Data_observacio, Hora_observacio, Latitud, Longitud, Id_feno, Descripcio_observacio, Fotografia_observacio, Local_path, Enviat) VALUES ("';
-        query += remote[i]["ID"] + '","';
-        query += remote[i]["Data_observacio"] + '","';
-        query += remote[i]["Hora_observacio"] + '","';
-        query += remote[i]["Latitud"] + '","';
-        query += remote[i]["Longitud"] + '","';
-        query += remote[i]["Id_feno"] + '","';
-        query += remote[i]["Descripcio_observacio"] + '","';
-        query += remote[i]["Fotografia_observacio"] + '","';
-        query += '0' + '","';
-        query += '1' + '")';   
-        console.log("Nova observació: " + remote[i]["ID"]);
-        db.transaction(function (tx) {          
-          tx.executeSql(query);
-        });*/
-      }
-    }
-  }
 }
 
 function enviaActual() {
@@ -1175,9 +1119,9 @@ function checkDeviceSupport(callback) {
           for (var d in _device) {
               device[d] = _device[d];
           }
-          if (device.kind === 'audio') {
+          /*if (device.kind === 'audio') {
               device.kind = 'audioinput';
-          }
+          }*/
           if (device.kind === 'video') {
               device.kind = 'videoinput';
           }
@@ -1205,16 +1149,16 @@ function checkDeviceSupport(callback) {
               if (device.kind === 'videoinput' && !isWebcamAlreadyCaptured) {
                   isWebcamAlreadyCaptured = true;
               }
-              if (device.kind === 'audioinput' && !isMicrophoneAlreadyCaptured) {
+              /*if (device.kind === 'audioinput' && !isMicrophoneAlreadyCaptured) {
                   isMicrophoneAlreadyCaptured = true;
-              }
+              }*/
           }
-          if (device.kind === 'audioinput') {
+          /*if (device.kind === 'audioinput') {
               hasMicrophone = true;
           }
           if (device.kind === 'audiooutput') {
               hasSpeakers = true;
-          }
+          }*/
           if (device.kind === 'videoinput') {
               hasWebcam = true;
           }

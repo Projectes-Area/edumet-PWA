@@ -18,6 +18,7 @@ self.addEventListener('install', function(e) {
           'font/weathericons-regular-webfont.woff2',
           'leaflet/leaflet.css',
           'leaflet/leaflet.js',
+          'js/exif.js',
           'json/municipis.geojson'
         ]);
       })
