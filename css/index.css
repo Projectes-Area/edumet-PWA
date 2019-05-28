@@ -135,10 +135,6 @@ button, select, input, textarea {
     width: 100%;
     background: transparent;
 }
-#carregant {
-    margin: 5vh;
-}
-
 #radar {
     display: none;
     height: 80vh;
