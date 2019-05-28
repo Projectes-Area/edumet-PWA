@@ -10,8 +10,6 @@
       <link rel="stylesheet" type="text/css" href="css/index.css">
       <link rel="stylesheet" type="text/css" href="css/weather-icons.min.css">
       <link rel="stylesheet" type="text/css" href="leaflet/leaflet.css">
-      <script src="leaflet/leaflet.js"></script>
-      <script type="text/javascript" src="js/exif.js"></script>
       <link rel="shortcut icon" href="img/favicon.ico">
       <title>Observacions</title>
     </head>
@@ -19,6 +17,7 @@
       <div id="capsalera">
         <div><img id="logo-edumet" src="img/edumet.png"></div>
         <div id="div-icona-login"><i id="icona-login" class="material-icons icona-36" onClick="usuaris();">person</i></div>
+        <div id="div-icona-back"><i id="icona-back" class="material-icons icona-36" onClick="back();">navigate_before</i></div>
       </div>
       <div id="login">
         <div id="iniciar">
@@ -154,16 +153,16 @@
         <input type='file' style='display: none;' accept="image/jpeg" id="fitxer_galeria" name="fitxer_galeria" />
         <canvas id="canvas" style="display:none;"></canvas>
       </div>   
-      <script type="text/javascript" src="cordova.js"></script>
+
       <script type="text/javascript" src="js/index.js"></script>
+      <script type="text/javascript" src="js/exif.js"></script>
+      <script type="text/javascript" src="leaflet/leaflet.js"></script>
       <script>
         if ('serviceWorker' in navigator) {
           window.addEventListener('load', function() {
             navigator.serviceWorker.register('sw.js').then(function(registration) {
-              // Registration was successful
               console.log('ServiceWorker registration successful with scope: ', registration.scope);
             }, function(err) {
-              // registration failed :(
               console.log('ServiceWorker registration failed: ', err);
             });
           });

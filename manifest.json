@@ -1,11 +1,11 @@
 {
   "background_color": "#418ac8",
   "display": "standalone",
-  "name": "Observacions",
-  "short_name": "Observacions",
+  "name": "eduMET",
+  "short_name": "eduMET",
   "version": "com.edumet.fenologia",
   "theme_color": "#418ac8",
-  "description": "App per fer observacions fenològiques",
+  "description": "PWA del projecte eduMET",
   "author": "Àrea de Cultura Digital",
   "icons": [
     {

@@ -1,103 +1,96 @@
-var app = {
-  initialize: function() {
-    document.addEventListener('deviceready', this.onDeviceReady, false);
-  },
-  onDeviceReady: function() {
-    //if (usuari == "") {
-      usuari = storage.getItem("user");
-    //}
-    var online;
-    var stringDatabase = storage.getItem("database");
-    map = L.map('map');
-    if (checkConnection() == 'No network connection') {
-      online = false;
-      if(stringDatabase == null) {
-        alert("La configuració inicial de l'App precisa una connexió a Internet. Si us plau, reinicia l'App quan en tinguis.");        
-      } else {
-        alert("No es pot connectar a Internet. Algunes característiques de l'App no estaran disponibles.");
-        map.setView([41.7292826, 1.8225154], 10);
-        const xhr = new XMLHttpRequest();
-        xhr.open('GET', 'json/municipis.geojson');
-        xhr.setRequestHeader('Content-Type', 'application/json');
-        xhr.responseType = 'json';
-        xhr.onload = function() {
-            return L.geoJSON(xhr.response,{style:{"color": "#0000FF","weight": 1,"opacity": 0.5}}).addTo(map);
-        };
-        xhr.send();
-      }
+window.onload = function() {
+  usuari = storage.getItem("user");
+  var online;
+  var stringDatabase = storage.getItem("database");
+  map = L.map('map');
+  if (!(navigator.onLine)) {
+    online = false;
+    if(stringDatabase == null) {
+      alert("La configuració inicial de l'App precisa una connexió a Internet. Si us plau, reinicia l'App quan en tinguis.");        
     } else {
-      online = true;
-      map.setView([41.7292826, 1.8225154], 15);
-      L.tileLayer('https://maps.wikimedia.org/osm-intl/{z}/{x}/{y}{r}.png', {
-        minZoom: 1,
-        maxZoom: 19,
-        attribution: 'Wikimedia'
-      }).addTo(map);
-
-    };   
-    var ara = new Date();
-    var dies = (ara - new Date(stringDatabase)) / 36000000;
-    if((stringDatabase == null || dies > 30) && online) {
-      indexedDB.open("eduMET").onupgradeneeded = function(event) { 
-        var db = event.target.result;    
-        db.createObjectStore("Fenomens", {keyPath: "Id_feno"});
-        db.createObjectStore("Estacions", {keyPath: "Codi_estacio"});
-        db.createObjectStore("Observacions", {keyPath: "Data_registre"});
-        baixaFenomens();
-        baixaEstacions();
-      }
-    } else {
-      mostraEstacions();
-      getFenomens();
-    }
-
-    /*document.addEventListener("backbutton", function(e){
-      switch(vistaActual) {
-        case 'fitxa':
-          activa('observacions');
-          break;
-        case 'observacions':
-          activa('fenologia');
-          break
-        case 'fotografia':
-          activa(vistaOrigen);
-          break;
-        default:
-          navigator.notification.confirm("Vols sortir de l'App eduMET?", sortir, "Sortir", ["Sortir","Cancel·lar"]);
-      }
-   }, false);*/
-
-    var input = document.getElementById('password');
-    input.addEventListener("keyup", function(event) {
-      if (event.keyCode === 13) {
-        valida();
-      }
-    });
-
-    document.getElementById('fitxer_galeria').addEventListener("change", function(event) {
-      readURL(this);
-    });
-    document.getElementById('fitxer').addEventListener("change", function(event) {
-      readURL(this);
-    });
-    
-    window.addEventListener("orientationchange", function(){
-      ajustaOrientacio(screen.orientation.type);
-    });
-    ajustaOrientacio(screen.orientation.type);
-  
-    if (navigator.mediaDevices && navigator.mediaDevices.enumerateDevices) {
-      navigator.enumerateDevices = function(callback) {
-          navigator.mediaDevices.enumerateDevices().then(callback);
+      alert("No es pot connectar a Internet. Algunes característiques de l'App no estaran disponibles.");
+      map.setView([41.7292826, 1.8225154], 10);
+      const xhr = new XMLHttpRequest();
+      xhr.open('GET', 'json/municipis.geojson');
+      xhr.setRequestHeader('Content-Type', 'application/json');
+      xhr.responseType = 'json';
+      xhr.onload = function() {
+          return L.geoJSON(xhr.response,{style:{"color": "#0000FF","weight": 1,"opacity": 0.5}}).addTo(map);
       };
-    } 
-    if (typeof MediaStreamTrack !== 'undefined' && 'getSources' in MediaStreamTrack) {
-        canEnumerate = true;
-    } else if (navigator.mediaDevices && !! navigator.mediaDevices.enumerateDevices) {
-        canEnumerate = true;
-    } 
-    checkDeviceSupport();  
-  }  
+      xhr.send();
+    }
+  } else {
+    online = true;
+    map.setView([41.7292826, 1.8225154], 15);
+    L.tileLayer('https://maps.wikimedia.org/osm-intl/{z}/{x}/{y}{r}.png', {
+      minZoom: 1,
+      maxZoom: 19,
+      attribution: 'Wikimedia'
+    }).addTo(map);
+
+  };   
+  var ara = new Date();
+  var dies = (ara - new Date(stringDatabase)) / 36000000;
+  if((stringDatabase == null || dies > 30) && online) {
+    indexedDB.open("eduMET").onupgradeneeded = function(event) { 
+      var db = event.target.result;    
+      db.createObjectStore("Fenomens", {keyPath: "Id_feno"});
+      db.createObjectStore("Estacions", {keyPath: "Codi_estacio"});
+      db.createObjectStore("Observacions", {keyPath: "Data_registre"});
+      baixaFenomens();
+      baixaEstacions();
+    }
+  } else {
+    mostraEstacions();
+    getFenomens();
+  }
+
+  /*document.addEventListener("backbutton", function(e){
+    switch(vistaActual) {
+      case 'fitxa':
+        activa('observacions');
+        break;
+      case 'observacions':
+        activa('fenologia');
+        break
+      case 'fotografia':
+        activa(vistaOrigen);
+        break;
+      default:
+        navigator.notification.confirm("Vols sortir de l'App eduMET?", sortir, "Sortir", ["Sortir","Cancel·lar"]);
+    }
+  }, false);*/
+
+  var input = document.getElementById('password');
+  input.addEventListener("keyup", function(event) {
+    if (event.keyCode === 13) {
+      valida();
+    }
+  });
+
+  document.getElementById('fitxer_galeria').addEventListener("change", function(event) {
+    readURL(this);
+  });
+  document.getElementById('fitxer').addEventListener("change", function(event) {
+    readURL(this);
+  });
+  
+  window.addEventListener("orientationchange", function(){
+    ajustaOrientacio(screen.orientation.type);
+  });
+  ajustaOrientacio(screen.orientation.type);
+
+  if (navigator.mediaDevices && navigator.mediaDevices.enumerateDevices) {
+    navigator.enumerateDevices = function(callback) {
+        navigator.mediaDevices.enumerateDevices().then(callback);
+    };
+  } 
+  if (typeof MediaStreamTrack !== 'undefined' && 'getSources' in MediaStreamTrack) {
+      canEnumerate = true;
+  } else if (navigator.mediaDevices && !! navigator.mediaDevices.enumerateDevices) {
+      canEnumerate = true;
+  } 
+  checkDeviceSupport();    
 };
 
 var storage = window.localStorage;
@@ -142,7 +135,7 @@ var hasWebcam = false;
 var isWebcamAlreadyCaptured = false;
 var origen;
 
-app.initialize();
+//app.initialize();
 
 function empty() {  
 }
@@ -333,7 +326,7 @@ function mostraEstacio() {
       document.getElementById('est_poblacio').innerHTML = e.target.result["Poblacio"];
       document.getElementById('est_altitud').innerHTML = "Altitud: " + e.target.result["Altitud"] + " m";
       var URLlogo = "https://edumet.cat/edumet-data/" + e.target.result["Codi_estacio"] + "/estacio/profile1/imatges/fotocentre.jpg";
-      if(checkConnection() != 'No network connection'){
+      if(navigator.onLine){
         document.getElementById('est_logo').src = URLlogo;
         getMesures();
       }
@@ -430,9 +423,6 @@ function fesFoto() {
   if(hasWebcam) {
     origen = "camera"
     document.getElementById('fitxer').click();
-    //} else {
-      //navigator.notification.alert("No es coneix la ubicació. Si us plau, activa primer GPS.", empty, "GPS", "D'acord");
-    //}
   } else {
     origen = "galeria"
     document.getElementById('fitxer_galeria').click();
@@ -541,14 +531,14 @@ function baixaObsAfegides() {
 }
 
 function enviaActual() {
-  if(checkConnection() != 'No network connection'){
+  if(navigator.onLine){
     enviaObservacio(observacioActual);
   } else {
     alert("Opció no disponible sense connexió a Internet.");
   }
 }
 function enviaFitxa() {
-  if(checkConnection() != 'No network connection'){
+  if(navigator.onLine){
     enviaObservacio(observacioFitxa);
   } else {
     alert("Opció no disponible sense connexió a Internet.");
@@ -666,7 +656,7 @@ function elimina() {
     obsObjStore.get(observacioFitxa).onsuccess = function(e) {
       var eliminarLocal = true;
       if(e.target.result["Enviat"] == "1") {
-        if (checkConnection() == 'No network connection') {
+        if (!(navigator.onLine)) {
           alert("Les observacions que ja s'han penjat al servidor eduMET no es poden eliminar sense connexió a Internet.");
           eliminarLocal = false;
         } else {           
@@ -727,7 +717,12 @@ function llistaObservacions() {
         } else {
           llista+= url_imatges + foto;
         }
-        llista+= '" style="width:10vh; height:10vh" /></div><label style="width:25%">' + formatDate(cursor.value.Data_observacio) + '<br>' + cursor.value.Hora_observacio +'</label><label style="width:25%">';
+        llista+= '" style="width:10vh; height:10vh" /></div><label style="width:25%">'; 
+        if(cursor.value.Data_observacio != "") {
+          llista+= formatDate(cursor.value.Data_observacio) + '<br>' + cursor.value.Hora_observacio;
+        }
+        llista+= '</label><label style="width:25%">';
+        
         if(cursor.value.Id_feno != "0") {
           llista+= fenomens[parseInt(cursor.value.Id_feno)]["Titol_feno"];
         } else {
@@ -858,7 +853,7 @@ function login() {
   if (usuari == "" || usuari == null) {
     document.getElementById("usuari").value = "";
     document.getElementById("password").value = "";
-    if (checkConnection() != 'No network connection') {
+    if (navigator.onLine) {
       activa('login');
     } else {
       alert("Per iniciar sessió al servidor eduMET, veure les teves observacions o penjar-ne de noves, has d'estar connectat a Internet.");          
@@ -870,7 +865,7 @@ function login() {
 }
 function fenologia() {
   activa('fenologia');
-  if(!obsActualitzades && (checkConnection() != 'No network connection')) {
+  if(!obsActualitzades && (navigator.onLine)) {
     baixaObsAfegides();
     obsActualitzades =  true;
   }
@@ -880,7 +875,7 @@ function estacio() {
   map.invalidateSize();
 }
 function radar() {
-  if(checkConnection() != 'No network connection') {
+  if(navigator.onLine) {
     activa('radar');
     //document.getElementById('frameRadar').src = "https://edumet.cat/edumet/meteo_proves/00_radar_app.php";
     //document.getElementById('frameRadar').src = "http://m.meteo.cat/temps-actual";
@@ -936,7 +931,7 @@ function showSlides() {
 }
 
 function prediccio() {
-  if(checkConnection() != 'No network connection') {
+  if(navigator.onLine) {
     activa('prediccio');
     var frame = document.getElementById('frame');
     var loader = document.getElementById('loaderPrediccio');
@@ -947,7 +942,6 @@ function prediccio() {
       frame.style.display = "flex";      
     }
     frame.src = 'https://static-m.meteo.cat/ginys/municipal8d?language=ca&color=2c3e50&tempFormat=ºC&location=' + INEinicial;
-    console.log(frame.src);
   } else {
     alert("Opció no disponible sense connexió a Internet.");
   }
@@ -985,7 +979,9 @@ function fitxa(observacio) {
         nomFenomen.innerHTML = "Sense identificar";
       }
       var dataHora = document.getElementById('dataHora');
-      dataHora.innerHTML = formatDate(e.target.result["Data_observacio"]) + '  -  ' + e.target.result["Hora_observacio"];
+      if(e.target.result["Data_observacio"] != "") {
+        dataHora.innerHTML = formatDate(e.target.result["Data_observacio"]) + '  -  ' + e.target.result["Hora_observacio"];
+      }
       var fotoFitxa = document.getElementById('fotoFitxa');
       var foto = e.target.result["Fotografia_observacio"];
         if(foto == 0) {
@@ -995,22 +991,33 @@ function fitxa(observacio) {
         }
       var descripcioFitxaFitxa = document.getElementById('descripcioFitxa');
       descripcioFitxaFitxa.innerHTML = e.target.result["Descripcio_observacio"];
-      if(checkConnection() != 'No network connection') {
+      if(navigator.onLine) {
         var online = true;
       } else {
         var online = false;
       }
+      var laLatitud = e.target.result["Latitud"];
+      var laLongitud = e.target.result["Longitud"];
+      if(laLatitud == "") {
+        if(mobilLocalitzat) {
+          laLatitud = latitudActual;
+          laLongitud = longitudActual;
+        } else {
+          laLatitud = 41.7292826;
+          laLongitud = 1.8225154;      
+        }
+      }
       try {
         mapaFitxa = L.map('mapaFitxa');
         if(online){
-          mapaFitxa.setView(new L.LatLng(e.target.result["Latitud"], e.target.result["Longitud"]), 15);
+          mapaFitxa.setView(new L.LatLng(laLatitud, laLongitud), 15);
           L.tileLayer('https://maps.wikimedia.org/osm-intl/{z}/{x}/{y}{r}.png', {
             minZoom: 1,
             maxZoom: 19,
             attribution: 'Wikimedia'
           }).addTo(mapaFitxa);
         } else{
-          mapaFitxa.setView(new L.LatLng(e.target.result["Latitud"], e.target.result["Longitud"]), 10);
+          mapaFitxa.setView(new L.LatLng(laLatitud, laLongitud), 10);
           const xhr = new XMLHttpRequest();
           xhr.open('GET', 'json/municipis.geojson');
           xhr.setRequestHeader('Content-Type', 'application/json');
@@ -1020,18 +1027,20 @@ function fitxa(observacio) {
           };
           xhr.send();
         }
-      } catch {
+      } catch (error) {
         if(online){
           var zoom = 15;
         } else {
           var zoom = 10;
         }
         mapaFitxa.invalidateSize();
-        mapaFitxa.setView(new L.LatLng(e.target.result["Latitud"],e.target.result["Longitud"]), zoom);
+        mapaFitxa.setView(new L.LatLng(laLatitud,laLongitud), zoom);
         mapaFitxa.removeLayer(marcadorFitxa);
-      }
-      marcadorFitxa = L.marker(new L.LatLng(e.target.result["Latitud"],e.target.result["Longitud"]));
-      marcadorFitxa.addTo(mapaFitxa);    
+      }      
+      if(e.target.result["Latitud"] != "") {
+        marcadorFitxa = L.marker(new L.LatLng(laLatitud,laLongitud));
+        marcadorFitxa.addTo(mapaFitxa);  
+      }  
     }
   }
 }
@@ -1104,20 +1113,6 @@ function geoSuccess(position){
     L.marker(new L.LatLng(latitudActual, longitudActual),{icon: greenIcon}).addTo(map);
   }
 } 
-
-function checkConnection() {
-  var networkState = navigator.connection.type;
-  var states = {};
-  states[Connection.UNKNOWN]  = 'Unknown connection';
-  states[Connection.ETHERNET] = 'Ethernet connection';
-  states[Connection.WIFI]     = 'WiFi connection';
-  states[Connection.CELL_2G]  = 'Cell 2G connection';
-  states[Connection.CELL_3G]  = 'Cell 3G connection';
-  states[Connection.CELL_4G]  = 'Cell 4G connection';
-  states[Connection.CELL]     = 'Cell generic connection';
-  states[Connection.NONE]     = 'No network connection';
-  return states[networkState];
-}
 
 function getDistanceFromLatLonInKm(lat1,lon1,lat2,lon2) {
   var R = 6371; // Radius of the earth in km
