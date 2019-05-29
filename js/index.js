@@ -29,9 +29,9 @@ window.onload = function() {
     }).addTo(map);
 
   };   
-  var ara = new Date();
-  var dies = (ara - new Date(stringDatabase)) / 36000000;
-  if((stringDatabase == null || dies > 30) && online) {
+  //var ara = new Date();
+  //var dies = (ara - new Date(stringDatabase)) / 36000000;
+  if(stringDatabase == null && online) {
     indexedDB.open("eduMET").onupgradeneeded = function(event) { 
       var db = event.target.result;    
       db.createObjectStore("Fenomens", {keyPath: "Id_feno"});
@@ -44,53 +44,11 @@ window.onload = function() {
     mostraEstacions();
     getFenomens();
   }
-
-  /*document.addEventListener("backbutton", function(e){
-    switch(vistaActual) {
-      case 'fitxa':
-        activa('observacions');
-        break;
-      case 'observacions':
-        activa('fenologia');
-        break
-      case 'fotografia':
-        activa(vistaOrigen);
-        break;
-      default:
-        navigator.notification.confirm("Vols sortir de l'App eduMET?", sortir, "Sortir", ["Sortir","Cancel·lar"]);
-    }
-  }, false);*/
-
-  var input = document.getElementById('password');
-  input.addEventListener("keyup", function(event) {
-    if (event.keyCode === 13) {
-      valida();
-    }
-  });
-
-  document.getElementById('fitxer_galeria').addEventListener("change", function(event) {
-    readURL(this);
-  });
-  document.getElementById('fitxer').addEventListener("change", function(event) {
-    readURL(this);
-  });
-  
+ 
   window.addEventListener("orientationchange", function(){
     ajustaOrientacio(screen.orientation.type);
-  });
-  ajustaOrientacio(screen.orientation.type);
-
-  if (navigator.mediaDevices && navigator.mediaDevices.enumerateDevices) {
-    navigator.enumerateDevices = function(callback) {
-        navigator.mediaDevices.enumerateDevices().then(callback);
-    };
-  } 
-  if (typeof MediaStreamTrack !== 'undefined' && 'getSources' in MediaStreamTrack) {
-      canEnumerate = true;
-  } else if (navigator.mediaDevices && !! navigator.mediaDevices.enumerateDevices) {
-      canEnumerate = true;
-  } 
-  checkDeviceSupport();    
+  },{passive: true});
+  ajustaOrientacio(screen.orientation.type);     
 };
 
 var storage = window.localStorage;
@@ -138,6 +96,23 @@ var origen;
 //app.initialize();
 
 function empty() {  
+}
+function back() {
+  switch(vistaActual) {
+    case 'fitxa':
+      activa('observacions');
+      break;
+    case 'observacions':
+      activa('fenologia');
+      break
+    case 'fotografia':
+      activa(vistaOrigen);
+      break;
+    default:
+    if (confirm("Vols sortir de l'App eduMET?")) {
+      tancar_sessio();
+    }
+  }
 }
 
 function ajustaOrientacio(orientacio) {
@@ -440,7 +415,7 @@ function readURL(input) {
     EXIF.getData(input.files[0], function() {
       if(this.exifdata.DateTimeOriginal != undefined) {
         var splitData = this.exifdata.DateTimeOriginal.split(" ");
-        ExifData = formatDate(splitData[0]);
+        ExifData = formatDateGPS(splitData[0]);
         ExifHora = splitData[1];
         console.log("EXIF Data: " + ExifData + ", " + ExifHora);
       }
@@ -851,6 +826,12 @@ vistaActual = fragment;
 
 function login() {
   if (usuari == "" || usuari == null) {
+    var input = document.getElementById('password');
+    input.addEventListener("keyup", function(event) {
+      if (event.keyCode === 13) {
+        valida();
+      }
+    },{passive: true});
     document.getElementById("usuari").value = "";
     document.getElementById("password").value = "";
     if (navigator.onLine) {
@@ -865,10 +846,27 @@ function login() {
 }
 function fenologia() {
   activa('fenologia');
+  document.getElementById('fitxer_galeria').addEventListener("change", function(event) {
+    readURL(this);
+  },{passive: true});
+  document.getElementById('fitxer').addEventListener("change", function(event) {
+    readURL(this);
+  },{passive: true});
   if(!obsActualitzades && (navigator.onLine)) {
     baixaObsAfegides();
     obsActualitzades =  true;
   }
+  if (navigator.mediaDevices && navigator.mediaDevices.enumerateDevices) {
+    navigator.enumerateDevices = function(callback) {
+        navigator.mediaDevices.enumerateDevices().then(callback);
+    };
+  } 
+  if (typeof MediaStreamTrack !== 'undefined' && 'getSources' in MediaStreamTrack) {
+      canEnumerate = true;
+  } else if (navigator.mediaDevices && !! navigator.mediaDevices.enumerateDevices) {
+      canEnumerate = true;
+  } 
+  checkDeviceSupport(); 
 }
 function estacio() {
   activa('estacions');
@@ -1132,11 +1130,7 @@ function deg2rad(deg) {
 }
 
 function formatDate(dia) {
-  if(dia.indexOf(":") == -1) {
-    var parts = dia.split('-');
-  } else {
-    var parts = dia.split(':');
-  }
+  var parts = dia.split('-');
   var d = new Date(parts[0], parts[1] - 1, parts[2]); 
   month = '' + (d.getMonth() + 1);
   day = '' + d.getDate();
@@ -1145,6 +1139,18 @@ function formatDate(dia) {
   if (day.length < 2) day = '0' + day;
   return [day, month, year].join('-');
 }
+function formatDateGPS(dia) {
+  var parts = dia.split(':');
+  var d = new Date(parts[0], parts[1] - 1, parts[2]); 
+  month = '' + (d.getMonth() + 1);
+  day = '' + d.getDate();
+  year = d.getFullYear();
+  if (month.length < 2) month = '0' + month;
+  if (day.length < 2) day = '0' + day;
+  return [year, month, day].join('-');
+}
+
+
 
 function checkDeviceSupport(callback) {
   if (!canEnumerate) {
@@ -1169,9 +1175,6 @@ function checkDeviceSupport(callback) {
           for (var d in _device) {
               device[d] = _device[d];
           }
-          /*if (device.kind === 'audio') {
-              device.kind = 'audioinput';
-          }*/
           if (device.kind === 'video') {
               device.kind = 'videoinput';
           }
@@ -1199,16 +1202,7 @@ function checkDeviceSupport(callback) {
               if (device.kind === 'videoinput' && !isWebcamAlreadyCaptured) {
                   isWebcamAlreadyCaptured = true;
               }
-              /*if (device.kind === 'audioinput' && !isMicrophoneAlreadyCaptured) {
-                  isMicrophoneAlreadyCaptured = true;
-              }*/
           }
-          /*if (device.kind === 'audioinput') {
-              hasMicrophone = true;
-          }
-          if (device.kind === 'audiooutput') {
-              hasSpeakers = true;
-          }*/
           if (device.kind === 'videoinput') {
               hasWebcam = true;
           }
