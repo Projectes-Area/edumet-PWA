@@ -273,6 +273,7 @@ button, select, input, textarea {
 }
 #fotoFitxa{
     width:70%;
+    margin:5px;
     object-fit: contain;
 }
 #valida, #enregistra {
@@ -382,17 +383,6 @@ button, select, input, textarea {
     .icona-16 {
         font-size:48px; 
     }
-}
-
-@font-face {
-    font-family: 'Material Icons';
-    font-style: normal;
-    font-weight: 400;
-    src: local('Material Icons'),
-      local('MaterialIcons-Regular'),
-        url(../font/MaterialIcons-Regular.woff2) format('woff2'),
-        url(../font/MaterialIcons-Regular.woff) format('woff'),
-        url(../font/MaterialIcons-Regular.ttf) format('truetype');
 }
 
 /* Slideshow container */
