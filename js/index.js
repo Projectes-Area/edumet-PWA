@@ -195,7 +195,8 @@ function baixaFenomens() {
     option.value = "0";    
     x.add(option);
     for(i=0;i<response.length;i++){
-      fenomens[i+1] = response[i];
+      //fenomens[i+1] = response[i];
+      fenomens[response[i]["Id_feno"]] = response[i];
       option = document.createElement("option");
       option.text = response[i]["Bloc_feno"] + ': ' + response[i]["Titol_feno"];
       option.value = response[i]["Id_feno"];
@@ -226,7 +227,8 @@ function assignaFenomens(response) {
   option.value = "0";
   x.add(option);  
   for(i=0;i<response.length;i++){
-    fenomens[i+1] = response[i];
+    //fenomens[i+1] = response[i];
+    fenomens[response[i]["Id_feno"]] = response[i];
     option = document.createElement("option");
     option.text = response[i]["Bloc_feno"] + ': ' + response[i]["Titol_feno"];;
     option.value = response[i]["Id_feno"];
@@ -681,29 +683,30 @@ function llistaObservacions() {
   var llista = '';
   indexedDB.open("eduMET").onsuccess = function(event) {
     event.target.result.transaction(["Observacions"], "readonly").objectStore("Observacions").getAll().onsuccess = function(event) {
-      event.target.result = event.target.result.sort(function(a,b){
-          return b["Data_Registre"]-a["Data_registre"];
-      });      
-      for(i=0;i<event.target.result.length;i++){
-        llista+= '<div style="display:flex; align-items:center;" onClick="fitxa(\'' + event.target.result[i]["Data_registre"] +'\')"><div style="width:25%"><img src="';
-        var foto = event.target.result[i]["Fotografia_observacio"];
+      var obs = event.target.result;
+      obs.sort(function(a,b){
+          return new Date(b["Data_registre"]) - new Date(a["Data_registre"]);
+      });
+      for(i=0;i<obs.length;i++){
+        llista+= '<div style="display:flex; align-items:center;" onClick="fitxa(\'' + obs[i]["Data_registre"] +'\')"><div style="width:25%"><img src="';
+        var foto = obs[i]["Fotografia_observacio"];
         if(foto == 0) {
-          llista+=  event.target.result[i]["Imatge"];
+          llista+=  obs[i]["Imatge"];
         } else {
           llista+= url_imatges + foto;
         }
         llista+= '" style="width:10vh; height:10vh" /></div><label style="width:25%">'; 
-        if(event.target.result[i]["Data_observacio"] != "") {
-          llista+= formatDate(event.target.result[i]["Data_observacio"]) + '<br>' + event.target.result[i]["Hora_observacio"];
+        if(obs[i]["Data_observacio"] != "") {
+          llista+= formatDate(obs[i]["Data_observacio"]) + '<br>' + obs[i]["Hora_observacio"];
         }
         llista+= '</label><label style="width:25%">';        
-        if(event.target.result[i]["Id_feno"] != "0") {
-          llista+= fenomens[parseInt(event.target.result[i]["Id_feno"])]["Titol_feno"];
+        if(obs[i]["Id_feno"] != "0") {
+          llista+= fenomens[obs[i]["Id_feno"]]["Titol_feno"];
         } else {
           llista+= 'Sense identificar';
         }
-        llista+= '</label><div style="width:25%"><i id="' + event.target.result[i]["Data_registre"] + '" class="material-icons icona-36" style="color:';
-        if(event.target.result[i]["Enviat"] == "1") {
+        llista+= '</label><div style="width:25%"><i id="' + obs[i]["Data_registre"] + '" class="material-icons icona-36" style="color:';
+        if(obs[i]["Enviat"] == "1") {
           llista+= 'limegreen';
         } else {
           llista+= 'lightgray';
@@ -731,6 +734,8 @@ function desaObservacio(string64){
   var Data_actual = any + '-' + mes + '-' + dia;
   var Hora_actual = hora + ':' + minut + ':' + segon;
 
+  observacioActual = Data_actual + " " + Hora_actual;
+
   var fotoData = "";
   var fotoHora = "";
   var fotoLatitud = "";
@@ -753,8 +758,6 @@ function desaObservacio(string64){
     fotoLatitud = ExifLatitud;
     fotoLongitud = ExifLongitud;
   }
-
-  observacioActual = fotoData + " " + fotoHora;
 
   var nou_registre = [];
   nou_registre["Data_registre"] = observacioActual;
