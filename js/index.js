@@ -45,7 +45,14 @@ window.onload = function() {
   window.addEventListener("orientationchange", function(){
     ajustaOrientacio(screen.orientation.type);
   });
-  ajustaOrientacio(screen.orientation.type);     
+  ajustaOrientacio(screen.orientation.type);   
+  
+  document.getElementById('fitxer_galeria').addEventListener("change", function(event) {
+    readURL(this);
+  });
+  document.getElementById('fitxer').addEventListener("change", function(event) {
+    readURL(this);
+  });
 };
 
 var storage = window.localStorage;
@@ -426,7 +433,7 @@ function readURL(input) {
         ExifLongitud = ConvertDMSToDD(lonDegree, lonMinute, lonSecond, lonDirection);
         console.log("EXIF GPS: "+ ExifLatitud + ", "+ ExifLongitud);        
       }    
-      var canvas = $("#canvas");
+      var canvas = document.getElementById("canvas");
       var ctx = canvas.getContext("2d");
       var img = new Image;
       img.src = URL.createObjectURL(input.files[0]);
@@ -465,6 +472,7 @@ function baixaObsInicial() {
         response[i]["Enviat"] = 1;
         obsObjStore.add(response[i]);
         console.log("Observació inicial: " + response[i]["ID"]);
+        fetch(url_imatges + response[i]["Fotografia_observacio"]);
       }
     }
   });  
@@ -490,6 +498,7 @@ function baixaObsAfegides() {
             if(nova){
               response[i]["Enviat"] = 1;
               console.log("Nova observació: " + response[i]["ID"]);
+              fetch(url_imatges + response[i]["Fotografia_observacio"]);
               obsObjStore.add(response[i]);              
             }
           }     
@@ -520,7 +529,7 @@ function enviaObservacio(observacioEnvia) {
       if(e.target.result["Enviat"] == undefined) {
         alert("Si us plau, fes primer la foto corresponent a l'observació.");
       } else {
-        if(e.target.result["Id_feno"] == 0 || e.target.result["Descripcio_observacio"] == "") {
+        if(e.target.result["Id_feno"] == "0" || e.target.result["Descripcio_observacio"] == "") {
           alert("Si us plau, desa primer l'observació indicant el tipus de fenomen i escrivint una breu descripció.");
         } else {
           if (e.target.result["Data_observacio"] == "") {
@@ -594,16 +603,16 @@ function editaObservacio() {
   indexedDB.open("eduMET").onsuccess = function(event) {
     event.target.result.transaction(["Observacions"], "readonly").objectStore("Observacions").get(observacioActual).onsuccess = function(e) {
       var foto = e.target.result["Fotografia_observacio"];
-      if(foto == 0) {
+      if(foto == "0") {
         $("#foto").attr("src", e.target.result["Imatge"]);
       } else {
         $("#foto").attr("src", url_imatges + foto);
       }
-      $("#Id_feno").text(e.target.result["Id_feno"]);
+      $("#fenomen").val(e.target.result["Id_feno"]);
       if(e.target.result["Descripcio_observacio"] == "Sense descriure"){
-        $("#descripcio").text("");
+        $("#descripcio").val("");
       } else {
-        $("#descripcio").text(e.target.result["Descripcio_observacio"]);
+        $("#descripcio").val(e.target.result["Descripcio_observacio"]);
       }
       activa('fenologia');
     }
@@ -634,8 +643,8 @@ function elimina() {
         obsObjStore.delete(observacioFitxa);
         if(observacioActual == observacioFitxa) {
           $("#foto").attr("src","img/launcher-icon-4x.png");
-          $("#descripcio").text("");
-          $("#fenomen").val("0");
+          $("#descripcio").val("");
+          $("#fenomen").val(0);
           observacioActual = "";
         }
         activa('observacions');
@@ -650,7 +659,7 @@ function actualitzaObservacio() {
   if(observacioActual == ""){
     alert("Si us plau, fes primer la foto corresponent a l'observació.");
   } else {
-    if($("#fenomen").val() == "0" || $("#descripcio").val() == "") {
+    if($("#fenomen").val() == 0 || $("#descripcio").val() == "") {
       alert("Si us plau, tria primer el tipus de fenomen i escriu una breu descripció.");
     } else {
       indexedDB.open("eduMET").onsuccess = function(event) {
@@ -658,8 +667,8 @@ function actualitzaObservacio() {
         var request = objStore.get(observacioActual);
         request.onsuccess = function() {
           var data = request.result;
-          data.Id_feno =  Id_feno;
-          data.Descripcio_observacio = Descripcio_observacio;
+          data.Id_feno =  $("#fenomen").val();
+          data.Descripcio_observacio = $("#descripcio").val();
           objStore.put(data);
           alert("S'ha desat el tipus d'observació i la descripció del fenomen.");
         }
@@ -756,7 +765,7 @@ function desaObservacio(string64){
   nou_registre["Longitud"] = fotoLongitud;
   nou_registre["Imatge"] = string64;
   nou_registre["ID"] = 0;
-  nou_registre["Id_feno"] = 0;
+  nou_registre["Id_feno"] = "0";
   nou_registre["Descripcio_observacio"] = "";
   nou_registre["Fotografia_observacio"] = "0";
 
@@ -830,10 +839,12 @@ function login() {
 }
 function fenologia() {
   activa('fenologia');
-  /*document.getElementById('fitxer_galeria').addEventListener("change", function(event) {
+  /*$("#fitxer").change(function(){
+    console.log("canvi");
     readURL(this);
   });
-  document.getElementById('fitxer').addEventListener("change", function(event) {
+  $("#fitxer_galeria").change(function(){
+    console.log("canvi");
     readURL(this);
   });*/
   if(!obsActualitzades && (navigator.onLine)) {
@@ -959,9 +970,8 @@ function fitxa(observacio) {
       } else {
         $("#nomFenomen").html("Sense identificar");
       }
-      var dataHora = $("dataHora");
       if(e.target.result["Data_observacio"] != "") {
-        dataHora.innerHTML = formatDate(e.target.result["Data_observacio"]) + '  -  ' + e.target.result["Hora_observacio"];
+        $("#dataHora").text(formatDate(e.target.result["Data_observacio"]) + '  -  ' + e.target.result["Hora_observacio"]);
       }
       var foto = e.target.result["Fotografia_observacio"];
         if(foto == 0) {
@@ -969,7 +979,7 @@ function fitxa(observacio) {
         } else {
           $("#fotoFitxa").attr("src", url_imatges + foto);
         }
-      $("#descripcioFitxa").html(e.target.result["Descripcio_observacio"]);
+      $("#descripcioFitxa").text(e.target.result["Descripcio_observacio"]);
       if(navigator.onLine) {
         var online = true;
       } else {

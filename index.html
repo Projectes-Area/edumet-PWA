@@ -13,28 +13,29 @@
       <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
       <script src="https://cdn.jsdelivr.net/npm/exif-js"></script>
       <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-      <link rel="shortcut icon" href="img/favicon.ico">
+      <link rel="shortcut icon" type=”image/png” href="img/launcher-icon-1x.png">
       <title>Observacions</title>
     </head>
     <body >
       <div id="capsalera">
+        <div id="div-icona-back"><i id="icona-back" class="material-icons icona-36" onClick="back();">navigate_before</i></div>
         <div><img id="logo-edumet" src="img/edumet.png" alt="Logo eduMET"></div>
         <div id="div-icona-login"><i id="icona-login" class="material-icons icona-36" onClick="usuaris();">person</i></div>
-        <div id="div-icona-back"><i id="icona-back" class="material-icons icona-36" onClick="back();">navigate_before</i></div>
       </div>
-      <main>
+
+      
       <div id="login">
         <div id="iniciar">
           <label class="icona-16">INICIAR SESSIÓ</label>
         </div>        
         <div>
-          <input class="marge" id="usuari" placeholder="usuari" type="text" name="usuari">
+          <input class="marge icona-16" id="usuari" placeholder="usuari" type="text" name="usuari" autocomplete="username">
         </div>
         <div>
-          <input class="marge" id="password" placeholder="contrasenya" type="password" name="contrasenya"><br>
+          <input class="marge icona-16" id="password" placeholder="contrasenya" type="password" name="contrasenya" autocomplete="new-password"><br>
         </div>
         <div>  
-          <button id="valida" class="marge" onClick="valida();">ENTRA</button>
+          <button id="valida" class="marge icona-16" onClick="valida();">ENTRA</button>
         </div>
       </div>
       <div id="fenologia">
@@ -117,7 +118,9 @@
             <div id="nomFenomen" class="icona-16"></div>
             <div id="descripcioFitxa"></div>
             <div id="dataHora"></div>
-            <div id="mapaFitxa"></div>  
+            <div id="cont_mapa">
+              <div id="mapaFitxa"></div> 
+            </div>
           </div>
         </div>
       </div>
@@ -143,7 +146,6 @@
           </div>
         </div>
       </div>
-      </main>
       <div id="sector-inferior">
         <div id="hr"></div>
         <div id="menu-inferior">

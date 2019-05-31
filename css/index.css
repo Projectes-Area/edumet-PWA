@@ -47,13 +47,13 @@ button, select, input, textarea {
     100% { transform: rotate(360deg); }
 }
 .icona-16 {
-    font-size:16px; 
+    font-size:16px !important; 
 }
 .icona-24 {
-    font-size:24px; 
+    font-size:24px !important; 
 }
 .icona-36{
-    font-size:36px; 
+    font-size:36px !important; 
 }
 .mesures {
     display:flex; 
@@ -92,11 +92,11 @@ button, select, input, textarea {
     align-items:center;
 }
 #capsalera {
-    height:10vh;
+    height: 10vh;
     background-color: #418ac8;
     display: flex;
-    justify-content: center;
-    align-items:center;
+    justify-content: space-between;
+    align-items: center;
 }
 #content {
     height:80vh;
@@ -124,7 +124,7 @@ button, select, input, textarea {
     flex-direction:column;
     justify-content:center;
     align-items:center;
-    font-size:16px;
+    font-size:16px !important;
     height: 80vh;
 }
 #prediccio {
@@ -195,12 +195,12 @@ button, select, input, textarea {
 #fenomen {
     width:85vw;
     height:100%;
-    font-size:12px;
+    font-size:14px !important;
 }
 #descripcio {
     width:85vw;
     height:90%;
-    font-size:12px;
+    font-size:14px !important;
 }
 #sector-inferior {
     height:10vh;
@@ -215,7 +215,6 @@ button, select, input, textarea {
     border: none;
 }
 #logo-edumet {
-    align-self: center;
     height:6vh;
 }
 #header {
@@ -226,12 +225,17 @@ button, select, input, textarea {
     width:100%;
     height:55vh;
 }
+#cont_mapa {
+    height:50%;
+    padding:5px;
+}
+
 #mapaFitxa {
     width:100%;
-    height:40%;
+    height:100%;
 }
 #descripcioFitxa {
-    height:40%;
+    height:30%;
     margin: 10px;
     overflow-y:scroll;
 }
@@ -319,69 +323,50 @@ button, select, input, textarea {
     margin-left:5px;
 }
 
-#div-icona-login {
-    display: flex;
-    position: absolute;
-    align-items: center;
-    width: 100%;
-    height: 10vh;
-}
-#icona-login{
-    margin-left:auto;
-    color:white;
-}
-#div-icona-back {
-    display: flex;
-    position: absolute;
-    align-items: center;
-    width: 100%;
-    height: 10vh;
-}
-#icona-back{
-    margin-right:auto;
+#icona-login, #icona-back{
     color:white;
 }
 
 @media (min-height: 800px) {
     body, input, #valida, #est_nom, #fenomen, #descripcio, .boto-inf, .boto-sup {
-        font-size:16px;
+        font-size:16px !important;
     }
     .icona-36 {
-        font-size:48px;
+        font-size:48px !important;
     }
     .obs-icon, .icona-24 {
-        font-size:36px;
+        font-size:36px !important;
     }
     .icona-16 {
-        font-size:24px; 
+        font-size:24px !important; 
     }
 }
 @media (min-height: 1000px) {
     body, input, #valida, #est_nom, #fenomen, #descripcio, .boto-inf, .boto-sup {
-        font-size:18px;
+        font-size:18px !important;
     }
     .icona-36 {
-        font-size:64px;
+        font-size:64px !important;
     }
     .obs-icon, .icona-24 {
-        font-size:48px;
+        font-size:48px !important;
     }
     .icona-16 {
-        font-size:32px; 
+        font-size:32px !important; 
     }
 }
 @media (min-height: 1200px) {
     body, input, #valida, #est_nom, #fenomen, #descripcio, .boto-inf, .boto-sup {
-        font-size:24px;
+        font-size:24px !important;
     }
     .icona-36 {
-        font-size:96px;
+        font-size:96px !important;
     }
     .obs-icon, .icona-24 {
-        font-size:64px;
+        font-size:64px !important;
     }
     .icona-16 {
-        font-size:48px; 
+        font-size:48px !important; 
     }
 }
 

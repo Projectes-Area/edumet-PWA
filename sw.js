@@ -7,7 +7,7 @@ self.addEventListener('install', function(e) {
           'css/index.css',
           'js/index.js',
           'manifest.json',
-          'img/favicon.ico',
+          'img/launcher-icon-1x.png',
           'img/edumet.png',
           'img/launcher-icon-4x.png',
           'img/marker-icon-green.png',
@@ -20,16 +20,17 @@ self.addEventListener('install', function(e) {
           'https://cdn.jsdelivr.net/npm/exif-js',
           'https://fonts.googleapis.com/icon?family=Material+Icons',
           'https://fonts.gstatic.com/s/materialicons/v47/flUhRq6tzZclQEJ-Vdg-IuiaDsNcIhQ8tQ.woff2',
-          'https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js'
+          'https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js',
+          'https://edumet.cat/edumet/app/json/municipis.geojson'
         ]);
       })
     );
    });
 
 self.addEventListener('fetch', function(event) {
- //console.log(event.request.url);
  event.respondWith(
    caches.match(event.request).then(function(response) {
+     console.log("Served: " + event.request.url);
      return response || fetch(event.request);
    })
  );
