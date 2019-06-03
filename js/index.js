@@ -107,11 +107,7 @@ if (typeof MediaStreamTrack !== 'undefined' && 'getSources' in MediaStreamTrack)
     canEnumerate = true;
 }
 
-var hasMicrophone = false;
-var hasSpeakers = false;
 var hasWebcam = false;
-
-var isMicrophoneAlreadyCaptured = false;
 var isWebcamAlreadyCaptured = false;
 
 checkDeviceSupport();
@@ -1176,9 +1172,6 @@ function checkDeviceSupport(callback) {
           for (var d in _device) {
               device[d] = _device[d];
           }
-          if (device.kind === 'audio') {
-              device.kind = 'audioinput';
-          }
           if (device.kind === 'video') {
               device.kind = 'videoinput';
           }
@@ -1206,17 +1199,6 @@ function checkDeviceSupport(callback) {
               if (device.kind === 'videoinput' && !isWebcamAlreadyCaptured) {
                   isWebcamAlreadyCaptured = true;
               }
-
-              if (device.kind === 'audioinput' && !isMicrophoneAlreadyCaptured) {
-                  isMicrophoneAlreadyCaptured = true;
-              }
-          }
-          if (device.kind === 'audioinput') {
-              hasMicrophone = true;
-          }
-
-          if (device.kind === 'audiooutput') {
-              hasSpeakers = true;
           }
           if (device.kind === 'videoinput') {
               hasWebcam = true;
