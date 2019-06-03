@@ -93,8 +93,29 @@ var midaFoto = 800;
 var MediaDevices = [];
 var isHTTPs = location.protocol === 'https:';
 var canEnumerate = false;
+
+if (navigator.mediaDevices && navigator.mediaDevices.enumerateDevices) {
+  // Firefox 38+ seems having support of enumerateDevicesx
+  navigator.enumerateDevices = function(callback) {
+      navigator.mediaDevices.enumerateDevices().then(callback);
+  };
+}
+
+if (typeof MediaStreamTrack !== 'undefined' && 'getSources' in MediaStreamTrack) {
+    canEnumerate = true;
+} else if (navigator.mediaDevices && !!navigator.mediaDevices.enumerateDevices) {
+    canEnumerate = true;
+}
+
+var hasMicrophone = false;
+var hasSpeakers = false;
 var hasWebcam = false;
+
+var isMicrophoneAlreadyCaptured = false;
 var isWebcamAlreadyCaptured = false;
+
+checkDeviceSupport();
+
 var origen;
 
 //app.initialize();
@@ -104,18 +125,23 @@ function empty() {
 function back() {
   switch(vistaActual) {
     case 'fitxa':
+      window.history.pushState({}, '');
       activa('observacions');
       break;
     case 'observacions':
+      window.history.pushState({}, '');
       activa('fenologia');
       break
     case 'fotografia':
+      window.history.pushState({}, '');
       activa(vistaOrigen);
       break;
     default:
-    if (confirm("Vols sortir de l'App eduMET?")) {
-      tancar_sessio();
-    }
+      alert("Per sortir de l'App eduMET has de prémer el botó Tornar o Inici del teu mòbil.")
+      /*if (confirm("Vols sortir de l'App eduMET?")) {
+        window.history.back();
+        window.history.back();
+      }*/
   }
 }
 
@@ -394,10 +420,14 @@ function tancar_sessio() {
   } 
   localStorage.removeItem("user");
   usuari = "";
+  $("#foto").attr("src","img/launcher-icon-4x.png");
+  $("#descripcio").val("");
+  $("#fenomen").val("0");
   estacio();
 }
 
 function fesFoto() {
+  console.log("webcam: " + hasWebcam);
   if(hasWebcam) {
     origen = "camera";
     $("#fitxer").click();
@@ -450,8 +480,8 @@ function readURL(input) {
         ctx.drawImage(img,0,0,iwScaled,ihScaled);
         canvas.style.display = "none";
         $("#foto").attr("src", canvas.toDataURL("image/jpeg",0.5));
-        $("#fenomen").val("0");
         $("#descripcio").val("");
+        $("#fenomen").val("0");
         var string64 = canvas.toDataURL("image/jpeg",0.5);
         desaObservacio(string64);
       }
@@ -586,9 +616,7 @@ function enviaObservacio(observacioEnvia) {
                 //navigator.notification.alert("Aquesta observació ja està penjada al servidor eduMET. Si us plau, fes una nova observació.", empty, 'Penjar observació', "D'acord");
                 var url = url_servidor + '?tab=modificarFenoApp&id=' + e.target.result["ID"] + '&Id_feno=' + e.target.result["Id_feno"] +'&descripcio="' + e.target.result["Descripcio_observacio"] + '"';
                 fetch(url)
-                  .then(response => response.text())
-                  .then(text => {
-                    console.log(text);
+                  .then(response =>  {
                     alert("S'ha actualitzat l'observació penjada al servidor eduMET.");
                 });
               }
@@ -646,7 +674,7 @@ function elimina() {
         if(observacioActual == observacioFitxa) {
           $("#foto").attr("src","img/launcher-icon-4x.png");
           $("#descripcio").val("");
-          $("#fenomen").val(0);
+          $("#fenomen").val("0");
           observacioActual = "";
         }
         activa('observacions');
@@ -842,29 +870,6 @@ function login() {
 }
 function fenologia() {
   activa('fenologia');
-  /*$("#fitxer").change(function(){
-    console.log("canvi");
-    readURL(this);
-  });
-  $("#fitxer_galeria").change(function(){
-    console.log("canvi");
-    readURL(this);
-  });*/
-  if(!obsActualitzades && (navigator.onLine)) {
-    baixaObsAfegides();
-    obsActualitzades =  true;
-  }
-  if (navigator.mediaDevices && navigator.mediaDevices.enumerateDevices) {
-    navigator.enumerateDevices = function(callback) {
-        navigator.mediaDevices.enumerateDevices().then(callback);
-    };
-  } 
-  if (typeof MediaStreamTrack !== 'undefined' && 'getSources' in MediaStreamTrack) {
-      canEnumerate = true;
-  } else if (navigator.mediaDevices && !! navigator.mediaDevices.enumerateDevices) {
-      canEnumerate = true;
-  } 
-  checkDeviceSupport(); 
 }
 function estacio() {
   activa('estacions');
@@ -1148,24 +1153,31 @@ function checkDeviceSupport(callback) {
   if (!canEnumerate) {
       return;
   }
+
   if (!navigator.enumerateDevices && window.MediaStreamTrack && window.MediaStreamTrack.getSources) {
       navigator.enumerateDevices = window.MediaStreamTrack.getSources.bind(window.MediaStreamTrack);
   }
+
   if (!navigator.enumerateDevices && navigator.enumerateDevices) {
       navigator.enumerateDevices = navigator.enumerateDevices.bind(navigator);
   }
+
   if (!navigator.enumerateDevices) {
       if (callback) {
           callback();
       }
       return;
   }
+
   MediaDevices = [];
   navigator.enumerateDevices(function(devices) {
       devices.forEach(function(_device) {
           var device = {};
           for (var d in _device) {
               device[d] = _device[d];
+          }
+          if (device.kind === 'audio') {
+              device.kind = 'audioinput';
           }
           if (device.kind === 'video') {
               device.kind = 'videoinput';
@@ -1194,6 +1206,17 @@ function checkDeviceSupport(callback) {
               if (device.kind === 'videoinput' && !isWebcamAlreadyCaptured) {
                   isWebcamAlreadyCaptured = true;
               }
+
+              if (device.kind === 'audioinput' && !isMicrophoneAlreadyCaptured) {
+                  isMicrophoneAlreadyCaptured = true;
+              }
+          }
+          if (device.kind === 'audioinput') {
+              hasMicrophone = true;
+          }
+
+          if (device.kind === 'audiooutput') {
+              hasSpeakers = true;
           }
           if (device.kind === 'videoinput') {
               hasWebcam = true;
