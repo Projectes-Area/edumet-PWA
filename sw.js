@@ -45,10 +45,10 @@ self.addEventListener('fetch', function(event) {
         console.log("From cache: " + event.request.url);
         return response || fetch(event.request);
       })
-      .catch(
-        // resposta segons url
-        console.log("No està en caché")
-      )
+      .catch(function() {
+        console.log("No està en caché" + event.request.url);
+        return;
+      })
     );
   }
 });  

@@ -43,9 +43,10 @@ window.onload = function() {
   }
  
   window.addEventListener("orientationchange", function(){
-    ajustaOrientacio(screen.orientation.type);
+    console.log("event triggered");
+    ajustaOrientacio();
   });
-  ajustaOrientacio(screen.orientation.type);   
+  ajustaOrientacio();   
   
   document.getElementById('fitxer_galeria').addEventListener("change", function(event) {
     readURL(this);
@@ -89,6 +90,7 @@ var slideIndex;
 var flagRadar = false;
 var timeOut;
 var midaFoto = 800;
+var orientacio;
 
 var MediaDevices = [];
 var isHTTPs = location.protocol === 'https:';
@@ -141,7 +143,13 @@ function back() {
   }
 }
 
-function ajustaOrientacio(orientacio) {
+function ajustaOrientacio() {
+  console.log("window.orientation: " + window.orientation);
+  if(window.orientation == 0 || window.orientation == 180) {
+    orientacio = "portrait";
+  } else {
+    orientacio = "landscape";
+  }
   console.log("Orientació: " + orientacio);
   var textBoto = '<i class="material-icons icona-24">';
   if(orientacio == "landscape" || orientacio == "landscape-primary" || orientacio == "landscape-secondary") {
@@ -329,9 +337,19 @@ function mostraEstacio() {
       $("#est_poblacio").html(e.target.result["Poblacio"]);
       $("#est_altitud").html("Altitud: " + e.target.result["Altitud"] + " m");
       var URLlogo = "https://edumet.cat/edumet-data/" + e.target.result["Codi_estacio"] + "/estacio/profile1/imatges/fotocentre.jpg";
+      $("#est_logo").attr("src", URLlogo);
       if(navigator.onLine){
-        $("#est_logo").attr("src", URLlogo);
         getMesures();
+      } else {
+        $("#data_mesura").css("color","#FF0000");
+        $("#data_mesura").html("Sense connexió a Internet");
+        $("#temperatura").html("");
+        $("#humitat").html("");
+        $("#pressio").html("");
+        $("#sunrise").html("");
+        $("#sunset").html("");
+        $("#pluja").html("");
+        $("#vent").html(""); 
       }
       map.setView(new L.LatLng(e.target.result["Latitud"], e.target.result["Longitud"]));
     }
@@ -379,6 +397,13 @@ function getMesures() {
   .catch(reason => {
     $("#data_mesura").css("color","#FF0000");
     $("#data_mesura").html("L'estació no proporciona les dades ...");
+    $("#temperatura").html("");
+    $("#humitat").html("");
+    $("#pressio").html("");
+    $("#sunrise").html("");
+    $("#sunset").html("");
+    $("#pluja").html("");
+    $("#vent").html("");  
     console.log("Error:" + reason);
   });
 }
@@ -883,7 +908,7 @@ function radar() {
     .then(response => {
       var stringDiv ='';
       for(i=0;i<response.length;i++) {
-        if(screen.orientation.type == "landscape" || screen.orientation.type == "landscape-primary" || screen.orientation.type == "landscape-secondary") {
+        if(orientacio == "landscape" || orientacio == "landscape-primary" || orientacio == "landscape-secondary") {
           stringDiv+='<div class="mySlidesLandscape"><img class="imgSlidesLandscape" src="https://edumet.cat/edumet-data/meteocat/radar/';
         } else {
           stringDiv+='<div class="mySlidesPortrait"><img class="imgSlidesPortrait" src="https://edumet.cat/edumet-data/meteocat/radar/';
@@ -906,7 +931,7 @@ function radar() {
   }
 }
 function showSlides() {
-  if(screen.orientation.type == "landscape" || screen.orientation.type == "landscape-primary" || screen.orientation.type == "landscape-secondary") {
+  if(orientacio == "landscape" || orientacio == "landscape-primary" || orientacio == "landscape-secondary") {
     var slides = document.getElementsByClassName("mySlidesLandscape");
   } else {
     var slides = document.getElementsByClassName("mySlidesPortrait");
