@@ -69,7 +69,6 @@ var url_imatges = 'https://edumet.cat/edumet/meteo_proves/imatges/fenologia/';
 var INEinicial = "081234";
 var codiInicial = "08903085";
 var mobilLocalitzat = false;
-var fotoLocalitzada = false;
 var ExifData;
 var ExifHora;
 var ExifLongitud;
@@ -78,6 +77,7 @@ var observacioActual = "";
 var observacioFitxa;
 var mapaFitxa;
 var marcadorFitxa;
+var marcadorUbica;
 var vistaActual;
 var vistaOrigen;
 var obsActualitzades = false;
@@ -91,13 +91,15 @@ var flagRadar = false;
 var timeOut;
 var midaFoto = 800;
 var orientacio;
+var origen;
+var hasWebcam = false;
+var isWebcamAlreadyCaptured = false;
 
 var MediaDevices = [];
 var isHTTPs = location.protocol === 'https:';
 var canEnumerate = false;
 
 if (navigator.mediaDevices && navigator.mediaDevices.enumerateDevices) {
-  // Firefox 38+ seems having support of enumerateDevicesx
   navigator.enumerateDevices = function(callback) {
       navigator.mediaDevices.enumerateDevices().then(callback);
   };
@@ -109,29 +111,23 @@ if (typeof MediaStreamTrack !== 'undefined' && 'getSources' in MediaStreamTrack)
     canEnumerate = true;
 }
 
-var hasWebcam = false;
-var isWebcamAlreadyCaptured = false;
-
 checkDeviceSupport();
-
-var origen;
-
-//app.initialize();
 
 function empty() {  
 }
 function back() {
   switch(vistaActual) {
     case 'fitxa':
-      window.history.pushState({}, '');
+      //window.history.pushState({}, '');
       activa('observacions');
       break;
     case 'observacions':
-      window.history.pushState({}, '');
+    case 'tria_lloc':
+      //window.history.pushState({}, '');
       activa('fenologia');
       break
     case 'fotografia':
-      window.history.pushState({}, '');
+      //window.history.pushState({}, '');
       activa(vistaOrigen);
       break;
     default:
@@ -512,6 +508,76 @@ function readURL(input) {
   }
 }
 
+function triaLloc() {
+  if(observacioActual == ""){
+    alert("Si us plau, fes primer la foto corresponent a l'observació.");
+  } else {
+    indexedDB.open("eduMET").onsuccess = function(event) {
+      event.target.result.transaction(["Observacions"], "readwrite").objectStore("Observacions").get(observacioActual).onsuccess = function(e) {
+        if(e.target.result["Latitud"] != "") {
+          alert("Aquesta observació ja està geolocalitzada.")
+        } else {
+          activa("tria_lloc");
+          var laLatitud;
+          var laLongitud;
+          if(mobilLocalitzat) {
+            laLatitud = latitudActual;
+            laLongitud = longitudActual;
+          } else {
+            laLatitud = 41.7292826;
+            laLongitud = 1.8225154;      
+          }
+          try {
+            mapaUbica = L.map('mapaUbica');
+            if(navigator.onLine){
+              mapaUbica.setView(new L.LatLng(laLatitud, laLongitud), 15);
+              L.tileLayer('https://maps.wikimedia.org/osm-intl/{z}/{x}/{y}{r}.png', {
+                minZoom: 1,
+                maxZoom: 19,
+                attribution: 'Wikimedia'
+              }).addTo(mapaUbica);
+            } else{
+              mapaUbica.setView(new L.LatLng(laLatitud, laLongitud), 10);
+              fetch("https://edumet.cat/edumet/app/json/municipis.geojson")
+              .then(response => response.json())
+              .then(response => {
+                L.geoJSON(response,{style:{"color": "#0000FF","weight": 1,"opacity": 0.5}}).addTo(mapaUbica);
+              });
+            }
+          } catch (error) {
+            if(navigator.onLine){
+              var zoom = 15;
+            } else {
+              var zoom = 10;
+            }
+            mapaUbica.invalidateSize();
+            mapaUbica.setView(new L.LatLng(laLatitud,laLongitud), zoom);
+            mapaUbica.removeLayer(marcadorUbica);
+          }  
+          marcadorUbica = L.marker(new L.LatLng(laLatitud,laLongitud));
+          marcadorUbica.addTo(mapaUbica);  
+          marcadorUbica.dragging.enable();
+        }
+      }
+    }
+  }
+}
+
+function desaUbicacio() {
+  indexedDB.open("eduMET").onsuccess = function(event) {
+    var objStore = event.target.result.transaction(["Observacions"], "readwrite").objectStore("Observacions");
+    var request = objStore.get(observacioActual);
+    request.onsuccess = function() {
+      var data = request.result;
+      data.Latitud =  marcadorUbica.getLatLng().lat;
+      data.Longitud =  marcadorUbica.getLatLng().lng;
+      objStore.put(data);
+      activa('fenologia');
+      alert("S'ha desat la ubicació de l'observació.");
+    }
+  }
+}
+
 function baixaObsInicial() {
   var url = url_servidor + "?usuari=" + usuari + "&tab=visuFenoApp";
   fetch(url)
@@ -586,10 +652,10 @@ function enviaObservacio(observacioEnvia) {
           alert("Si us plau, desa primer l'observació indicant el tipus de fenomen i escrivint una breu descripció.");
         } else {
           if (e.target.result["Data_observacio"] == "") {
-            alert("Si us plau, Indica primer la data en què es va realitzar l'observació");
+            alert("Si us plau, Indica primer la data en què es va realitzar l'observació.");
           } else {      
             if (e.target.result["Latitud"] == "") {
-              alert("Si us plau, Indica primer el lloc on es va realitzar l'observació");
+              alert("Si us plau, Indica primer el lloc on es va realitzar l'observació.");
             } else {  
               if(e.target.result["Enviat"] == "0") {  
                 var imatge64 =  e.target.result["Imatge"].replace(/^data:image\/[a-z]+;base64,/, "");                    
@@ -837,6 +903,7 @@ function activa(fragment) {
   $("#login").css("display","none");
   $("#fotografia").css("display","none");
   $("#registra").css("display","none");
+  $("#tria_lloc").css("display","none");
   $("#" + fragment).css("display","flex");
   $("#boto_estacions").css("color","graytext");
   $("#boto_observacions").css("color","graytext");
@@ -852,6 +919,7 @@ function activa(fragment) {
     case "observacions":
     case "fitxa":
     case "fotografia":
+    case "tria_lloc":
       boto = $("#boto_observacions");
       break;
     case "registra":

@@ -51,10 +51,11 @@
       </div>
       <div id="fenologia">
         <div id="menu-botons">
-          <button class="boto-sup" onClick="fesFoto();"><i class="material-icons icona-36">add_a_photo</i></button>
-          <button class="boto-sup" onClick="actualitzaObservacio();"><i class="material-icons icona-36">save</i></button>
-          <button class="boto-sup" onClick="enviaActual();"><i class="material-icons icona-36">cloud_upload</i></button>
-          <button class="boto-sup" onClick="observa();"><i class="material-icons icona-36">assignment</i></button>
+          <button class="boto-sup" onClick="fesFoto()"><i class="material-icons icona-36">add_a_photo</i></button>
+          <button class="boto-sup" onClick="triaLloc()"><i class="material-icons icona-36">edit_location</i></button>
+          <button class="boto-sup" onClick="actualitzaObservacio()"><i class="material-icons icona-36">save</i></button>
+          <button class="boto-sup" onClick="enviaActual()"><i class="material-icons icona-36">cloud_upload</i></button>
+          <button class="boto-sup" onClick="observa()"><i class="material-icons icona-36">assignment</i></button>
         </div>
         <div id="div_foto"> 
           <img id="foto" src= "img/launcher-icon-4x.png" onClick="fotografia();">
@@ -133,6 +134,16 @@
               <div id="mapaFitxa"></div> 
             </div>
           </div>
+        </div>
+      </div>
+
+      <div id="tria_lloc">
+        <div style="display:flex; align-items:center; height:10vh">
+          <div class="icona-16" style="padding:10px">Arrossega el marcador fins al lloc on vas fer la foto de l'observació i desa la ubicació.</div>
+        </div>
+        <div id="mapaUbica" style="height:60vh"></div>
+        <div id="div_boto_desa" style="display:flex; height:10vh">
+          <button onClick="desaUbicacio()" class="icona-16" style="width:100%; margin:5px">Desa la ubicació</button>
         </div>
       </div>
 
