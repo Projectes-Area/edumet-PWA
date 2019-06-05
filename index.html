@@ -22,6 +22,9 @@
       <link rel="stylesheet" href="https://unpkg.com/leaflet@1.5.1/dist/leaflet.css" integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ==" crossorigin=""/>
       <script src="https://unpkg.com/leaflet@1.5.1/dist/leaflet.js" integrity="sha512-GffPMF3RvMeYyc1LWMHtK8EbPv0iNZ8/oTtHPx9/cc2ILxQ+u905qIwdpULaqDkyBKgOaB57QTMg7ztg8Jm2Og==" crossorigin=""></script>
       <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+      <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+      <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+      <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
       <script src="https://cdn.jsdelivr.net/npm/exif-js"></script>
       <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
       <link rel="shortcut icon" type=”image/png” href="img/launcher-icon-1x.png">
@@ -50,8 +53,10 @@
         </div>
       </div>
       <div id="fenologia">
+        <div id="calendari" style="width:100%"></div>
         <div id="menu-botons">
           <button class="boto-sup" onClick="fesFoto()"><i class="material-icons icona-36">add_a_photo</i></button>
+          <button class="boto-sup" onClick="triaData()"><i class="material-icons icona-36">watch_later</i></button>
           <button class="boto-sup" onClick="triaLloc()"><i class="material-icons icona-36">edit_location</i></button>
           <button class="boto-sup" onClick="actualitzaObservacio()"><i class="material-icons icona-36">save</i></button>
           <button class="boto-sup" onClick="enviaActual()"><i class="material-icons icona-36">cloud_upload</i></button>

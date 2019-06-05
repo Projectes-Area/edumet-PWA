@@ -66,7 +66,6 @@ button, select, input, textarea {
     outline:none;
 }
 .boto-sup {
-    width:20%;
     background: none;
     color: #418ac8;
     border:none;
@@ -103,6 +102,7 @@ button, select, input, textarea {
 }
 #menu-botons {
     display:flex;
+    justify-content: space-evenly;
     width:100%;
     height:10vh;
 }

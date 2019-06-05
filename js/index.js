@@ -56,6 +56,9 @@ window.onload = function() {
   });
 };
 
+
+
+
 var storage = window.localStorage;
 var usuari = "";
 var contrasenya;
@@ -563,6 +566,10 @@ function triaLloc() {
   }
 }
 
+function triaData(){
+  $("#calendari").click();
+}
+
 function desaUbicacio() {
   indexedDB.open("eduMET").onsuccess = function(event) {
     var objStore = event.target.result.transaction(["Observacions"], "readwrite").objectStore("Observacions");
@@ -959,6 +966,29 @@ function login() {
 }
 function fenologia() {
   activa('fenologia');
+  $("#calendari").daterangepicker({
+    singleDatePicker: true,
+    startDate: moment(),
+    showDropdowns: true,
+    minYear: 2000,
+    timePicker: true,
+    timePicker24Hour: true,
+    locale: {
+        "format": "DD/MM/YYYY",
+        "separator": " - ",
+        "applyLabel": "Desa la data i l'hora",
+        "cancelLabel": "Cancel·la",
+        "customRangeLabel": "Custom",
+        "daysOfWeek": ["Di","Dl","Dm","Dc","Dj","Dv","Ds"],
+        "monthNames": ["Gener","Febrer","Març","Abril","Maig","Juny","Juliol","Agost","Setembre","Octubre","Novembre","Desembre"],
+        "firstDay": 1
+    }
+  }, function(start) {
+    GPSdia = start.format('YYYY-MM-DD');
+    GPShora = start.format('HH:mm:00'); 
+    console.log("Dia: " + GPSdia);
+    console.log("Hora: " + GPShora);
+  });
 }
 function estacio() {
   activa('estacions');
