@@ -7,10 +7,11 @@ self.addEventListener('install', function(e) {
         'css/index.css',
         'js/index.js',
         'manifest.json',
-        'img/launcher-icon-1x.png',
+        'img/launcher-icon-2x.png',
         'img/edumet.png',
         'img/launcher-icon-4x.png',
         'img/marker-icon-green.png',
+        'img/default@2x.png',
         'https://unpkg.com/leaflet@1.5.1/dist/leaflet.css',
         'https://unpkg.com/leaflet@1.5.1/dist/leaflet.js',
         'https://unpkg.com/leaflet@1.5.1/dist/images/marker-icon.png',
@@ -29,26 +30,25 @@ self.addEventListener('install', function(e) {
   });
 
 self.addEventListener('fetch', function(event) {
-  if(event.request.url.includes("dades_recarregar")) {
-    event.respondWith(
-      fetch(event.request)
-      .then(console.log("Fetched: " + event.request.url))
-      .catch(function() {
-        console.log("From cache (offline): " + event.request.url)
-        return caches.match(event.request);
-      })
-    );  
-  } else {
-    event.respondWith(
-      caches.match(event.request)
-      .then(function(response) {
-        console.log("From cache: " + event.request.url);
-        return response || fetch(event.request);
-      })
-      .catch(function() {
-        console.log("No està en caché" + event.request.url);
+  event.respondWith(
+    caches.match(event.request)
+    .then(function(response) {
+      return response || fetch(event.request);
+    })
+    .catch(function() {
+      var resolt = false;
+      if (event.request.url.includes("fotocentre")) {
+        resolt = true;
+        return caches.match('img/launcher-icon-2x.png');
+      } 
+      if (event.request.url.includes("@2x")) {
+        resolt = true;
+        return caches.match('img/default@2x.png');
+      } 
+      if(!resolt) {
+        console.log("No està en cache: " + event.request.url);
         return;
-      })
-    );
-  }
+      }
+    })
+  ); 
 });  
