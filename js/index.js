@@ -454,6 +454,10 @@ function fesFoto() {
     $("#fitxer_galeria").click();
   }
 }
+function triaFoto() {
+  origen = "galeria";
+  $("#fitxer_galeria").click();
+}
 
 function readURL(input) {   
   fitxerImg = input.files[0].name;
@@ -817,18 +821,40 @@ function actualitzaObservacio() {
   if(observacioActual == ""){
     alert("Si us plau, fes primer la foto corresponent a l'observació.");
   } else {
-    if($("#fenomen").val() == 0 || $("#descripcio").val() == "") {
-      alert("Si us plau, tria primer el tipus de fenomen i escriu una breu descripció.");
-    } else {
-      indexedDB.open("eduMET").onsuccess = function(event) {
-        var objStore = event.target.result.transaction(["Observacions"], "readwrite").objectStore("Observacions");
-        var request = objStore.get(observacioActual);
-        request.onsuccess = function() {
-          var data = request.result;
+    indexedDB.open("eduMET").onsuccess = function(event) {
+      var objStore = event.target.result.transaction(["Observacions"], "readwrite").objectStore("Observacions");
+      var request = objStore.get(observacioActual);
+      request.onsuccess = function() {
+        var data = request.result;
+        if($("#fenomen").val()!=0){
           data.Id_feno =  $("#fenomen").val();
+        }
+        if($("#descripcio").val()!=""){
           data.Descripcio_observacio = $("#descripcio").val();
-          objStore.put(data);
-          alert("S'ha desat el tipus d'observació i la descripció del fenomen.");
+        }
+        objStore.put(data);
+        indexedDB.open("eduMET").onsuccess = function(event) {
+          event.target.result.transaction(["Observacions"], "readonly").objectStore("Observacions").get(observacioActual).onsuccess = function(e) {
+            var llistaMissing = "";
+            if(e.target.result["Data_observacio"] == ""){
+              llistaMissing+="\t•La data i l'hora de l'observació\n";
+            }
+            if(e.target.result["Latitud"] == ""){
+              llistaMissing+="\t•El lloc des d'on es va fer l'observació\n";
+            }
+            if(e.target.result["Id_feno"] == 0){
+              llistaMissing+="\t•El tipus de fenomen observat\n";
+            }
+            if(e.target.result["Descripcio_observacio"] == ""){
+              llistaMissing+="\t•Una breu descripció del fenomen observat\n";
+            }
+            if(llistaMissing==""){
+              enviaObservacio(observacioActual);
+            } else{
+              llistaMissing = "Abans de penjar l'observació al servidor eduMET has d'indicar:\n\n" + llistaMissing;
+              alert(llistaMissing);
+            }
+          }
         }
       }
     }

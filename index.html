@@ -32,12 +32,10 @@
     </head>
     <body >
       <div id="capsalera">
-        <div id="div-icona-back"><i id="icona-back" class="material-icons icona-36" onClick="back();">navigate_before</i></div>
+        <div id="div-icona-back"><i id="icona-back" class="material-icons icona-36" onClick="back()" title="Enrera">navigate_before</i></div>
         <div><img id="logo-edumet" src="img/edumet.png" alt="Logo eduMET"></div>
-        <div id="div-icona-login"><i id="icona-login" class="material-icons icona-36" onClick="usuaris();">person</i></div>
-      </div>
-
-      
+        <div id="div-icona-login"><i id="icona-login" class="material-icons icona-36" onClick="usuaris()" title="Usuari">person</i></div>
+      </div>      
       <div id="login">
         <div id="iniciar">
           <label class="icona-16">INICIAR SESSIÓ</label>
@@ -55,21 +53,22 @@
       <div id="fenologia">
         <div id="calendari" style="width:100%"></div>
         <div id="menu-botons">
-          <button class="boto-sup" onClick="fesFoto()"><i class="material-icons icona-36">add_a_photo</i></button>
-          <button class="boto-sup" onClick="triaData()"><i class="material-icons icona-36">watch_later</i></button>
-          <button class="boto-sup" onClick="triaLloc()"><i class="material-icons icona-36">edit_location</i></button>
-          <button class="boto-sup" onClick="actualitzaObservacio()"><i class="material-icons icona-36">save</i></button>
-          <button class="boto-sup" onClick="enviaActual()"><i class="material-icons icona-36">cloud_upload</i></button>
-          <button class="boto-sup" onClick="observa()"><i class="material-icons icona-36">assignment</i></button>
+          <button class="boto-sup" onClick="fesFoto()" title="Fer una foto"><i class="material-icons icona-36">add_a_photo</i></button>
+          <button class="boto-sup" onClick="triaFoto()" title="Triar una foto"><i class="material-icons icona-36">attach_file</i></button>
+          <button class="boto-sup" onClick="triaData()" title="Data i hora"><i class="material-icons icona-36">watch_later</i></button>
+          <button class="boto-sup" onClick="triaLloc()" title="Ubicació"><i class="material-icons icona-36">location_on</i></button>
+          <button class="boto-sup" onClick="actualitzaObservacio()" title="Penjar l'observació"><i class="material-icons icona-36">cloud_upload</i></button>
+          <!--<button class="boto-sup" onClick="enviaActual()"><i class="material-icons icona-36">cloud_upload</i></button>-->
+          <button class="boto-sup" onClick="observa()" title="Observacions realitzades"><i class="material-icons icona-36">assignment</i></button>
         </div>
         <div id="div_foto"> 
           <img id="foto" src= "img/launcher-icon-4x.png" onClick="fotografia();">
         </div>
         <div class="obs-fen">
-          <i class="material-icons icona-24" style="margin-right:3px; color:#418ac8;">visibility</i><select id="fenomen"></select> 
+          <!--<i class="material-icons icona-24" style="margin-right:3px; color:#418ac8;">visibility</i>--><select id="fenomen"></select> 
         </div>
         <div class="obs-desc">
-          <i class="material-icons icona-24" style="margin-right:3px; color:#418ac8;">assignment</i><textarea id="descripcio" placeholder="Escriu en aquest espai una breu descripció del fenomen observat." onKeyUp="if(this.value.length>250) this.value = this.value.slice(0, -1);"></textarea>
+          <!--<i class="material-icons icona-24" style="margin-right:3px; color:#418ac8;">assignment</i>--><textarea id="descripcio" placeholder="Escriu en aquest espai una breu descripció del fenomen observat." onKeyUp="if(this.value.length>250) this.value = this.value.slice(0, -1);"></textarea>
         </div>
       </div>
       <div id="fotografia">
@@ -126,9 +125,9 @@
           <div id="edicio_fitxa">
             <img id="fotoFitxa" src="" onClick="fotografia();">
             <div id="botons_edicio">
-              <button id="envia_obs" class="boto-edit" style="color:#418ac8" onClick="enviaFitxa()"><i class="material-icons icona-24">cloud_upload</i></button>
-              <button id="edita_obs" class="boto-edit" style="color:#418ac8" onClick="editaObservacio()"><i class="material-icons icona-24">edit</i></button>
-              <button id="elimina_obs" class="boto-edit" style="color:#418ac8" onClick="eliminaObservacio()"><i class="material-icons icona-24">delete_forever</i></button>
+              <!--<button id="envia_obs" class="boto-edit" style="color:#418ac8" onClick="enviaFitxa()"><i class="material-icons icona-24">cloud_upload</i></button>-->
+              <button id="edita_obs" class="boto-edit" style="color:#418ac8" onClick="editaObservacio()" title="Editar"><i class="material-icons icona-24">edit</i></button>
+              <button id="elimina_obs" class="boto-edit" style="color:#418ac8" onClick="eliminaObservacio()" title="Eliminar"><i class="material-icons icona-24">delete_forever</i></button>
             </div>
           </div>
           <div id="desc_map_fitxa">
@@ -176,11 +175,11 @@
       <div id="sector-inferior">
         <div id="hr"></div>
         <div id="menu-inferior">
-          <button id="boto_observacions" class="boto-inf" style="color:graytext;" onClick="login();"><i class="material-icons icona-24">camera_alt</i></button>
-          <button id="boto_estacions" class="boto-inf" style="color:#418ac8;" onClick="estacio();"><i class="material-icons icona-24">router</i></button>
-          <button id="boto_registra" class="boto-inf" style="color:graytext;" onClick="registra();"><i class="material-icons icona-24">bookmark</i></button>
-          <button id="boto_prediccio" class="boto-inf" style="color:graytext;" onClick="prediccio();"><i class="material-icons icona-24">cloud</i></button>
-          <button id="boto_radar" class="boto-inf" style="color:graytext;" onClick="radar();"><i class="material-icons icona-24">wifi_tethering</i></button>
+          <button id="boto_observacions" class="boto-inf" style="color:graytext;" onClick="login();" title="Observacions"><i class="material-icons icona-24">camera_alt</i></button>
+          <button id="boto_estacions" class="boto-inf" style="color:#418ac8;" onClick="estacio();" title="Estacions"><i class="material-icons icona-24">router</i></button>
+          <button id="boto_registra" class="boto-inf" style="color:graytext;" onClick="registra();" title="Registra"><i class="material-icons icona-24">bookmark</i></button>
+          <button id="boto_prediccio" class="boto-inf" style="color:graytext;" onClick="prediccio();" title="Predicció"><i class="material-icons icona-24">cloud</i></button>
+          <button id="boto_radar" class="boto-inf" style="color:graytext;" onClick="radar();" title="Radar"><i class="material-icons icona-24">wifi_tethering</i></button>
         </div>  
         <input type="file" style='display: none;' accept="image/*" id="fitxer" name="fitxer" capture="camera"/>
         <input type='file' style='display: none;' accept="image/jpeg" id="fitxer_galeria" name="fitxer_galeria" />

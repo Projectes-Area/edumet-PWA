@@ -83,12 +83,15 @@ button, select, input, textarea {
 .obs-fen {
     display:flex;
     height:10vh;
-    align-items:center;
 }
 .obs-desc {
     display:flex;
     height:40vh;
+    width:90%;
     align-items:center;
+}
+.btn {
+    font-weight:unset !important;
 }
 #capsalera {
     height: 10vh;
@@ -193,12 +196,10 @@ button, select, input, textarea {
     max-height:95%;
 }
 #fenomen {
-    width:85vw;
-    height:100%;
     font-size:14px !important;
 }
 #descripcio {
-    width:85vw;
+    width:100%;
     height:90%;
     font-size:14px !important;
 }
@@ -305,7 +306,7 @@ button, select, input, textarea {
 #botons_edicio {
     display:flex;
     flex-direction:column; 
-    justify-content:space-around;
+    justify-content:space-evenly;
     align-items: center;
     width: 20%;
 }
