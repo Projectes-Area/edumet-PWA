@@ -56,9 +56,6 @@ window.onload = function() {
   });
 };
 
-
-
-
 var storage = window.localStorage;
 var usuari = "";
 var contrasenya;
@@ -91,6 +88,7 @@ var colorEdumet = "#418ac8";
 var map;
 var slideIndex;
 var flagRadar = false;
+var flagDataTriada;
 var timeOut;
 var midaFoto = 800;
 var orientacio;
@@ -517,12 +515,17 @@ function triaLloc() {
   } else {
     indexedDB.open("eduMET").onsuccess = function(event) {
       event.target.result.transaction(["Observacions"], "readwrite").objectStore("Observacions").get(observacioActual).onsuccess = function(e) {
+        activa("tria_lloc");
+        var laLatitud;
+        var laLongitud;
         if(e.target.result["Latitud"] != "") {
-          alert("Aquesta observació ja està geolocalitzada.")
+          $("#desc_mapa").text("Aquest és el lloc des d'on es va fer l'observació.");
+          $("#boto_desa_mapa").text("D'acord").attr("onClick","activa('fenologia')");
+          laLatitud = e.target.result["Latitud"];
+          laLongitud = e.target.result["Longitud"];
         } else {
-          activa("tria_lloc");
-          var laLatitud;
-          var laLongitud;
+          $("#desc_mapa").text("Arrossega el marcador fins al lloc on vas fer la foto de l'observació i desa la ubicació.");
+          $("#boto_desa_mapa").text("Desa la ubicació").attr("onClick","desaUbicacio()");
           if(mobilLocalitzat) {
             laLatitud = latitudActual;
             laLongitud = longitudActual;
@@ -530,35 +533,39 @@ function triaLloc() {
             laLatitud = 41.7292826;
             laLongitud = 1.8225154;      
           }
-          try {
-            mapaUbica = L.map('mapaUbica');
-            if(navigator.onLine){
-              mapaUbica.setView(new L.LatLng(laLatitud, laLongitud), 15);
-              L.tileLayer('https://maps.wikimedia.org/osm-intl/{z}/{x}/{y}{r}.png', {
-                minZoom: 1,
-                maxZoom: 19,
-                attribution: 'Wikimedia'
-              }).addTo(mapaUbica);
-            } else{
-              mapaUbica.setView(new L.LatLng(laLatitud, laLongitud), 10);
-              fetch("https://edumet.cat/edumet/app/json/municipis.geojson")
-              .then(response => response.json())
-              .then(response => {
-                L.geoJSON(response,{style:{"color": "#0000FF","weight": 1,"opacity": 0.5}}).addTo(mapaUbica);
-              });
-            }
-          } catch (error) {
-            if(navigator.onLine){
-              var zoom = 15;
-            } else {
-              var zoom = 10;
-            }
-            mapaUbica.invalidateSize();
-            mapaUbica.setView(new L.LatLng(laLatitud,laLongitud), zoom);
-            mapaUbica.removeLayer(marcadorUbica);
-          }  
-          marcadorUbica = L.marker(new L.LatLng(laLatitud,laLongitud));
-          marcadorUbica.addTo(mapaUbica);  
+        }
+        try {
+          mapaUbica = L.map('mapaUbica');
+          if(navigator.onLine){
+            mapaUbica.setView(new L.LatLng(laLatitud, laLongitud), 15);
+            L.tileLayer('https://maps.wikimedia.org/osm-intl/{z}/{x}/{y}{r}.png', {
+              minZoom: 1,
+              maxZoom: 19,
+              attribution: 'Wikimedia'
+            }).addTo(mapaUbica);
+          } else{
+            mapaUbica.setView(new L.LatLng(laLatitud, laLongitud), 10);
+            fetch("https://edumet.cat/edumet/app/json/municipis.geojson")
+            .then(response => response.json())
+            .then(response => {
+              L.geoJSON(response,{style:{"color": "#0000FF","weight": 1,"opacity": 0.5}}).addTo(mapaUbica);
+            });
+          }
+        } catch (error) {
+          if(navigator.onLine){
+            var zoom = 15;
+          } else {
+            var zoom = 10;
+          }
+          mapaUbica.invalidateSize();
+          mapaUbica.setView(new L.LatLng(laLatitud,laLongitud), zoom);
+          mapaUbica.removeLayer(marcadorUbica);
+        }  
+        marcadorUbica = L.marker(new L.LatLng(laLatitud,laLongitud));
+        marcadorUbica.addTo(mapaUbica);  
+        if(e.target.result["Latitud"] != "") {
+          marcadorUbica.dragging.disable();
+        } else {
           marcadorUbica.dragging.enable();
         }
       }
@@ -567,8 +574,35 @@ function triaLloc() {
 }
 
 function triaData(){
-  $("#calendari").click();
+  if(observacioActual == ""){
+    alert("Si us plau, fes primer la foto corresponent a l'observació.");
+  } else {
+    indexedDB.open("eduMET").onsuccess = function(event) {
+      event.target.result.transaction(["Observacions"], "readwrite").objectStore("Observacions").get(observacioActual).onsuccess = function(e) {
+        if(e.target.result["Data_observacio"] != "") {
+          alert("Aquesta observació es va realitzar el dia " + formatDate(e.target.result["Data_observacio"])+ " a les " + e.target.result["Hora_observacio"] +".");
+        } else {
+          $("#calendari").click();
+        }
+      }
+    }
+  }
 }
+
+function desaData(dia, hora) {
+  indexedDB.open("eduMET").onsuccess = function(event) {
+    var objStore = event.target.result.transaction(["Observacions"], "readwrite").objectStore("Observacions");
+    var request = objStore.get(observacioActual);
+    request.onsuccess = function() {
+      var data = request.result;
+      data.Data_observacio =  dia;
+      data.Hora_observacio =  hora;
+      objStore.put(data);
+      alert("S'ha desat la data i l'hora de l'observació.");
+    }
+  }
+}
+
 
 function desaUbicacio() {
   indexedDB.open("eduMET").onsuccess = function(event) {
@@ -973,6 +1007,7 @@ function fenologia() {
     minYear: 2000,
     timePicker: true,
     timePicker24Hour: true,
+    timePickerSeconds: true,
     locale: {
         "format": "DD/MM/YYYY",
         "separator": " - ",
@@ -984,12 +1019,36 @@ function fenologia() {
         "firstDay": 1
     }
   }, function(start) {
-    GPSdia = start.format('YYYY-MM-DD');
-    GPShora = start.format('HH:mm:00'); 
-    console.log("Dia: " + GPSdia);
-    console.log("Hora: " + GPShora);
+    var dia = start.format('YYYY-MM-DD');
+    var hora = start.format('HH:mm:ss'); 
+    flagDataTriada = true;
+    desaData(dia,hora);
+  });
+  $('#calendari').on('show.daterangepicker', function(ev, picker) {
+    flagDataTriada = false;
+  });
+  $('#calendari').on('apply.daterangepicker', function(ev, picker) {
+    if(!flagDataTriada) {
+      var ara = new Date(Date.now());
+      var any = ara.getFullYear();
+      var mes = (ara.getMonth() + 1).toString();
+      var dia = ara.getDate().toString();
+      var hora = ara.getHours().toString();
+      var minut = ara.getMinutes().toString();
+      var segon = ara.getSeconds().toString();
+      if (mes.length < 2) mes = '0' + mes;
+      if (dia.length < 2) dia = '0' + dia;
+      if (hora.length < 2) hora = '0' + hora;
+      if (minut.length < 2) minut = '0' + minut;
+      if (segon.length < 2) segon = '0' + segon;
+      var Data_actual = any + '-' + mes + '-' + dia;
+      var Hora_actual = hora + ':' + minut + ':' + segon;
+      desaData(Data_actual,Hora_actual);
+    }
   });
 }
+
+
 function estacio() {
   activa('estacions');
   map.invalidateSize();
