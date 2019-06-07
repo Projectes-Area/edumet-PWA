@@ -119,24 +119,17 @@ function empty() {
 function back() {
   switch(vistaActual) {
     case 'fitxa':
-      //window.history.pushState({}, '');
       activa('observacions');
       break;
     case 'observacions':
     case 'tria_lloc':
-      //window.history.pushState({}, '');
       activa('fenologia');
       break
     case 'fotografia':
-      //window.history.pushState({}, '');
       activa(vistaOrigen);
       break;
     default:
       alert("Per sortir de l'App eduMET has de prémer el botó Tornar o Inici del teu mòbil.")
-      /*if (confirm("Vols sortir de l'App eduMET?")) {
-        window.history.back();
-        window.history.back();
-      }*/
   }
 }
 
@@ -197,11 +190,6 @@ function ajustaOrientacio() {
   }
 }
 
-/*function sortir(buttonIndex) {
-  if(buttonIndex == 1) {
-    tancar();
-  }
-}*/
 function tancar() {
   navigator.geolocation.clearWatch(watchID);
   navigator.app.exitApp();
@@ -222,7 +210,6 @@ function baixaFenomens() {
     option.value = "0";    
     x.add(option);
     for(i=0;i<response.length;i++){
-      //fenomens[i+1] = response[i];
       fenomens[response[i]["Id_feno"]] = response[i];
       option = document.createElement("option");
       option.text = response[i]["Bloc_feno"] + ': ' + response[i]["Titol_feno"];
@@ -254,7 +241,6 @@ function assignaFenomens(response) {
   option.value = "0";
   x.add(option);  
   for(i=0;i<response.length;i++){
-    //fenomens[i+1] = response[i];
     fenomens[response[i]["Id_feno"]] = response[i];
     option = document.createElement("option");
     option.text = response[i]["Bloc_feno"] + ': ' + response[i]["Titol_feno"];;
@@ -294,7 +280,6 @@ function mostraEstacions() {
         marcador[i].i = i
         marcador[i].Codi_estacio = event.target.result[i]["Codi_estacio"];
         marcador[i].on('click',function(e) {
-          //var x = document.getElementById("est_nom");
           $("#est_nom").val(this.Codi_estacio);
           mostra(this.Codi_estacio);
         });   
@@ -459,57 +444,61 @@ function triaFoto() {
   $("#fitxer_galeria").click();
 }
 
-function readURL(input) {   
-  fitxerImg = input.files[0].name;
-  var extn = fitxerImg.substring(fitxerImg.lastIndexOf('.') + 1).toLowerCase();
-  if (extn == "jpg" || extn == "jpeg") { 
-    ExifData = ""; 
-    ExifHora = ""
-    ExifLatitud = "";
-    ExifLongitud = "";
-    EXIF.getData(input.files[0], function() {
-      if(this.exifdata.DateTimeOriginal != undefined) {
-        var splitData = this.exifdata.DateTimeOriginal.split(" ");
-        ExifData = formatDateGPS(splitData[0]);
-        ExifHora = splitData[1];
-        console.log("EXIF Data: " + ExifData + ", " + ExifHora);
-      }
-      if(this.exifdata.GPSLatitude != undefined) {     
-        var latDegree = this.exifdata.GPSLatitude[0].numerator/this.exifdata.GPSLatitude[0].denominator;
-        var latMinute = this.exifdata.GPSLatitude[1].numerator/this.exifdata.GPSLatitude[1].denominator;
-        var latSecond = this.exifdata.GPSLatitude[2].numerator/this.exifdata.GPSLatitude[2].denominator;
-        var latDirection = this.exifdata.GPSLatitudeRef;
-        ExifLatitud = ConvertDMSToDD(latDegree, latMinute, latSecond, latDirection);        
-        var lonDegree = this.exifdata.GPSLongitude[0].numerator/this.exifdata.GPSLongitude[0].denominator;
-        var lonMinute = this.exifdata.GPSLongitude[1].numerator;this.exifdata.GPSLongitude[1].denominator;
-        var lonSecond = this.exifdata.GPSLongitude[2].numerator/this.exifdata.GPSLongitude[2].denominator;
-        var lonDirection = this.exifdata.GPSLongitudeRef;
-        ExifLongitud = ConvertDMSToDD(lonDegree, lonMinute, lonSecond, lonDirection);
-        console.log("EXIF GPS: "+ ExifLatitud + ", "+ ExifLongitud);        
-      }    
-      var canvas = document.getElementById("canvas");
-      var ctx = canvas.getContext("2d");
-      var img = new Image;
-      img.src = URL.createObjectURL(input.files[0]);
-      img.onload = function() {
-        var iw=img.width;
-        var ih=img.height;
-        var scale=Math.min((midaFoto/iw),(midaFoto/ih));
-        var iwScaled=iw*scale;
-        var ihScaled=ih*scale;
-        canvas.width=iwScaled;
-        canvas.height=ihScaled;
-        ctx.drawImage(img,0,0,iwScaled,ihScaled);
-        canvas.style.display = "none";
-        $("#foto").attr("src", canvas.toDataURL("image/jpeg",0.5));
-        $("#descripcio").val("");
-        $("#fenomen").val("0");
-        var string64 = canvas.toDataURL("image/jpeg",0.5);
-        desaObservacio(string64);
-      }
-    });
+function readURL(input) { 
+  if(input.files[0] != undefined) {
+    fitxerImg = input.files[0].name;
+    var extn = fitxerImg.substring(fitxerImg.lastIndexOf('.') + 1).toLowerCase();
+    if (extn == "jpg" || extn == "jpeg") { 
+      ExifData = ""; 
+      ExifHora = ""
+      ExifLatitud = "";
+      ExifLongitud = "";
+      EXIF.getData(input.files[0], function() {
+        if(this.exifdata.DateTimeOriginal != undefined) {
+          var splitData = this.exifdata.DateTimeOriginal.split(" ");
+          ExifData = formatDateGPS(splitData[0]);
+          ExifHora = splitData[1];
+          console.log("EXIF Data: " + ExifData + ", " + ExifHora);
+        }
+        if(this.exifdata.GPSLatitude != undefined) {     
+          var latDegree = this.exifdata.GPSLatitude[0].numerator/this.exifdata.GPSLatitude[0].denominator;
+          var latMinute = this.exifdata.GPSLatitude[1].numerator/this.exifdata.GPSLatitude[1].denominator;
+          var latSecond = this.exifdata.GPSLatitude[2].numerator/this.exifdata.GPSLatitude[2].denominator;
+          var latDirection = this.exifdata.GPSLatitudeRef;
+          ExifLatitud = ConvertDMSToDD(latDegree, latMinute, latSecond, latDirection);        
+          var lonDegree = this.exifdata.GPSLongitude[0].numerator/this.exifdata.GPSLongitude[0].denominator;
+          var lonMinute = this.exifdata.GPSLongitude[1].numerator;this.exifdata.GPSLongitude[1].denominator;
+          var lonSecond = this.exifdata.GPSLongitude[2].numerator/this.exifdata.GPSLongitude[2].denominator;
+          var lonDirection = this.exifdata.GPSLongitudeRef;
+          ExifLongitud = ConvertDMSToDD(lonDegree, lonMinute, lonSecond, lonDirection);
+          console.log("EXIF GPS: "+ ExifLatitud + ", "+ ExifLongitud);        
+        }    
+        var canvas = document.getElementById("canvas");
+        var ctx = canvas.getContext("2d");
+        var img = new Image;
+        img.src = URL.createObjectURL(input.files[0]);
+        img.onload = function() {
+          var iw=img.width;
+          var ih=img.height;
+          var scale=Math.min((midaFoto/iw),(midaFoto/ih));
+          var iwScaled=iw*scale;
+          var ihScaled=ih*scale;
+          canvas.width=iwScaled;
+          canvas.height=ihScaled;
+          ctx.drawImage(img,0,0,iwScaled,ihScaled);
+          canvas.style.display = "none";
+          $("#foto").attr("src", canvas.toDataURL("image/jpeg",0.5));
+          $("#descripcio").val("");
+          $("#fenomen").val("0");
+          var string64 = canvas.toDataURL("image/jpeg",0.5);            
+          desaObservacio(string64);
+        }
+      });
+    } else {
+      alert("La foto de l'observació ha de tenir el format JPEG.");
+    }
   } else {
-    alert("La foto de l'observació ha de tenir el format JPEG.");
+    console.log("Error: no s'ha obtingut cap fitxer.");
   }
 }
 
@@ -607,7 +596,6 @@ function desaData(dia, hora) {
   }
 }
 
-
 function desaUbicacio() {
   indexedDB.open("eduMET").onsuccess = function(event) {
     var objStore = event.target.result.transaction(["Observacions"], "readwrite").objectStore("Observacions");
@@ -633,7 +621,8 @@ function baixaObsInicial() {
       var db = event.target.result;    
       var obsObjStore = db.transaction("Observacions", "readwrite").objectStore("Observacions");
       for(i=0;i<response.length;i++){
-        response[i]["Enviat"] = 1;
+        response[i]["En_cua"] = 0;
+        response[i]["Penjada"] = 1;
         obsObjStore.add(response[i]);
         console.log("Observació inicial: " + response[i]["ID"]);
         fetch(url_imatges + response[i]["Fotografia_observacio"]);
@@ -660,7 +649,8 @@ function baixaObsAfegides() {
               }
             }
             if(nova){
-              response[i]["Enviat"] = 1;
+              response[i]["En_cua"] = 0;
+              response[i]["Penjada"] = 1;
               console.log("Nova observació: " + response[i]["ID"]);
               fetch(url_imatges + response[i]["Fotografia_observacio"]);
               obsObjStore.add(response[i]);              
@@ -672,90 +662,71 @@ function baixaObsAfegides() {
   });
 }
 
-function enviaActual() {
-  if(navigator.onLine){
-    enviaObservacio(observacioActual);
-  } else {
-    alert("Opció no disponible sense connexió a Internet.");
-  }
-}
-function enviaFitxa() {
-  if(navigator.onLine){
-    enviaObservacio(observacioFitxa);
-  } else {
-    alert("Opció no disponible sense connexió a Internet.");
+function enviaObservacio() {
+  indexedDB.open("eduMET").onsuccess = function(event) {
+    event.target.result.transaction(["Observacions"], "readwrite").objectStore("Observacions").get(observacioActual).onsuccess = function(e) {
+      if(e.target.result["Penjada"] == "0") {  
+        var imatge64 =  e.target.result["Imatge"].replace(/^data:image\/[a-z]+;base64,/, "");                    
+        var envio = { 
+            tab: "salvarFenoApp",
+            usuari: usuari,
+            dia: e.target.result["Data_observacio"],
+            hora: e.target.result["Hora_observacio"],
+            lat: e.target.result["Latitud"],
+            lon: e.target.result["Longitud"],
+            id_feno: e.target.result["Id_feno"],
+            descripcio: e.target.result["Descripcio_observacio"],
+            fitxer: imatge64
+        }
+        var JSONenvio = JSON.stringify(envio);
+        fetch(url_servidor,{
+          method:'POST',
+          headers:{
+            'Content-Type': 'application/json; charset=UTF-8'
+            },
+          body: JSONenvio
+        })
+        .then(response => response.text())
+        .then(response => {  
+          indexedDB.open("eduMET").onsuccess = function(event) {
+            var objStore = event.target.result.transaction(["Observacions"], "readwrite").objectStore("Observacions");
+            var request = objStore.get(observacioActual);
+            request.onsuccess = function() {
+              var data = request.result;
+              data.ID =  response.trim();
+              data.En_cua = 0;
+              data.Penjada = 1;
+              objStore.put(data);
+              alert("S'ha penjat l'observació al servidor eduMET.");
+            }
+          }                       
+        })
+        .catch(error => {
+          posaEnCua();
+        });
+      } else {
+        var url = url_servidor + '?tab=modificarFenoApp&id=' + e.target.result["ID"] + '&Id_feno=' + e.target.result["Id_feno"] +'&descripcio="' + e.target.result["Descripcio_observacio"] + '"';
+        fetch(url)
+        .then(response =>  {
+          alert("S'ha actualitzat l'observació penjada al servidor eduMET.");
+        })
+        .catch(error => {
+          posaEnCua();
+        });
+      }
+    }
   }
 }
 
-function enviaObservacio(observacioEnvia) {
+function posaEnCua() {
+  console.log("Offline: Posant l'observació en cua");
   indexedDB.open("eduMET").onsuccess = function(event) {
-    event.target.result.transaction(["Observacions"], "readwrite").objectStore("Observacions").get(observacioEnvia).onsuccess = function(e) {
-      if(e.target.result["Enviat"] == undefined) {
-        alert("Si us plau, fes primer la foto corresponent a l'observació.");
-      } else {
-        if(e.target.result["Id_feno"] == "0" || e.target.result["Descripcio_observacio"] == "") {
-          alert("Si us plau, desa primer l'observació indicant el tipus de fenomen i escrivint una breu descripció.");
-        } else {
-          if (e.target.result["Data_observacio"] == "") {
-            alert("Si us plau, Indica primer la data en què es va realitzar l'observació.");
-          } else {      
-            if (e.target.result["Latitud"] == "") {
-              alert("Si us plau, Indica primer el lloc on es va realitzar l'observació.");
-            } else {  
-              if(e.target.result["Enviat"] == "0") {  
-                var imatge64 =  e.target.result["Imatge"].replace(/^data:image\/[a-z]+;base64,/, "");                    
-                var envio = { 
-                    tab: "salvarFenoApp",
-                    usuari: usuari,
-                    dia: e.target.result["Data_observacio"],
-                    hora: e.target.result["Hora_observacio"],
-                    lat: e.target.result["Latitud"],
-                    lon: e.target.result["Longitud"],
-                    id_feno: e.target.result["Id_feno"],
-                    descripcio: e.target.result["Descripcio_observacio"],
-                    fitxer: imatge64
-                }
-                var JSONenvio = JSON.stringify(envio);
-                fetch(url_servidor,{
-                  method:'POST',
-                  headers:{
-                    'Content-Type': 'application/json; charset=UTF-8'
-                    },
-                  body: JSONenvio
-                })
-                .then(response => response.text())
-                .then(response => {  
-                  indexedDB.open("eduMET").onsuccess = function(event) {
-                    var objStore = event.target.result.transaction(["Observacions"], "readwrite").objectStore("Observacions");
-                    var request = objStore.get(observacioEnvia);
-                    request.onsuccess = function() {
-                      var data = request.result;
-                      data.ID =  response.trim();
-                      data.Enviat = 1;
-                      objStore.put(data);
-                      alert("S'ha penjat l'observació al servidor eduMET.");
-                      if(vistaActual == 'fitxa') {
-                        //$("edita_obs').disabled = true;
-                        //$("envia_obs').disabled = true;
-                        //var checkVerd = document.getElementById(e.target.result["Data_registre"]);
-                        //checkVerd.style.color = "limegreen";
-                        $("#" + e.target.result["Data_registre"]).css("color","limegreen");
-                      }
-                    }
-                  }                       
-                });
-              } else {
-                //navigator.notification.alert("Aquesta observació ja està penjada al servidor eduMET. Si us plau, fes una nova observació.", empty, 'Penjar observació', "D'acord");
-                var url = url_servidor + '?tab=modificarFenoApp&id=' + e.target.result["ID"] + '&Id_feno=' + e.target.result["Id_feno"] +'&descripcio="' + e.target.result["Descripcio_observacio"] + '"';
-                fetch(url)
-                  .then(response =>  {
-                    alert("S'ha actualitzat l'observació penjada al servidor eduMET.");
-                });
-              }
-            }
-          }
-        }
-      }
+    var objStore = event.target.result.transaction(["Observacions"], "readwrite").objectStore("Observacions");
+    var request = objStore.get(observacioActual);
+    request.onsuccess = function() {
+      var data = request.result;
+      data.En_cua = 1;
+      objStore.put(data);
     }
   }
 }
@@ -792,7 +763,7 @@ function elimina() {
     obsObjStore = db.objectStore("Observacions");
     obsObjStore.get(observacioFitxa).onsuccess = function(e) {
       var eliminarLocal = true;
-      if(e.target.result["Enviat"] == "1") {
+      if(e.target.result["Penjada"] == "1") {
         if (!(navigator.onLine)) {
           alert("Les observacions que ja s'han penjat al servidor eduMET no es poden eliminar sense connexió a Internet.");
           eliminarLocal = false;
@@ -837,19 +808,19 @@ function actualitzaObservacio() {
           event.target.result.transaction(["Observacions"], "readonly").objectStore("Observacions").get(observacioActual).onsuccess = function(e) {
             var llistaMissing = "";
             if(e.target.result["Data_observacio"] == ""){
-              llistaMissing+="\t•La data i l'hora de l'observació\n";
+              llistaMissing+="• La data i l'hora de l'observació\n";
             }
             if(e.target.result["Latitud"] == ""){
-              llistaMissing+="\t•El lloc des d'on es va fer l'observació\n";
+              llistaMissing+="• El lloc des d'on es va fer l'observació\n";
             }
             if(e.target.result["Id_feno"] == 0){
-              llistaMissing+="\t•El tipus de fenomen observat\n";
+              llistaMissing+="• El tipus de fenomen observat\n";
             }
             if(e.target.result["Descripcio_observacio"] == ""){
-              llistaMissing+="\t•Una breu descripció del fenomen observat\n";
+              llistaMissing+="• Una breu descripció del fenomen observat\n";
             }
-            if(llistaMissing==""){
-              enviaObservacio(observacioActual);
+            if(llistaMissing == ""){
+              enviaObservacio();
             } else{
               llistaMissing = "Abans de penjar l'observació al servidor eduMET has d'indicar:\n\n" + llistaMissing;
               alert(llistaMissing);
@@ -887,11 +858,15 @@ function llistaObservacions() {
         } else {
           llista+= 'Sense identificar';
         }
-        llista+= '</label><div style="width:25%"><i id="' + obs[i]["Data_registre"] + '" class="material-icons icona-36" style="color:';
-        if(obs[i]["Enviat"] == "1") {
+        llista+= '</label><div style="width:25%"><i id="' + obs[i]["Data_registre"] + '" class="material-icons icona-36" style="color:';        
+        if(obs[i]["Penjada"] == "1") {
           llista+= 'limegreen';
         } else {
-          llista+= 'lightgray';
+          if(obs[i]["En_cua"] == "1") {
+            llista+= 'orange';
+          } else {
+            llista+= 'lightgray';
+          }
         }
         llista+= '">check</i></div></div>'; 
       }
@@ -943,7 +918,8 @@ function desaObservacio(string64){
 
   var nou_registre = [];
   nou_registre["Data_registre"] = observacioActual;
-  nou_registre["Enviat"] = 0;
+  nou_registre["En_cua"] = 0;
+  nou_registre["Penjada"] = 0;
   nou_registre["Data_observacio"] = fotoData;
   nou_registre["Hora_observacio"] = fotoHora;
   nou_registre["Latitud"] = fotoLatitud;
@@ -1082,8 +1058,6 @@ function estacio() {
 function radar() {
   if(navigator.onLine) {
     activa('radar');
-    //$("frameRadar').src = "https://edumet.cat/edumet/meteo_proves/00_radar_app.php";
-    //$("frameRadar').src = "http://m.meteo.cat/temps-actual";
     var url = url_servidor + "?tab=radar";
     fetch(url)
     .then(response => response.text())
@@ -1219,7 +1193,6 @@ function fitxa(observacio) {
           }).addTo(mapaFitxa);
         } else{
           mapaFitxa.setView(new L.LatLng(laLatitud, laLongitud), 10);
-          //const xhr = new XMLHttpRequest();
           fetch("https://edumet.cat/edumet/app/json/municipis.geojson")
           .then(response => response.json())
           .then(response => {
@@ -1376,47 +1349,47 @@ function checkDeviceSupport(callback) {
   MediaDevices = [];
   navigator.enumerateDevices(function(devices) {
       devices.forEach(function(_device) {
-          var device = {};
-          for (var d in _device) {
-              device[d] = _device[d];
-          }
-          if (device.kind === 'video') {
-              device.kind = 'videoinput';
-          }
-          var skip;
-          MediaDevices.forEach(function(d) {
-              if (d.id === device.id && d.kind === device.kind) {
-                  skip = true;
-              }
-          });
-          if (skip) {
-              return;
-          }
-          if (!device.deviceId) {
-              device.deviceId = device.id;
-          }
-          if (!device.id) {
-              device.id = device.deviceId;
-          }
-          if (!device.label) {
-              device.label = 'Please invoke getUserMedia once.';
-              if (!isHTTPs) {
-                  device.label = 'HTTPs is required to get label of this ' + device.kind + ' device.';
-              }
-          } else {
-              if (device.kind === 'videoinput' && !isWebcamAlreadyCaptured) {
-                  isWebcamAlreadyCaptured = true;
-              }
-          }
-          if (device.kind === 'videoinput') {
-              hasWebcam = true;
-          }
-          // there is no 'videoouput' in the spec.
-          MediaDevices.push(device);
-      });
-      if (callback) {
-          callback();
-      }
+        var device = {};
+        for (var d in _device) {
+            device[d] = _device[d];
+        }
+        if (device.kind === 'video') {
+            device.kind = 'videoinput';
+        }
+        var skip;
+        MediaDevices.forEach(function(d) {
+            if (d.id === device.id && d.kind === device.kind) {
+                skip = true;
+            }
+        });
+        if (skip) {
+            return;
+        }
+        if (!device.deviceId) {
+            device.deviceId = device.id;
+        }
+        if (!device.id) {
+            device.id = device.deviceId;
+        }
+        if (!device.label) {
+            device.label = 'Please invoke getUserMedia once.';
+            if (!isHTTPs) {
+                device.label = 'HTTPs is required to get label of this ' + device.kind + ' device.';
+            }
+        } else {
+            if (device.kind === 'videoinput' && !isWebcamAlreadyCaptured) {
+                isWebcamAlreadyCaptured = true;
+            }
+        }
+        if (device.kind === 'videoinput') {
+            hasWebcam = true;
+        }
+        // there is no 'videoouput' in the spec.
+        MediaDevices.push(device);
+    });
+    if (callback) {
+        callback();
+    }
   });
 }
 

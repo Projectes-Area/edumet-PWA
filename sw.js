@@ -12,6 +12,7 @@ self.addEventListener('install', function(e) {
         'img/launcher-icon-4x.png',
         'img/marker-icon-green.png',
         'img/default@2x.png',
+        'https://edumet.cat/edumet/app/json/municipis.geojson',
         'https://unpkg.com/leaflet@1.5.1/dist/leaflet.css',
         'https://unpkg.com/leaflet@1.5.1/dist/leaflet.js',
         'https://unpkg.com/leaflet@1.5.1/dist/images/marker-icon.png',
@@ -21,13 +22,22 @@ self.addEventListener('install', function(e) {
         'https://fonts.googleapis.com/icon?family=Material+Icons',
         'https://fonts.gstatic.com/s/materialicons/v47/flUhRq6tzZclQEJ-Vdg-IuiaDsNcIhQ8tQ.woff2',
         'https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js',
-        'https://edumet.cat/edumet/app/json/municipis.geojson',
         'https://cdnjs.cloudflare.com/ajax/libs/weather-icons/2.0.10/css/weather-icons.min.css',
         'https://cdnjs.cloudflare.com/ajax/libs/weather-icons/2.0.10/font/weathericons-regular-webfont.woff2'
       ]);
     })
   );
-  });
+});
+
+self.addEventListener('activate', event => {
+  var interval = setInterval(escombra,5000);
+  console.log('V1 now ready to handle fetches!');
+});
+function escombra() {
+  console.log("Escombrant ...");
+}
+
+
 
 self.addEventListener('fetch', function(event) {
   event.respondWith(
