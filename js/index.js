@@ -665,61 +665,82 @@ function baixaObsAfegides() {
 function enviaObservacio() {
   indexedDB.open("eduMET").onsuccess = function(event) {
     event.target.result.transaction(["Observacions"], "readwrite").objectStore("Observacions").get(observacioActual).onsuccess = function(e) {
-      if(e.target.result["Penjada"] == "0") {  
-        var imatge64 =  e.target.result["Imatge"].replace(/^data:image\/[a-z]+;base64,/, "");                    
-        var envio = { 
-            tab: "salvarFenoApp",
-            usuari: usuari,
-            dia: e.target.result["Data_observacio"],
-            hora: e.target.result["Hora_observacio"],
-            lat: e.target.result["Latitud"],
-            lon: e.target.result["Longitud"],
+      if(navigator.onLine) {
+        if(e.target.result["Penjada"] == "0") {  
+          var imatge64 =  e.target.result["Imatge"].replace(/^data:image\/[a-z]+;base64,/, "");                    
+          var envio = { 
+              tab: "salvarFenoApp",
+              usuari: usuari,
+              dia: e.target.result["Data_observacio"],
+              hora: e.target.result["Hora_observacio"],
+              lat: e.target.result["Latitud"],
+              lon: e.target.result["Longitud"],
+              id_feno: e.target.result["Id_feno"],
+              descripcio: e.target.result["Descripcio_observacio"],
+              fitxer: imatge64
+          }
+          var JSONenvio = JSON.stringify(envio);
+          fetch(url_servidor,{
+            method:'POST',
+            headers:{
+              'Content-Type': 'application/json; charset=UTF-8'
+              },
+            body: JSONenvio
+          })
+          .then(response => response.text())
+          .then(response => {  
+            indexedDB.open("eduMET").onsuccess = function(event) {
+              var objStore = event.target.result.transaction(["Observacions"], "readwrite").objectStore("Observacions");
+              var request = objStore.get(observacioActual);
+              request.onsuccess = function() {
+                var data = request.result;
+                data.ID =  response.trim();
+                data.En_cua = 0;
+                data.Penjada = 1;
+                objStore.put(data);
+                alert("S'ha penjat l'observació al servidor eduMET.");
+              }
+            }                       
+          })
+          .catch(error => {
+            posaEnCua();
+          });
+        } else {
+          var envio = { 
+            tab: "modificarFenoApp",
+            id: e.target.result["ID"],
             id_feno: e.target.result["Id_feno"],
-            descripcio: e.target.result["Descripcio_observacio"],
-            fitxer: imatge64
+            descripcio: e.target.result["Descripcio_observacio"]
+          }
+          var JSONenvio = JSON.stringify(envio);
+          var url = url_servidor + '?observacio=' + e.target.result["Data_registre"];
+          fetch(url,{
+            method:'POST',
+            headers:{
+              'Content-Type': 'application/json; charset=UTF-8'
+              },
+            body: JSONenvio
+          })
+          .then(response => {
+            var url = new URL(response.url);
+            observacio = url.searchParams.get("observacio");
+            alert("S'ha actualitzat l'observació penjada al servidor eduMET: " + observacio);
+          })
+        //var url = url_servidor + '?tab=modificarFenoApp&id=' + e.target.result["ID"] + '&Id_feno=' + e.target.result["Id_feno"] +'&descripcio="' + e.target.result["Descripcio_observacio"] + '"&observacio=' + e.target.result["Data_registre"] ;
+          .catch(error => {
+            posaEnCua();
+          });
         }
-        var JSONenvio = JSON.stringify(envio);
-        fetch(url_servidor,{
-          method:'POST',
-          headers:{
-            'Content-Type': 'application/json; charset=UTF-8'
-            },
-          body: JSONenvio
-        })
-        .then(response => response.text())
-        .then(response => {  
-          indexedDB.open("eduMET").onsuccess = function(event) {
-            var objStore = event.target.result.transaction(["Observacions"], "readwrite").objectStore("Observacions");
-            var request = objStore.get(observacioActual);
-            request.onsuccess = function() {
-              var data = request.result;
-              data.ID =  response.trim();
-              data.En_cua = 0;
-              data.Penjada = 1;
-              objStore.put(data);
-              alert("S'ha penjat l'observació al servidor eduMET.");
-            }
-          }                       
-        })
-        .catch(error => {
-          posaEnCua();
-        });
       } else {
-        var url = url_servidor + '?tab=modificarFenoApp&id=' + e.target.result["ID"] + '&Id_feno=' + e.target.result["Id_feno"] +'&descripcio="' + e.target.result["Descripcio_observacio"] + '"';
-        fetch(url)
-        .then(response =>  {
-          alert("S'ha actualitzat l'observació penjada al servidor eduMET.");
-        })
-        .catch(error => {
-          posaEnCua();
-        });
+        posaEnCua();
       }
-    }
+    } 
   }
 }
 
 function posaEnCua() {
   console.log("Offline: Posant l'observació en cua");
+  alert("Sense connexió. L'observació es penjarà quan et connectis a Internet");
   indexedDB.open("eduMET").onsuccess = function(event) {
     var objStore = event.target.result.transaction(["Observacions"], "readwrite").objectStore("Observacions");
     var request = objStore.get(observacioActual);

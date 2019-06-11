@@ -30,14 +30,93 @@ self.addEventListener('install', function(e) {
 });
 
 self.addEventListener('activate', event => {
-  var interval = setInterval(escombra,5000);
-  console.log('V1 now ready to handle fetches!');
+  setInterval(escombra,10000);
 });
+
 function escombra() {
-  console.log("Escombrant ...");
+  var url_servidor = 'https://edumet.cat/edumet/meteo_proves/dades_recarregar.php';
+  indexedDB.open("eduMET").onsuccess = function(event) {
+    var obsObjStore = event.target.result.transaction(["Observacions"], "readwrite").objectStore("Observacions");
+    obsObjStore.getAll().onsuccess = function(e) {
+      for(i=0;i<e.target.result.length;i++) {        
+        if(e.target.result[i]["En_cua"] == 1) {
+          var observacio = e.target.result[i]["Data_registre"];
+          if(e.target.result[i]["Penjada"] == 0) {  
+            var imatge64 =  e.target.result[i]["Imatge"].replace(/^data:image\/[a-z]+;base64,/, "");                    
+            var envio = { 
+                tab: "salvarFenoApp",
+                usuari: e.target.result[i]["Observador"],
+                dia: e.target.result[i]["Data_observacio"],
+                hora: e.target.result[i]["Hora_observacio"],
+                lat: e.target.result[i]["Latitud"],
+                lon: e.target.result[i]["Longitud"],
+                id_feno: e.target.result[i]["Id_feno"],
+                descripcio: e.target.result[i]["Descripcio_observacio"],
+                fitxer: imatge64
+            }
+            var JSONenvio = JSON.stringify(envio);
+            fetch(url_servidor,{
+              method:'POST',
+              headers:{
+                'Content-Type': 'application/json; charset=UTF-8'
+                },
+              body: JSONenvio
+            })
+            .then(response => response.text())
+            .then(response => {  
+                var objStore = event.target.result.transaction(["Observacions"], "readwrite").objectStore("Observacions");
+                var request = objStore.get(observacio);
+                request.onsuccess = function() {
+                  var data = request.result;
+                  data.ID =  response.trim();
+                  data.En_cua = 0;
+                  data.Penjada = 1;
+                  objStore.put(data);
+                  console.log("S'ha penjat l'observació ID " + data.ID);
+                }                   
+            })
+            .catch(error => {
+              console.log("Service worker: offline");
+            });
+          } else {
+            var envio = { 
+              tab: "modificarFenoApp",
+              id: e.target.result[i]["ID"],
+              id_feno: e.target.result[i]["Id_feno"],
+              descripcio: e.target.result[i]["Descripcio_observacio"]
+            }
+            var JSONenvio = JSON.stringify(envio);
+            var url = url_servidor + '?observacio=' + e.target.result[i]["Data_registre"];
+            console.log(url);
+            fetch(url,{
+              method:'POST',
+              headers:{
+                'Content-Type': 'application/json; charset=UTF-8'
+                },
+              body: JSONenvio
+            })
+            .then(response => {
+              var url = new URL(response.url);
+              observacio = url.searchParams.get("observacio");
+              console.log(observacio);
+              var objStore = event.target.result.transaction(["Observacions"], "readwrite").objectStore("Observacions");
+              var request = objStore.get(observacio);
+              request.onsuccess = function() {
+                var data = request.result;
+                data.En_cua = 0;
+                objStore.put(data);
+                console.log("S'ha actualitzat l'observació Data_registre " + observacio);
+              }
+            })
+            .catch(error => {
+              console.log("Service worker: offline");
+            });
+          }
+        }
+      }
+    }
+  }
 }
-
-
 
 self.addEventListener('fetch', function(event) {
   event.respondWith(
