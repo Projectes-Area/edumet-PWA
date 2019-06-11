@@ -39,8 +39,8 @@ function escombra() {
     var obsObjStore = event.target.result.transaction(["Observacions"], "readwrite").objectStore("Observacions");
     obsObjStore.getAll().onsuccess = function(e) {
       for(i=0;i<e.target.result.length;i++) {        
-        if(e.target.result[i]["En_cua"] == 1) {
-          var observacio = e.target.result[i]["Data_registre"];
+        if(e.target.result[i]["En_cua"] == "penjar") {
+          var observacio = e.target.result[i]["GUID"];
           if(e.target.result[i]["Penjada"] == 0) {  
             var imatge64 =  e.target.result[i]["Imatge"].replace(/^data:image\/[a-z]+;base64,/, "");                    
             var envio = { 
@@ -69,7 +69,7 @@ function escombra() {
                 request.onsuccess = function() {
                   var data = request.result;
                   data.ID =  response.trim();
-                  data.En_cua = 0;
+                  data.En_cua = "";
                   data.Penjada = 1;
                   objStore.put(data);
                   console.log("S'ha penjat l'observació ID " + data.ID);
@@ -86,8 +86,7 @@ function escombra() {
               descripcio: e.target.result[i]["Descripcio_observacio"]
             }
             var JSONenvio = JSON.stringify(envio);
-            var url = url_servidor + '?observacio=' + e.target.result[i]["Data_registre"];
-            console.log(url);
+            var url = url_servidor + '?observacio=' + e.target.result[i]["GUID"];
             fetch(url,{
               method:'POST',
               headers:{
@@ -98,20 +97,34 @@ function escombra() {
             .then(response => {
               var url = new URL(response.url);
               observacio = url.searchParams.get("observacio");
-              console.log(observacio);
               var objStore = event.target.result.transaction(["Observacions"], "readwrite").objectStore("Observacions");
               var request = objStore.get(observacio);
               request.onsuccess = function() {
                 var data = request.result;
-                data.En_cua = 0;
+                data.En_cua = "";
                 objStore.put(data);
-                console.log("S'ha actualitzat l'observació Data_registre " + observacio);
+                console.log("S'ha actualitzat l'observació GUID " + observacio);
               }
             })
             .catch(error => {
               console.log("Service worker: offline");
             });
           }
+        }
+        if(e.target.result[i]["En_cua"] == "eliminar") {
+          var url = url_servidor + "?usuari=" + e.target.result[i]["Observador"] + "&id=" + e.target.result[i]["ID"] + "&tab=eliminarFenUsu&observacio=" + e.target.result[i]["GUID"];
+          fetch(url)
+          .then(response => {
+            var url = new URL(response.url);
+            observacio = url.searchParams.get("observacio");
+            indexedDB.open("eduMET").onsuccess = function(event) {
+              event.target.result.transaction(["Observacions"], "readwrite").objectStore("Observacions").delete(observacio);   
+              console.log("Service worker: observació eliminada");
+            }
+          })
+          .catch(error => {
+            console.log("Service worker: offline");
+          });
         }
       }
     }

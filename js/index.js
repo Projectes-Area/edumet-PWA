@@ -33,7 +33,7 @@ window.onload = function() {
       var db = event.target.result;    
       db.createObjectStore("Fenomens", {keyPath: "Id_feno"});
       db.createObjectStore("Estacions", {keyPath: "Codi_estacio"});
-      db.createObjectStore("Observacions", {keyPath: "Data_registre"});
+      db.createObjectStore("Observacions", {keyPath: "GUID"});
       baixaFenomens();
       baixaEstacions();
     }
@@ -53,6 +53,52 @@ window.onload = function() {
   });
   document.getElementById('fitxer').addEventListener("change", function(event) {
     readURL(this);
+  });
+  $("#calendari").daterangepicker({
+    singleDatePicker: true,
+    startDate: moment(),
+    showDropdowns: true,
+    minYear: 2000,
+    timePicker: true,
+    timePicker24Hour: true,
+    timePickerSeconds: true,
+    locale: {
+        "format": "DD/MM/YYYY",
+        "separator": " - ",
+        "applyLabel": "Desa la data i l'hora",
+        "cancelLabel": "Cancel·la",
+        "customRangeLabel": "Custom",
+        "daysOfWeek": ["Di","Dl","Dm","Dc","Dj","Dv","Ds"],
+        "monthNames": ["Gener","Febrer","Març","Abril","Maig","Juny","Juliol","Agost","Setembre","Octubre","Novembre","Desembre"],
+        "firstDay": 1
+    }
+  }, function(start) {
+    var dia = start.format('YYYY-MM-DD');
+    var hora = start.format('HH:mm:ss'); 
+    flagDataTriada = true;
+    desaData(dia,hora);
+  });
+  $("#calendari").on('show.daterangepicker', function(ev, picker) {
+    flagDataTriada = false;
+  });
+  $("#calendari").on('apply.daterangepicker', function(ev, picker) {
+    if(!flagDataTriada) {
+      var ara = new Date(Date.now());
+      var any = ara.getFullYear();
+      var mes = (ara.getMonth() + 1).toString();
+      var dia = ara.getDate().toString();
+      var hora = ara.getHours().toString();
+      var minut = ara.getMinutes().toString();
+      var segon = ara.getSeconds().toString();
+      if (mes.length < 2) mes = '0' + mes;
+      if (dia.length < 2) dia = '0' + dia;
+      if (hora.length < 2) hora = '0' + hora;
+      if (minut.length < 2) minut = '0' + minut;
+      if (segon.length < 2) segon = '0' + segon;
+      var Data_actual = any + '-' + mes + '-' + dia;
+      var Hora_actual = hora + ':' + minut + ':' + segon;
+      desaData(Data_actual,Hora_actual);
+    }
   });
 };
 
@@ -591,7 +637,7 @@ function desaData(dia, hora) {
       data.Data_observacio =  dia;
       data.Hora_observacio =  hora;
       objStore.put(data);
-      alert("S'ha desat la data i l'hora de l'observació.");
+      console.log("S'ha desat la data i l'hora de l'observació.");
     }
   }
 }
@@ -606,7 +652,7 @@ function desaUbicacio() {
       data.Longitud =  marcadorUbica.getLatLng().lng;
       objStore.put(data);
       activa('fenologia');
-      alert("S'ha desat la ubicació de l'observació.");
+      console.log("S'ha desat la ubicació de l'observació.");
     }
   }
 }
@@ -621,10 +667,11 @@ function baixaObsInicial() {
       var db = event.target.result;    
       var obsObjStore = db.transaction("Observacions", "readwrite").objectStore("Observacions");
       for(i=0;i<response.length;i++){
-        response[i]["En_cua"] = 0;
+        response[i]["GUID"] = GUID();
+        response[i]["En_cua"] = "";
         response[i]["Penjada"] = 1;
         obsObjStore.add(response[i]);
-        console.log("Observació inicial: " + response[i]["ID"]);
+        console.log("Observació inicial ID " + response[i]["ID"] + " GUID " + response[i]["GUID"]);
         fetch(url_imatges + response[i]["Fotografia_observacio"]);
       }
     }
@@ -649,9 +696,10 @@ function baixaObsAfegides() {
               }
             }
             if(nova){
-              response[i]["En_cua"] = 0;
+              response[i]["GUID"] = GUID();
+              response[i]["En_cua"] = "";
               response[i]["Penjada"] = 1;
-              console.log("Nova observació: " + response[i]["ID"]);
+              console.log("Nova observació: " + response[i]["ID"]  + " GUID " + response[i]["GUID"]);
               fetch(url_imatges + response[i]["Fotografia_observacio"]);
               obsObjStore.add(response[i]);              
             }
@@ -695,7 +743,7 @@ function enviaObservacio() {
               request.onsuccess = function() {
                 var data = request.result;
                 data.ID =  response.trim();
-                data.En_cua = 0;
+                data.En_cua = "";
                 data.Penjada = 1;
                 objStore.put(data);
                 alert("S'ha penjat l'observació al servidor eduMET.");
@@ -703,7 +751,7 @@ function enviaObservacio() {
             }                       
           })
           .catch(error => {
-            posaEnCua();
+            posaEnCua("penjar");
           });
         } else {
           var envio = { 
@@ -713,7 +761,7 @@ function enviaObservacio() {
             descripcio: e.target.result["Descripcio_observacio"]
           }
           var JSONenvio = JSON.stringify(envio);
-          var url = url_servidor + '?observacio=' + e.target.result["Data_registre"];
+          var url = url_servidor + '?observacio=' + e.target.result["GUID"];
           fetch(url,{
             method:'POST',
             headers:{
@@ -725,28 +773,34 @@ function enviaObservacio() {
             var url = new URL(response.url);
             observacio = url.searchParams.get("observacio");
             alert("S'ha actualitzat l'observació penjada al servidor eduMET: " + observacio);
-          })
-        //var url = url_servidor + '?tab=modificarFenoApp&id=' + e.target.result["ID"] + '&Id_feno=' + e.target.result["Id_feno"] +'&descripcio="' + e.target.result["Descripcio_observacio"] + '"&observacio=' + e.target.result["Data_registre"] ;
+          })      
           .catch(error => {
-            posaEnCua();
+            posaEnCua("penjar");
           });
         }
       } else {
-        posaEnCua();
+        posaEnCua("penjar");
       }
     } 
   }
 }
 
-function posaEnCua() {
+function posaEnCua(motiu) {
   console.log("Offline: Posant l'observació en cua");
-  alert("Sense connexió. L'observació es penjarà quan et connectis a Internet");
   indexedDB.open("eduMET").onsuccess = function(event) {
     var objStore = event.target.result.transaction(["Observacions"], "readwrite").objectStore("Observacions");
-    var request = objStore.get(observacioActual);
+    if(motiu == "penjar") {
+      var request = objStore.get(observacioActual);
+      alert("Sense connexió. L'observació es penjarà quan et connectis a Internet.");
+    }
+    if(motiu == "eliminar") {
+      var request = objStore.get(observacioFitxa);
+      alert("Sense connexió. L'observació s'eliminarà quan et connectis a Internet.");
+      resetObservacio();
+    }
     request.onsuccess = function() {
       var data = request.result;
-      data.En_cua = 1;
+      data.En_cua = motiu;
       objStore.put(data);
     }
   }
@@ -783,29 +837,44 @@ function elimina() {
     var db = event.target.result.transaction(["Observacions"], "readwrite");
     obsObjStore = db.objectStore("Observacions");
     obsObjStore.get(observacioFitxa).onsuccess = function(e) {
-      var eliminarLocal = true;
       if(e.target.result["Penjada"] == "1") {
         if (!(navigator.onLine)) {
-          alert("Les observacions que ja s'han penjat al servidor eduMET no es poden eliminar sense connexió a Internet.");
-          eliminarLocal = false;
+          posaEnCua("eliminar");
         } else {           
-          var url = url_servidor + "?usuari=" + usuari + "&id=" + e.target.result["ID"] + "&tab=eliminarFenUsu";
-          fetch(url);
+          var url = url_servidor + "?usuari=" + usuari + "&id=" + e.target.result["ID"] + "&tab=eliminarFenUsu&observacio=" + e.target.result["GUID"];
+          fetch(url)
+          .then(response => {
+            var url = new URL(response.url);
+            observacio = url.searchParams.get("observacio");
+            indexedDB.open("eduMET").onsuccess = function(event) {
+              event.target.result.transaction(["Observacions"], "readwrite").objectStore("Observacions").delete(observacio);
+              alert("S'ha eliminat l'observació.");  
+              resetObservacio(); 
+            }
+          })
+          .catch(error => {
+            console.log(error);
+            posaEnCua("eliminar");
+          });
         }
-      }
-      if(eliminarLocal) {
+      } 
+      else {
         obsObjStore.delete(observacioFitxa);
-        if(observacioActual == observacioFitxa) {
-          $("#foto").attr("src","img/launcher-icon-4x.png");
-          $("#descripcio").val("");
-          $("#fenomen").val("0");
-          observacioActual = "";
-        }
-        activa('observacions');
-        llistaObservacions(); 
-        alert("S'ha eliminat l'observació.");          
-      }
+        alert("S'ha eliminat l'observació.");  
+        resetObservacio();       
+      }        
     }
+  }
+}
+
+function resetObservacio() {
+  activa('observacions');
+  llistaObservacions();  
+  if(observacioActual == observacioFitxa) {
+    $("#foto").attr("src","img/launcher-icon-4x.png");
+    $("#descripcio").val("");
+    $("#fenomen").val("0");
+    observacioActual = "";
   }
 }
 
@@ -859,10 +928,14 @@ function llistaObservacions() {
     event.target.result.transaction(["Observacions"], "readonly").objectStore("Observacions").getAll().onsuccess = function(event) {
       var obs = event.target.result;
       obs.sort(function(a,b){
-          return new Date(b["Data_registre"]) - new Date(a["Data_registre"]);
+        if (a["Data_observacio"] == "") {
+          return -1;
+        } else {
+          return new Date(b["Data_observacio"] + " " + b["Hora_observacio"]) - new Date(a["Data_observacio"] + " " + b["Hora_observacio"]);
+        }
       });
       for(i=0;i<obs.length;i++){
-        llista+= '<div style="display:flex; align-items:center;" onClick="fitxa(\'' + obs[i]["Data_registre"] +'\')"><div style="width:25%"><img src="';
+        llista+= '<div style="display:flex; align-items:center;" onClick="fitxa(\'' + obs[i]["GUID"] +'\')"><div style="width:25%"><img src="';
         var foto = obs[i]["Fotografia_observacio"];
         if(foto == 0) {
           llista+=  obs[i]["Imatge"];
@@ -879,11 +952,11 @@ function llistaObservacions() {
         } else {
           llista+= 'Sense identificar';
         }
-        llista+= '</label><div style="width:25%"><i id="' + obs[i]["Data_registre"] + '" class="material-icons icona-36" style="color:';        
+        llista+= '</label><div style="width:25%"><i id="' + obs[i]["GUID"] + '" class="material-icons icona-36" style="color:';     
         if(obs[i]["Penjada"] == "1") {
           llista+= 'limegreen';
         } else {
-          if(obs[i]["En_cua"] == "1") {
+          if(obs[i]["En_cua"] != "") {
             llista+= 'orange';
           } else {
             llista+= 'lightgray';
@@ -912,7 +985,9 @@ function desaObservacio(string64){
   var Data_actual = any + '-' + mes + '-' + dia;
   var Hora_actual = hora + ':' + minut + ':' + segon;
 
-  observacioActual = Data_actual + " " + Hora_actual;
+  var guid = GUID();
+  console.log('GUID: ' + guid);
+  observacioActual = guid;
 
   var fotoData = "";
   var fotoHora = "";
@@ -938,8 +1013,8 @@ function desaObservacio(string64){
   }
 
   var nou_registre = [];
-  nou_registre["Data_registre"] = observacioActual;
-  nou_registre["En_cua"] = 0;
+  nou_registre["GUID"] = observacioActual;
+  nou_registre["En_cua"] = "";
   nou_registre["Penjada"] = 0;
   nou_registre["Data_observacio"] = fotoData;
   nou_registre["Hora_observacio"] = fotoHora;
@@ -950,6 +1025,7 @@ function desaObservacio(string64){
   nou_registre["Id_feno"] = "0";
   nou_registre["Descripcio_observacio"] = "";
   nou_registre["Fotografia_observacio"] = "0";
+  nou_registre["Observador"] = usuari;
 
   indexedDB.open("eduMET").onsuccess = function(event) { 
     event.target.result.transaction("Observacions", "readwrite").objectStore("Observacions").add(nou_registre);
@@ -1022,55 +1098,8 @@ function login() {
   }
 }
 function fenologia() {
-  activa('fenologia');
-  $("#calendari").daterangepicker({
-    singleDatePicker: true,
-    startDate: moment(),
-    showDropdowns: true,
-    minYear: 2000,
-    timePicker: true,
-    timePicker24Hour: true,
-    timePickerSeconds: true,
-    locale: {
-        "format": "DD/MM/YYYY",
-        "separator": " - ",
-        "applyLabel": "Desa la data i l'hora",
-        "cancelLabel": "Cancel·la",
-        "customRangeLabel": "Custom",
-        "daysOfWeek": ["Di","Dl","Dm","Dc","Dj","Dv","Ds"],
-        "monthNames": ["Gener","Febrer","Març","Abril","Maig","Juny","Juliol","Agost","Setembre","Octubre","Novembre","Desembre"],
-        "firstDay": 1
-    }
-  }, function(start) {
-    var dia = start.format('YYYY-MM-DD');
-    var hora = start.format('HH:mm:ss'); 
-    flagDataTriada = true;
-    desaData(dia,hora);
-  });
-  $('#calendari').on('show.daterangepicker', function(ev, picker) {
-    flagDataTriada = false;
-  });
-  $('#calendari').on('apply.daterangepicker', function(ev, picker) {
-    if(!flagDataTriada) {
-      var ara = new Date(Date.now());
-      var any = ara.getFullYear();
-      var mes = (ara.getMonth() + 1).toString();
-      var dia = ara.getDate().toString();
-      var hora = ara.getHours().toString();
-      var minut = ara.getMinutes().toString();
-      var segon = ara.getSeconds().toString();
-      if (mes.length < 2) mes = '0' + mes;
-      if (dia.length < 2) dia = '0' + dia;
-      if (hora.length < 2) hora = '0' + hora;
-      if (minut.length < 2) minut = '0' + minut;
-      if (segon.length < 2) segon = '0' + segon;
-      var Data_actual = any + '-' + mes + '-' + dia;
-      var Hora_actual = hora + ':' + minut + ':' + segon;
-      desaData(Data_actual,Hora_actual);
-    }
-  });
+  activa('fenologia');  
 }
-
 
 function estacio() {
   activa('estacions');
@@ -1420,4 +1449,8 @@ function ConvertDMSToDD(degrees, minutes, seconds, direction) {
       dd = dd * -1; 
   }    
   return dd;
+}
+
+function GUID() {
+  return (Date.now().toString(36) + Math.random().toString(36).substr(2, 5)).toUpperCase()
 }
