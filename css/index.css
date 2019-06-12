@@ -6,9 +6,6 @@ body {
 button, select, input, textarea {
     font-family: Roboto,"Open Sans",Arial,Serif,Times !important;
 }
-#textarea {
-    resize: none;
-}
 .wi {
     color:#418ac8;
     margin-right:7px;
@@ -60,7 +57,7 @@ button, select, input, textarea {
     justify-content: center;
 }
 .boto-inf {
-    width:20%;
+    width:25%;
     background: none;
     border:none;
     outline:none;
@@ -201,6 +198,7 @@ button, select, input, textarea {
 #descripcio {
     width:100%;
     height:90%;
+    resize: none;
     font-size:14px !important;
 }
 #sector-inferior {

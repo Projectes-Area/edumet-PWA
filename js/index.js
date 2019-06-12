@@ -43,7 +43,6 @@ window.onload = function() {
   }
  
   window.addEventListener("orientationchange", function(){
-    console.log("event triggered");
     ajustaOrientacio();
   });
   ajustaOrientacio();   
@@ -472,6 +471,7 @@ function tancar_sessio() {
   $("#foto").attr("src","img/launcher-icon-4x.png");
   $("#descripcio").val("");
   $("#fenomen").val("0");
+  observacioActual = "";
   estacio();
 }
 
@@ -550,7 +550,7 @@ function readURL(input) {
 
 function triaLloc() {
   if(observacioActual == ""){
-    alert("Si us plau, fes primer la foto corresponent a l'observació.");
+    alert("Si us plau, primer fes o tria la foto corresponent a l'observació.");
   } else {
     indexedDB.open("eduMET").onsuccess = function(event) {
       event.target.result.transaction(["Observacions"], "readwrite").objectStore("Observacions").get(observacioActual).onsuccess = function(e) {
@@ -614,7 +614,7 @@ function triaLloc() {
 
 function triaData(){
   if(observacioActual == ""){
-    alert("Si us plau, fes primer la foto corresponent a l'observació.");
+    alert("Si us plau, primer fes o tria la foto corresponent a l'observació.");
   } else {
     indexedDB.open("eduMET").onsuccess = function(event) {
       event.target.result.transaction(["Observacions"], "readwrite").objectStore("Observacions").get(observacioActual).onsuccess = function(e) {
@@ -772,7 +772,7 @@ function enviaObservacio() {
           .then(response => {
             var url = new URL(response.url);
             observacio = url.searchParams.get("observacio");
-            alert("S'ha actualitzat l'observació penjada al servidor eduMET: " + observacio);
+            alert("S'han actualitzat les dades de l'observació.");
           })      
           .catch(error => {
             posaEnCua("penjar");
@@ -880,7 +880,7 @@ function resetObservacio() {
 
 function actualitzaObservacio() {
   if(observacioActual == ""){
-    alert("Si us plau, fes primer la foto corresponent a l'observació.");
+    alert("Si us plau, primer fes o tria la foto corresponent a l'observació.");
   } else {
     indexedDB.open("eduMET").onsuccess = function(event) {
       var objStore = event.target.result.transaction(["Observacions"], "readwrite").objectStore("Observacions");
@@ -1012,8 +1012,23 @@ function desaObservacio(string64){
     fotoLongitud = ExifLongitud;
   }
 
-  var nou_registre = [];
-  nou_registre["GUID"] = observacioActual;
+  var nou_registre = {
+    GUID:observacioActual,
+    En_cua:"",
+    Penjada:0,
+    Data_observacio:fotoData,
+    Hora_observacio:fotoHora,
+    Latitud:fotoLatitud,
+    Longitud:fotoLongitud,
+    Imatge:string64,
+    ID:"0",
+    Id_feno:"0",
+    Descripcio_observacio:"",
+    Fotografia_observacio:"0",
+    Observador:usuari
+  };
+
+  /*nou_registre["GUID"] = observacioActual;
   nou_registre["En_cua"] = "";
   nou_registre["Penjada"] = 0;
   nou_registre["Data_observacio"] = fotoData;
@@ -1021,11 +1036,11 @@ function desaObservacio(string64){
   nou_registre["Latitud"] = fotoLatitud;
   nou_registre["Longitud"] = fotoLongitud;
   nou_registre["Imatge"] = string64;
-  nou_registre["ID"] = 0;
+  nou_registre["ID"] = "0";
   nou_registre["Id_feno"] = "0";
   nou_registre["Descripcio_observacio"] = "";
   nou_registre["Fotografia_observacio"] = "0";
-  nou_registre["Observador"] = usuari;
+  nou_registre["Observador"] = usuari;*/
 
   indexedDB.open("eduMET").onsuccess = function(event) { 
     event.target.result.transaction("Observacions", "readwrite").objectStore("Observacions").add(nou_registre);

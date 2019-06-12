@@ -34,6 +34,7 @@ self.addEventListener('activate', event => {
 });
 
 function escombra() {
+  console.log("Service Worker: escombrant ...");
   var url_servidor = 'https://edumet.cat/edumet/meteo_proves/dades_recarregar.php';
   indexedDB.open("eduMET").onsuccess = function(event) {
     var obsObjStore = event.target.result.transaction(["Observacions"], "readwrite").objectStore("Observacions");
