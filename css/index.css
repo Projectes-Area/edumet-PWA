@@ -94,16 +94,30 @@ button, select, input, textarea {
     width:33vw;
     height:26vh;
 }
-.fotoNuvol:hover{
-    z-index: 999;
-    transition: transform 0.5s;
-      -moz-transition: -moz-transform 0.5s;
-      -webkit-transition: -webkit-transform 0.5s;
-      -webkit-transform: scale(2.1,2.1);
-         -moz-transform: scale(2.1,2.1);
-          -ms-transform: scale(2.1,2.1);
-           -o-transform: scale(2.1,2.1);
-              transform: scale(2.1,2.1);
+.quadre {
+    position: relative;
+    text-align: center;
+    color: white;
+}
+.quadre-vents {
+    position: relative;
+    text-align: center;
+}
+.bottom-left {
+    position: absolute;
+    bottom: 5px;
+    left: 5px;
+}
+.top-left {
+    position: absolute;
+    top: 5px;
+    left: 5px;
+}
+.centered {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 }
 #capsalera {
     height: 10vh;
@@ -177,53 +191,11 @@ button, select, input, textarea {
     align-items:center;
     height:80vh;
 }
-#observacions, #fitxa, #registra, #tria_lloc, #nuvols {
+#observacions, #fitxa, #registra, #tria_lloc, #nuvols, #vents, #fenAtm {
     display:none;
     height:80vh;    
     flex-direction:column;
 }
-#nuvols-grid {
-    display:grid;
-    height:80vh;    
-    width:100vw;
-    grid:   'nuvol1 nuvol2 nuvol3'
-            'nuvol4 visor  nuvol5'
-            'nuvol6 nuvol7 nuvol8';            ;
-}
-#nuvols-grid > div {
-    background-color: rgba(255, 255, 255, 0.8);
-    text-align: center;
-    font-size: 30px;
-}
-.nuvol1 {
-    grid-area:nuvol1;
-}
-.nuvol2 {
-    grid-area:nuvol2;
-}
-.nuvol3 {
-    grid-area:nuvol3;
-}
-.nuvol4 {
-    grid-area:nuvol4;
-}
-.nuvol5 {
-    grid-area:nuvol5;
-}
-.nuvol6 {
-    grid-area:nuvol6;
-}
-.nuvol7 {
-    grid-area:nuvol7;
-}
-.nuvol8 {
-    grid-area:nuvol8;
-}
-.visor {
-    grid-area:visor;
-}
-
-
 #fila {
     height:5vh;
     display:flex;

@@ -168,6 +168,11 @@ function back() {
     case 'fotografia':
       activa(vistaOrigen);
       break;
+    case 'fenAtm':
+    case 'vents':
+    case 'nuvols':
+      activa('registra');
+      break;
     default:
       alert("Per sortir de l'App eduMET has de prémer el botó Tornar o Inici del teu mòbil.")
   }
@@ -425,15 +430,54 @@ function buidaMesures() {
 
 function registra() {
   activa('registra');
+  var T_actual = document.getElementById("temp_actual");
+  var T_max = document.getElementById("temp_max");
+  var T_min = document.getElementById("temp_min");
+  for(i=500;i>-200;i--){
+    option = document.createElement("option");
+    option.text = i/10;
+    option.value = i/10;
+    T_actual.add(option);
+    option = document.createElement("option");
+    option.text = i/10;
+    option.value = i/10;
+    T_max.add(option);
+    option = document.createElement("option");
+    option.text = i/10;
+    option.value = i/10;
+    T_min.add(option);
+  }
+  T_actual.value="0";
+  T_max.value="0";
+  T_min.value="0";
+  var P_actual = document.getElementById("press_actual");
+  for(i=1045;i>975;i--){
+    option = document.createElement("option");
+    option.text = i;
+    option.value = i;
+    P_actual.add(option);
+  }
+  P_actual.value="1013";
+  var H_actual = document.getElementById("humitat_actual");
+  for(i=100;i>=0;i--){
+    option = document.createElement("option");
+    option.text = i;
+    option.value = i;
+    H_actual.add(option);
+  }
+  H_actual.value="100";
 }
 function registra_mesures() {
 }
-function registra_cel() {
+function registra_vents() {
+  activa('vents');
+}
+function registra_fenomens() {
+  activa('fenAtm');
 }
 function registra_nuvols() {
   activa('nuvols');
   if(hasWebcam) {
-    alert("Observa el núvol i toca la foto que més s'assembli a la forma observada.")
     mira();
   } else {
     alert("El teu dispositiu no té càmera frontal. Observa directament el núvol i toca la foto que més s'assembli a la forma observada.")
@@ -449,17 +493,15 @@ function mira() {
     audio: false
   };
   if(navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-  navigator.mediaDevices.getUserMedia(constraints)
-  .then(function(stream) {
-      video.srcObject = stream;
-      video.play();
-  })
-  .catch(error => {
-    console.log("No hi ha càmera frontal de video");
-  });
-}
-}
-function registra_fenomens() {
+    navigator.mediaDevices.getUserMedia(constraints)
+    .then(function(stream) {
+        video.srcObject = stream;
+        video.play();
+    })
+    .catch(error => {
+      console.log("No hi ha càmera frontal de video");
+    });
+  }
 }
 
 // OBSERVACIONS
@@ -1052,6 +1094,8 @@ function activa(fragment) {
   $("#registra").css("display","none");
   $("#tria_lloc").css("display","none");
   $("#nuvols").css("display","none");
+  $("#vents").css("display","none");
+  $("#fenAtm").css("display","none");
   $("#" + fragment).css("display","flex");
   $("#boto_estacions").css("color","graytext");
   $("#boto_observacions").css("color","graytext");
@@ -1072,6 +1116,8 @@ function activa(fragment) {
       break;
     case "registra":
     case "nuvols":
+    case "vents":
+    case "fenAtm":
       boto = $("#boto_registra");
       break;
     case "prediccio":

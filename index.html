@@ -5,17 +5,6 @@
       <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
       <meta name="description" content="eduMET">
       <meta name="theme-color" content="#418ac8">
-      <!-- Add to homescreen for Chrome on Android -->
-      <meta name="mobile-web-app-capable" content="yes">
-      <meta name="application-name" content="eduMET">
-      <!-- Add to homescreen for Safari on iOS -->
-      <meta name="apple-mobile-web-app-capable" content="yes">
-      <meta name="apple-mobile-web-app-status-bar-style" content="black">
-      <meta name="apple-mobile-web-app-title" content="eduMET">
-      <link rel="apple-touch-icon" sizes="128x128" href="">
-      <link rel="apple-touch-icon" sizes="152x152" href="">
-      <link rel="apple-touch-icon-precomposed" sizes="128x128" href="">
-
       <link rel="manifest" href="manifest.json">
       <link rel="stylesheet" type="text/css" href="css/index.css">
       <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/weather-icons/2.0.10/css/weather-icons.min.css" />
@@ -58,17 +47,16 @@
           <button class="boto-sup" onClick="triaData()" title="Data i hora"><i class="material-icons icona-36">watch_later</i></button>
           <button class="boto-sup" onClick="triaLloc()" title="Ubicació"><i class="material-icons icona-36">location_on</i></button>
           <button class="boto-sup" onClick="actualitzaObservacio()" title="Penjar l'observació"><i class="material-icons icona-36">cloud_upload</i></button>
-          <!--<button class="boto-sup" onClick="enviaActual()"><i class="material-icons icona-36">cloud_upload</i></button>-->
           <button class="boto-sup" onClick="observa()" title="Observacions realitzades"><i class="material-icons icona-36">assignment</i></button>
         </div>
         <div id="div_foto"> 
           <img id="foto" src= "img/launcher-icon-4x.png" onClick="fotografia();">
         </div>
         <div class="obs-fen">
-          <!--<i class="material-icons icona-24" style="margin-right:3px; color:#418ac8;">visibility</i>--><select id="fenomen"></select> 
+          <select id="fenomen"></select> 
         </div>
         <div class="obs-desc">
-          <!--<i class="material-icons icona-24" style="margin-right:3px; color:#418ac8;">assignment</i>--><textarea id="descripcio" placeholder="Escriu en aquest espai una breu descripció del fenomen observat." onKeyUp="if(this.value.length>250) this.value = this.value.slice(0, -1);"></textarea>
+          <textarea id="descripcio" placeholder="Escriu en aquest espai una breu descripció del fenomen observat." onKeyUp="if(this.value.length>250) this.value = this.value.slice(0, -1);"></textarea>
         </div>
       </div>
       <div id="fotografia">
@@ -125,7 +113,6 @@
           <div id="edicio_fitxa">
             <img id="fotoFitxa" src="" onClick="fotografia();">
             <div id="botons_edicio">
-              <!--<button id="envia_obs" class="boto-edit" style="color:#418ac8" onClick="enviaFitxa()"><i class="material-icons icona-24">cloud_upload</i></button>-->
               <button id="edita_obs" class="boto-edit" style="color:#418ac8" onClick="editaObservacio()" title="Editar"><i class="material-icons icona-24">edit</i></button>
               <button id="elimina_obs" class="boto-edit" style="color:#418ac8" onClick="eliminaObservacio()" title="Eliminar"><i class="material-icons icona-24">delete_forever</i></button>
             </div>
@@ -166,27 +153,100 @@
         <div id="entrada_dades" style="height:50%">
           <div id="menu-registra">
             <button class="boto-sup" onClick="registra_mesures();"><i class="wi wi-thermometer icona-24"></i></button>
-            <button class="boto-sup" onClick="registra_cel();"><i class="wi wi-strong-wind icona-24"></i></button>
+            <button class="boto-sup" onClick="registra_vents();"><i class="wi wi-strong-wind icona-24"></i></button>
             <button class="boto-sup" onClick="registra_nuvols();"><i class="material-icons icona-24">cloud</i></button>
             <button class="boto-sup" onClick="registra_fenomens();"><i class="material-icons icona-24">check</i></button>
+          </div>
+          <div id="caixa_registra" style="display:flex;flex-direction:column;margin:5px">
+            <div class="icona-16" style="align-self:center">REGISTRE DE DADES</div>
+            <div id="temperatures" style="display:flex;justify-content:space-between;margin:10px">
+              <div style="display:flex;flex-direction:column;align-items: center">
+                <label style="text-align:center;color:blue">Temperatura<br>mínima</label>
+                <div><select id="temp_min"></select> (ºC)</div>
+              </div>
+              <div style="display:flex;flex-direction:column;align-items: center">
+                <label style="text-align:center">Temperatura<br>actual</label>
+                <div><select id="temp_actual"></select> (ºC)</div>
+              </div>
+              <div style="display:flex;flex-direction:column;align-items: center">
+                <label style="text-align:center;color:red">Temperatura<br>màxima</label>
+                <div><select id="temp_max"></select> (ºC)</div>
+              </div>
+            </div>
+            <div id="humitat_pressio" style="display:flex;justify-content:space-between;margin:10px">
+              <div style="display:flex;flex-direction:column;align-items: center">
+                <label style="text-align:center">Humitat<br>relativa</label>
+                <div><select id="humitat_actual"></select> (%)</div>
+              </div>
+              <div style="display:flex;flex-direction:column;align-items: center">
+                <label style="text-align:center">Pressió<br>atmosfèrica</label>
+                <div><select id="press_actual"></select> (HPa)</div>
+              </div>
+              <div style="display:flex;flex-direction:column;align-items: center">
+                <label>Tendència<br>baromètrica</label>
+                <select id="tend_bar" style="width:75%">
+                  <option selected="" value="">Tria ...</option>
+                  <option value="Pujant molt ràpidament">Pujant molt ràpidament</option>
+                  <option value="Pujant ràpidament">Pujant ràpidament</option>
+                  <option value="Pujant lentament">Pujant lentament</option>
+                  <option value="Estable">Estable</option><option value="Baixant lentament">Baixant lentament</option>
+                  <option value="Baixant ràpidament">Baixant ràpidament</option>
+                  <option value="Baixant molt ràpidament">Baixant molt ràpidament</option>
+                </select> 
+              </div>
+            </div>
           </div>
         </div>
       </div>
       <div id="nuvols" style="justify-content:space-evenly">
         <div style="display:flex;flex-direction:row;justify-content:space-evenly">
-          <div><img src="http://static-m.meteo.cat/wordpressweb/wp-content/uploads/2014/11/21084223/BIG_521555615022712_00.jpg" class="fotoNuvol" alt="Cirrus" title="Cirrus"></div>
-          <div><img src="http://static-m.meteo.cat/wordpressweb/wp-content/uploads/2014/11/21084223/BIG_568565615022712_00.jpg" class="fotoNuvol" alt="Cirrocúmuls" title="Cirrocúmuls"></div>
-          <div><img src="http://static-m.meteo.cat/wordpressweb/wp-content/uploads/2014/11/21090417/BIG_037575615022712_00.jpg" class="fotoNuvol" alt="Altostrats"  title="Altostrats"></div>
+          <div class="quadre"><img src="https://static-m.meteo.cat/wordpressweb/wp-content/uploads/2014/11/21084223/BIG_521555615022712_00.jpg" class="fotoNuvol" alt="Cirrus" title="Cirrus"><div class="bottom-left">Cirrus</div></div>         
+          <div class="quadre"><img src="https://static-m.meteo.cat/wordpressweb/wp-content/uploads/2014/11/21084223/BIG_568565615022712_00.jpg" class="fotoNuvol" alt="Cirrocúmuls" title="Cirrocúmuls"><div class="bottom-left">Cirrocúmuls</div></div>
+          <div class="quadre"><img src="https://static-m.meteo.cat/wordpressweb/wp-content/uploads/2014/11/21090417/BIG_037575615022712_00.jpg" class="fotoNuvol" alt="Altostrats"  title="Altostrats"><div class="bottom-left">Altostrats</div></div>
         </div>
         <div style="display:flex;flex-direction:row;justify-content:space-evenly">
-          <div><img src="http://static-m.meteo.cat/wordpressweb/wp-content/uploads/2014/11/21090541/BIG_490575615022712_00.jpg" class="fotoNuvol" alt="Altocúmuls" title="Altocúmuls"></div> 
+          <div class="quadre"><img src="https://static-m.meteo.cat/wordpressweb/wp-content/uploads/2014/11/21090541/BIG_490575615022712_00.jpg" class="fotoNuvol" alt="Altocúmuls" title="Altocúmuls"><div class="bottom-left">Altocúmuls</div></div> 
           <video id="video" class="fotoNuvol"></video>
-          <div><img src="http://static-m.meteo.cat/wordpressweb/wp-content/uploads/2014/11/21090655/BIG_005585615022712_00.jpg" class="fotoNuvol" alt="Nimbostrats" title="Nimbostrats"></div> 
+          <div class="quadre"><img src="https://static-m.meteo.cat/wordpressweb/wp-content/uploads/2014/11/21090655/BIG_005585615022712_00.jpg" class="fotoNuvol" alt="Nimbostrats" title="Nimbostrats"><div class="bottom-left">Nimbostrats</div></div> 
         </div>
         <div style="display:flex;flex-direction:row;justify-content:space-evenly">
-          <div><img src="http://static-m.meteo.cat/wordpressweb/wp-content/uploads/2014/11/21084223/BIG_693585615022712_00.jpg" class="fotoNuvol" alt="Cumulonimbus" title="Cumulonimbus"></div> 
-          <div><img src="http://static-m.meteo.cat/wordpressweb/wp-content/uploads/2014/11/21084223/BIG_115595615022712_00.jpg" class="fotoNuvol" alt="Cúmuls" title="Cúmuls"></div> 
-          <div><img src="http://static-m.meteo.cat/wordpressweb/wp-content/uploads/2014/11/21091124/BIG_630595615022712_00.jpg" class="fotoNuvol" alt="Estratocúmuls" title="Estratocúmuls"></div> 
+          <div class="quadre"><img src="https://static-m.meteo.cat/wordpressweb/wp-content/uploads/2014/11/21084223/BIG_693585615022712_00.jpg" class="fotoNuvol" alt="Cumulonimbus" title="Cumulonimbus"><div class="bottom-left">Cumulonimbus</div></div> 
+          <div class="quadre"><img src="https://static-m.meteo.cat/wordpressweb/wp-content/uploads/2014/11/21084223/BIG_115595615022712_00.jpg" class="fotoNuvol" alt="Cúmuls" title="Cúmuls"><div class="bottom-left">Cúmuls</div></div> 
+          <div class="quadre"><img src="https://static-m.meteo.cat/wordpressweb/wp-content/uploads/2014/11/21091124/BIG_630595615022712_00.jpg" class="fotoNuvol" alt="Estratocúmuls" title="Estratocúmuls"><div class="bottom-left">Estratocúmuls</div></div> 
+        </div>
+      </div>
+      <div id="vents" style="justify-content:space-evenly">
+        <div style="display:flex;flex-direction:row;justify-content:space-evenly">
+          <div class="quadre-vents"><img src="img/NO.png" class="fotoNuvol" alt="Mestral" title="Mestral"><div class="centered">Mestral</div></div>         
+          <div class="quadre-vents"><img src="img/N.png" class="fotoNuvol" alt="Tramuntana" title="Tramuntana"><div class="centered">Tramuntana</div></div>
+          <div class="quadre-vents"><img src="img/NE.png" class="fotoNuvol" alt="Gregal"  title="Gregal"><div class="centered">Gregal</div></div>
+        </div>
+        <div style="display:flex;flex-direction:row;justify-content:space-evenly">
+          <div class="quadre-vents"><img src="img/O.png" class="fotoNuvol" alt="Ponent" title="Ponent"><div class="centered">Ponent</div></div> 
+          <div class="quadre-vents"><img src="img/C.png" class="fotoNuvol" alt="Calma" title="Calma"><div class="centered">Calma</div></div> 
+          <div class="quadre-vents"><img src="img/E.png" class="fotoNuvol" alt="Llevant" title="Llevant"><div class="centered">Llevant</div></div> 
+        </div>
+        <div style="display:flex;flex-direction:row;justify-content:space-evenly">
+          <div class="quadre-vents"><img src="img/SO.png" class="fotoNuvol" alt="Lleveig" title="Lleveig"><div class="centered">Lleveig</div></div> 
+          <div class="quadre-vents"><img src="img/S.png" class="fotoNuvol" alt="Migjorn" title="Migjorn"><div class="centered">Migjorn</div></div> 
+          <div class="quadre-vents"><img src="img/SE.png" class="fotoNuvol" alt="Xaloc" title="Xaloc"><div class="centered">Xaloc</div></div> 
+        </div>
+      </div>
+      <div id="fenAtm" style="justify-content:space-evenly">
+        <div style="display:flex;flex-direction:row;justify-content:space-evenly">
+          <div class="quadre"><img src="https://static-m.meteo.cat/wordpressweb/wp-content/uploads/2014/11/21082911/BIG_459395615022712_00.jpg" class="fotoNuvol" alt="Pluja" title="Pluja"><div class="top-left"><input type="checkbox" name="Pluja" value="Pluja">Pluja</div></div>         
+          <div class="quadre"><img src="https://static-m.meteo.cat/wordpressweb/wp-content/uploads/2014/11/21084115/BIG_006495615022712_00.jpg" class="fotoNuvol" alt="Calamarsa" title="Calamarsa"><div class="top-left"><input type="checkbox" name="Calamarsa" value="Calamarsa">Calamarsa</div></div> 
+          <div class="quadre"><img src="https://static-m.meteo.cat/wordpressweb/wp-content/uploads/2014/11/21084223/BIG_177515615022712_00.jpg" class="fotoNuvol" alt="Neu"  title="Neu"><div class="top-left"><input type="checkbox" name="Neu" value="Neu">Neu</div></div> 
+        </div>
+        <div style="display:flex;flex-direction:row;justify-content:space-evenly">
+          <div class="quadre"><img src="http://static-m.meteo.cat/wordpressweb/wp-content/uploads/2014/11/21084223/BIG_459315615022712_00.jpg" class="fotoNuvol" alt="Rosada" title="Rosada"><div class="top-left"><input type="checkbox" name="Rosada" value="Rosada">Rosada</div></div>  
+          <div class="quadre"><button style="width:33vw; height:26vh" class="icona-16">Desa els fenòmens atmosfèrics seleccionats</button></div> 
+          <div class="quadre"><img src="https://static-m.meteo.cat/wordpressweb/wp-content/uploads/2014/11/21084223/BIG_584325615022712_00.jpg" class="fotoNuvol" alt="Gebre" title="Gebre"><div class="top-left"><input type="checkbox" name="Gebre" value="Gebre">Gebre</div></div> 
+        </div>
+        <div style="display:flex;flex-direction:row;justify-content:space-evenly">
+          <div class="quadre"><img src="https://static-m.meteo.cat/wordpressweb/wp-content/uploads/2014/11/21080737/BIG_146335615022712_00.jpg" class="fotoNuvol" alt="Boira" title="Boira"><div class="top-left"><input type="checkbox" name="Boira" value="Boira">Boira</div></div>  
+          <div class="quadre"><img src="https://static-m.meteo.cat/wordpressweb/wp-content/uploads/2014/11/21084115/BIG_396255615022712_00.jpg" class="fotoNuvol" alt="Arc de Sant Martí" title="Arc de Sant Martí"><div class="top-left"><input type="checkbox" name="Arc de Sant Martí" value="Arc de Sant Martí">Arc de Sant Martí</div></div>  
+          <div class="quadre"><img src="https://static-m.meteo.cat/wordpressweb/wp-content/uploads/2014/11/21084223/BIG_552435615022712_00.jpg" class="fotoNuvol" alt="Llamp" title="Llamp"><div class="top-left"><input type="checkbox" name="Llamp" value="Llamp">Llamp</div></div> 
         </div>
       </div>
       <div id="sector-inferior">
@@ -198,7 +258,7 @@
           <button id="boto_prediccio" class="boto-inf" style="color:graytext;" onClick="prediccio();" title="Predicció"><i class="material-icons icona-24">cloud</i></button>
           <button id="boto_radar" class="boto-inf" style="color:graytext;" onClick="radar();" title="Radar"><i class="material-icons icona-24">wifi_tethering</i></button>
         </div>  
-        <input type="file" style='display: none;' accept="image/*" id="fitxer" name="fitxer" capture="camera"/>
+        <input type="file" style='display:none;' accept="image/*" id="fitxer" name="fitxer" capture="camera"/>
         <input type='file' style='display: none;' accept="image/jpeg" id="fitxer_galeria" name="fitxer_galeria" />
         <canvas id="canvas" style="display:none;"></canvas>
       </div>   
