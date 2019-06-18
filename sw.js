@@ -97,7 +97,7 @@ function escombra() {
             })
             .then(response => {
               var url = new URL(response.url);
-              observacio = url.searchParams.get("observacio");
+              observacio = parseInt(url.searchParams.get("observacio"));
               var objStore = event.target.result.transaction(["Observacions"], "readwrite").objectStore("Observacions");
               var request = objStore.get(observacio);
               request.onsuccess = function() {
@@ -117,7 +117,7 @@ function escombra() {
           fetch(url)
           .then(response => {
             var url = new URL(response.url);
-            observacio = url.searchParams.get("observacio");
+            observacio = parseInt(url.searchParams.get("observacio"));
             indexedDB.open("eduMET").onsuccess = function(event) {
               event.target.result.transaction(["Observacions"], "readwrite").objectStore("Observacions").delete(observacio);   
               console.log("Service worker: observació eliminada");

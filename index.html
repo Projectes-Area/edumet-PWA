@@ -165,11 +165,28 @@
         </div>
         <div id="entrada_dades" style="height:50%">
           <div id="menu-registra">
-            <button class="boto-sup" onClick="registra_mesures();"><i class="wi wi-thermometer icona-36"></i></button>
-            <button class="boto-sup" onClick="registra_cel();"><i class="wi wi-strong-wind icona-36"></i></button>
-            <button class="boto-sup" onClick="registra_nuvols();"><i class="material-icons icona-36">cloud</i></button>
-            <button class="boto-sup" onClick="registra_fenomens();"><i class="material-icons icona-36">check</i></button>
+            <button class="boto-sup" onClick="registra_mesures();"><i class="wi wi-thermometer icona-24"></i></button>
+            <button class="boto-sup" onClick="registra_cel();"><i class="wi wi-strong-wind icona-24"></i></button>
+            <button class="boto-sup" onClick="registra_nuvols();"><i class="material-icons icona-24">cloud</i></button>
+            <button class="boto-sup" onClick="registra_fenomens();"><i class="material-icons icona-24">check</i></button>
           </div>
+        </div>
+      </div>
+      <div id="nuvols" style="justify-content:space-evenly">
+        <div style="display:flex;flex-direction:row;justify-content:space-evenly">
+          <div><img src="http://static-m.meteo.cat/wordpressweb/wp-content/uploads/2014/11/21084223/BIG_521555615022712_00.jpg" class="fotoNuvol" alt="Cirrus" title="Cirrus"></div>
+          <div><img src="http://static-m.meteo.cat/wordpressweb/wp-content/uploads/2014/11/21084223/BIG_568565615022712_00.jpg" class="fotoNuvol" alt="Cirrocúmuls" title="Cirrocúmuls"></div>
+          <div><img src="http://static-m.meteo.cat/wordpressweb/wp-content/uploads/2014/11/21090417/BIG_037575615022712_00.jpg" class="fotoNuvol" alt="Altostrats"  title="Altostrats"></div>
+        </div>
+        <div style="display:flex;flex-direction:row;justify-content:space-evenly">
+          <div><img src="http://static-m.meteo.cat/wordpressweb/wp-content/uploads/2014/11/21090541/BIG_490575615022712_00.jpg" class="fotoNuvol" alt="Altocúmuls" title="Altocúmuls"></div> 
+          <video id="video" class="fotoNuvol"></video>
+          <div><img src="http://static-m.meteo.cat/wordpressweb/wp-content/uploads/2014/11/21090655/BIG_005585615022712_00.jpg" class="fotoNuvol" alt="Nimbostrats" title="Nimbostrats"></div> 
+        </div>
+        <div style="display:flex;flex-direction:row;justify-content:space-evenly">
+          <div><img src="http://static-m.meteo.cat/wordpressweb/wp-content/uploads/2014/11/21084223/BIG_693585615022712_00.jpg" class="fotoNuvol" alt="Cumulonimbus" title="Cumulonimbus"></div> 
+          <div><img src="http://static-m.meteo.cat/wordpressweb/wp-content/uploads/2014/11/21084223/BIG_115595615022712_00.jpg" class="fotoNuvol" alt="Cúmuls" title="Cúmuls"></div> 
+          <div><img src="http://static-m.meteo.cat/wordpressweb/wp-content/uploads/2014/11/21091124/BIG_630595615022712_00.jpg" class="fotoNuvol" alt="Estratocúmuls" title="Estratocúmuls"></div> 
         </div>
       </div>
       <div id="sector-inferior">
@@ -177,7 +194,7 @@
         <div id="menu-inferior">
           <button id="boto_observacions" class="boto-inf" style="color:graytext;" onClick="login();" title="Observacions"><i class="material-icons icona-24">camera_alt</i></button>
           <button id="boto_estacions" class="boto-inf" style="color:#418ac8;" onClick="estacio();" title="Estacions"><i class="material-icons icona-24">router</i></button>
-          <button id="boto_registra" class="boto-inf" style="color:graytext; display:none;" onClick="registra();" title="Registra"><i class="material-icons icona-24">bookmark</i></button>
+          <button id="boto_registra" class="boto-inf" style="color:graytext;" onClick="registra();" title="Registra"><i class="material-icons icona-24">bookmark</i></button>
           <button id="boto_prediccio" class="boto-inf" style="color:graytext;" onClick="prediccio();" title="Predicció"><i class="material-icons icona-24">cloud</i></button>
           <button id="boto_radar" class="boto-inf" style="color:graytext;" onClick="radar();" title="Radar"><i class="material-icons icona-24">wifi_tethering</i></button>
         </div>  

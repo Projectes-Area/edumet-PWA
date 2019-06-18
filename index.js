@@ -1,7 +1,7 @@
 window.onload = function() {
   usuari = storage.getItem("user");
-  var stringDatabase = storage.getItem("database");
   var online;
+  var stringDatabase = storage.getItem("database");
   map = L.map('map');
   if (!(navigator.onLine)) {
     online = false;
@@ -33,7 +33,7 @@ window.onload = function() {
       var db = event.target.result;    
       db.createObjectStore("Fenomens", {keyPath: "Id_feno"});
       db.createObjectStore("Estacions", {keyPath: "Codi_estacio"});
-      db.createObjectStore("Observacions", {keyPath: "GUID", autoIncrement:true});
+      db.createObjectStore("Observacions", {keyPath: "GUID"});
       baixaFenomens();
       baixaEstacions();
     }
@@ -118,7 +118,7 @@ var ExifData;
 var ExifHora;
 var ExifLongitud;
 var ExifLongitud;
-var observacioActual = 0;
+var observacioActual = "";
 var observacioFitxa;
 var mapaFitxa;
 var marcadorFitxa;
@@ -142,6 +142,7 @@ var hasWebcam = false;
 var isWebcamAlreadyCaptured = false;
 
 var MediaDevices = [];
+var isHTTPs = location.protocol === 'https:';
 var canEnumerate = false;
 
 if (navigator.mediaDevices && navigator.mediaDevices.enumerateDevices) {
@@ -149,13 +150,17 @@ if (navigator.mediaDevices && navigator.mediaDevices.enumerateDevices) {
       navigator.mediaDevices.enumerateDevices().then(callback);
   };
 }
+
 if (typeof MediaStreamTrack !== 'undefined' && 'getSources' in MediaStreamTrack) {
     canEnumerate = true;
 } else if (navigator.mediaDevices && !!navigator.mediaDevices.enumerateDevices) {
     canEnumerate = true;
 }
+
 checkDeviceSupport();
 
+function empty() {  
+}
 function back() {
   switch(vistaActual) {
     case 'fitxa':
@@ -182,7 +187,7 @@ function ajustaOrientacio() {
   }
   console.log("Orientació: " + orientacio);
   var textBoto = '<i class="material-icons icona-24">';
-  if(orientacio == "landscape") {
+  if(orientacio == "landscape" || orientacio == "landscape-primary" || orientacio == "landscape-secondary") {
     $("#boto_observacions").html(textBoto + 'camera_alt</i>');
     $("#boto_estacions").html(textBoto + 'router</i>');
     $("#boto_registra").html(textBoto + 'bookmark</i>');
@@ -228,6 +233,11 @@ function ajustaOrientacio() {
     clearTimeout(timeOut);
     radar();
   }
+}
+
+function tancar() {
+  navigator.geolocation.clearWatch(watchID);
+  navigator.app.exitApp();
 }
 
 // FENOMENS FENOLOGICS
@@ -358,8 +368,15 @@ function mostraEstacio() {
       if(navigator.onLine){
         getMesures();
       } else {
+        $("#data_mesura").css("color","#FF0000");
         $("#data_mesura").html("Sense connexió a Internet");
-        buidaMesures();
+        $("#temperatura").html("");
+        $("#humitat").html("");
+        $("#pressio").html("");
+        $("#sunrise").html("");
+        $("#sunset").html("");
+        $("#pluja").html("");
+        $("#vent").html(""); 
       }
       map.setView(new L.LatLng(e.target.result["Latitud"], e.target.result["Longitud"]));
     }
@@ -405,20 +422,17 @@ function getMesures() {
     }
   })
   .catch(reason => {
+    $("#data_mesura").css("color","#FF0000");
     $("#data_mesura").html("L'estació no proporciona les dades ...");
-    buidaMesures() ;
+    $("#temperatura").html("");
+    $("#humitat").html("");
+    $("#pressio").html("");
+    $("#sunrise").html("");
+    $("#sunset").html("");
+    $("#pluja").html("");
+    $("#vent").html("");  
     console.log("Error:" + reason);
   });
-}
-function buidaMesures() {
-  $("#data_mesura").css("color","#FF0000");
-  $("#temperatura").html("");
-  $("#humitat").html("");
-  $("#pressio").html("");
-  $("#sunrise").html("");
-  $("#sunset").html("");
-  $("#pluja").html("");
-  $("#vent").html("");  
 }
 
 // REGISTRA
@@ -431,33 +445,6 @@ function registra_mesures() {
 function registra_cel() {
 }
 function registra_nuvols() {
-  activa('nuvols');
-  if(hasWebcam) {
-    alert("Observa el núvol i toca la foto que més s'assembli a la forma observada.")
-    mira();
-  } else {
-    alert("El teu dispositiu no té càmera frontal. Observa directament el núvol i toca la foto que més s'assembli a la forma observada.")
-  }
-}
-function mira() {
-  var video = document.getElementById('video');
-  const videoConstraints = {
-    facingMode: 'environment'
-  };
-  const constraints = {
-    video: videoConstraints,
-    audio: false
-  };
-  if(navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-  navigator.mediaDevices.getUserMedia(constraints)
-  .then(function(stream) {
-      video.srcObject = stream;
-      video.play();
-  })
-  .catch(error => {
-    console.log("No hi ha càmera frontal de video");
-  });
-}
 }
 function registra_fenomens() {
 }
@@ -481,8 +468,10 @@ function tancar_sessio() {
   } 
   localStorage.removeItem("user");
   usuari = "";
-  resetObservacio();
-  observacioActual = 0;
+  $("#foto").attr("src","img/launcher-icon-4x.png");
+  $("#descripcio").val("");
+  $("#fenomen").val("0");
+  observacioActual = "";
   estacio();
 }
 
@@ -560,7 +549,7 @@ function readURL(input) {
 }
 
 function triaLloc() {
-  if(observacioActual == 0){
+  if(observacioActual == ""){
     alert("Si us plau, primer fes o tria la foto corresponent a l'observació.");
   } else {
     indexedDB.open("eduMET").onsuccess = function(event) {
@@ -624,7 +613,7 @@ function triaLloc() {
 }
 
 function triaData(){
-  if(observacioActual == 0){
+  if(observacioActual == ""){
     alert("Si us plau, primer fes o tria la foto corresponent a l'observació.");
   } else {
     indexedDB.open("eduMET").onsuccess = function(event) {
@@ -678,10 +667,11 @@ function baixaObsInicial() {
       var db = event.target.result;    
       var obsObjStore = db.transaction("Observacions", "readwrite").objectStore("Observacions");
       for(i=0;i<response.length;i++){
+        response[i]["GUID"] = GUID();
         response[i]["En_cua"] = "";
         response[i]["Penjada"] = 1;
         obsObjStore.add(response[i]);
-        console.log("Observació inicial ID " + response[i]["ID"]);
+        console.log("Observació inicial ID " + response[i]["ID"] + " GUID " + response[i]["GUID"]);
         fetch(url_imatges + response[i]["Fotografia_observacio"]);
       }
     }
@@ -706,8 +696,10 @@ function baixaObsAfegides() {
               }
             }
             if(nova){
+              response[i]["GUID"] = GUID();
               response[i]["En_cua"] = "";
               response[i]["Penjada"] = 1;
+              console.log("Nova observació: " + response[i]["ID"]  + " GUID " + response[i]["GUID"]);
               fetch(url_imatges + response[i]["Fotografia_observacio"]);
               obsObjStore.add(response[i]);              
             }
@@ -778,6 +770,8 @@ function enviaObservacio() {
             body: JSONenvio
           })
           .then(response => {
+            var url = new URL(response.url);
+            observacio = url.searchParams.get("observacio");
             alert("S'han actualitzat les dades de l'observació.");
           })      
           .catch(error => {
@@ -851,7 +845,7 @@ function elimina() {
           fetch(url)
           .then(response => {
             var url = new URL(response.url);
-            observacio = parseInt(url.searchParams.get("observacio"));
+            observacio = url.searchParams.get("observacio");
             indexedDB.open("eduMET").onsuccess = function(event) {
               event.target.result.transaction(["Observacions"], "readwrite").objectStore("Observacions").delete(observacio);
               alert("S'ha eliminat l'observació.");  
@@ -885,7 +879,7 @@ function resetObservacio() {
 }
 
 function actualitzaObservacio() {
-  if(observacioActual == 0){
+  if(observacioActual == ""){
     alert("Si us plau, primer fes o tria la foto corresponent a l'observació.");
   } else {
     indexedDB.open("eduMET").onsuccess = function(event) {
@@ -941,7 +935,7 @@ function llistaObservacions() {
         }
       });
       for(i=0;i<obs.length;i++){
-        llista+= '<div style="display:flex; align-items:center;" onClick="fitxa(' + obs[i]["GUID"] +')"><div style="width:25%"><img src="';
+        llista+= '<div style="display:flex; align-items:center;" onClick="fitxa(\'' + obs[i]["GUID"] +'\')"><div style="width:25%"><img src="';
         var foto = obs[i]["Fotografia_observacio"];
         if(foto == 0) {
           llista+=  obs[i]["Imatge"];
@@ -991,6 +985,10 @@ function desaObservacio(string64){
   var Data_actual = any + '-' + mes + '-' + dia;
   var Hora_actual = hora + ':' + minut + ':' + segon;
 
+  var guid = GUID();
+  console.log('GUID: ' + guid);
+  observacioActual = guid;
+
   var fotoData = "";
   var fotoHora = "";
   var fotoLatitud = "";
@@ -1014,7 +1012,8 @@ function desaObservacio(string64){
     fotoLongitud = ExifLongitud;
   }
 
-  var nou_registre = [{
+  var nou_registre = {
+    GUID:observacioActual,
     En_cua:"",
     Penjada:0,
     Data_observacio:fotoData,
@@ -1027,16 +1026,25 @@ function desaObservacio(string64){
     Descripcio_observacio:"",
     Fotografia_observacio:"0",
     Observador:usuari
-  }];
+  };
+
+  /*nou_registre["GUID"] = observacioActual;
+  nou_registre["En_cua"] = "";
+  nou_registre["Penjada"] = 0;
+  nou_registre["Data_observacio"] = fotoData;
+  nou_registre["Hora_observacio"] = fotoHora;
+  nou_registre["Latitud"] = fotoLatitud;
+  nou_registre["Longitud"] = fotoLongitud;
+  nou_registre["Imatge"] = string64;
+  nou_registre["ID"] = "0";
+  nou_registre["Id_feno"] = "0";
+  nou_registre["Descripcio_observacio"] = "";
+  nou_registre["Fotografia_observacio"] = "0";
+  nou_registre["Observador"] = usuari;*/
 
   indexedDB.open("eduMET").onsuccess = function(event) { 
-    var db = event.target.result;    
-    var obsObjStore = db.transaction("Observacions", "readwrite").objectStore("Observacions");
-    var request = obsObjStore.add(nou_registre[0]);
-    request.onsuccess = function (e) {
-        observacioActual = e.target.result;
-    };
-  };
+    event.target.result.transaction("Observacions", "readwrite").objectStore("Observacions").add(nou_registre);
+  }
 }
 
 function activa(fragment) {
@@ -1051,7 +1059,6 @@ function activa(fragment) {
   $("#fotografia").css("display","none");
   $("#registra").css("display","none");
   $("#tria_lloc").css("display","none");
-  $("#nuvols").css("display","none");
   $("#" + fragment).css("display","flex");
   $("#boto_estacions").css("color","graytext");
   $("#boto_observacions").css("color","graytext");
@@ -1071,7 +1078,6 @@ function activa(fragment) {
       boto = $("#boto_observacions");
       break;
     case "registra":
-    case "nuvols":
       boto = $("#boto_registra");
       break;
     case "prediccio":
@@ -1083,8 +1089,8 @@ function activa(fragment) {
     default:
       break;
   }
-  boto.css("color", colorEdumet);  
-  vistaActual = fragment;
+boto.css("color", colorEdumet);  
+vistaActual = fragment;
 }
 
 function login() {
@@ -1383,61 +1389,71 @@ function formatDateGPS(dia) {
   return [year, month, day].join('-');
 }
 
+
+
 function checkDeviceSupport(callback) {
   if (!canEnumerate) {
-    return;
+      return;
   }
+
   if (!navigator.enumerateDevices && window.MediaStreamTrack && window.MediaStreamTrack.getSources) {
-    navigator.enumerateDevices = window.MediaStreamTrack.getSources.bind(window.MediaStreamTrack);
+      navigator.enumerateDevices = window.MediaStreamTrack.getSources.bind(window.MediaStreamTrack);
   }
+
   if (!navigator.enumerateDevices && navigator.enumerateDevices) {
-    navigator.enumerateDevices = navigator.enumerateDevices.bind(navigator);
+      navigator.enumerateDevices = navigator.enumerateDevices.bind(navigator);
   }
+
   if (!navigator.enumerateDevices) {
-    if (callback) {
-      callback();
-    }
-    return;
+      if (callback) {
+          callback();
+      }
+      return;
   }
+
   MediaDevices = [];
   navigator.enumerateDevices(function(devices) {
-    devices.forEach(function(_device) {
-      var device = {};
-      for (var d in _device) {
-        device[d] = _device[d];
-      }
-      if (device.kind === 'video') {
-          device.kind = 'videoinput';
-      }
-      var skip;
-      MediaDevices.forEach(function(d) {
-        if (d.id === device.id && d.kind === device.kind) {
-            skip = true;
+      devices.forEach(function(_device) {
+        var device = {};
+        for (var d in _device) {
+            device[d] = _device[d];
         }
-      });
-      if (skip) {
-        return;
-      }
-      if (!device.deviceId) {
-        device.deviceId = device.id;
-      }
-      if (!device.id) {
-        device.id = device.deviceId;
-      }
-      if (!device.label) {
-        device.label = 'Please invoke getUserMedia once.';
-      } else {
-        if (device.kind === 'videoinput' && !isWebcamAlreadyCaptured) {
-          isWebcamAlreadyCaptured = true;
+        if (device.kind === 'video') {
+            device.kind = 'videoinput';
         }
-      }
-      if (device.kind === 'videoinput') {
-        hasWebcam = true;
-      }
-      MediaDevices.push(device);
+        var skip;
+        MediaDevices.forEach(function(d) {
+            if (d.id === device.id && d.kind === device.kind) {
+                skip = true;
+            }
+        });
+        if (skip) {
+            return;
+        }
+        if (!device.deviceId) {
+            device.deviceId = device.id;
+        }
+        if (!device.id) {
+            device.id = device.deviceId;
+        }
+        if (!device.label) {
+            device.label = 'Please invoke getUserMedia once.';
+            if (!isHTTPs) {
+                device.label = 'HTTPs is required to get label of this ' + device.kind + ' device.';
+            }
+        } else {
+            if (device.kind === 'videoinput' && !isWebcamAlreadyCaptured) {
+                isWebcamAlreadyCaptured = true;
+            }
+        }
+        if (device.kind === 'videoinput') {
+            hasWebcam = true;
+        }
+        // there is no 'videoouput' in the spec.
+        MediaDevices.push(device);
     });
     if (callback) {
-      callback();
+        callback();
     }
   });
 }
@@ -1448,4 +1464,8 @@ function ConvertDMSToDD(degrees, minutes, seconds, direction) {
       dd = dd * -1; 
   }    
   return dd;
+}
+
+function GUID() {
+  return (Date.now().toString(36) + Math.random().toString(36).substr(2, 5)).toUpperCase()
 }
