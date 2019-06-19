@@ -43,6 +43,11 @@ window.onload = function() {
   }
  
   window.addEventListener("orientationchange", function(){
+    console.log("Canvi d'orientació");
+    ajustaOrientacio();
+  });
+  window.addEventListener("resize", function(){
+    console.log("Resize");
     ajustaOrientacio();
   });
   ajustaOrientacio();   
@@ -170,7 +175,9 @@ function back() {
       break;
     case 'fenAtm':
     case 'vents':
+    case 'beaufort':
     case 'nuvols':
+    case 'lluna':
       activa('registra');
       break;
     default:
@@ -180,10 +187,20 @@ function back() {
 
 function ajustaOrientacio() {
   console.log("window.orientation: " + window.orientation);
-  if(window.orientation == 0 || window.orientation == 180) {
-    orientacio = "portrait";
+  console.log("window.innerWidth: " + window.innerWidth);
+  console.log("window.innerHeight: " + window.innerHeight);
+  if(window.orientation != undefined) {
+    if(window.orientation == 0 || window.orientation == 180) {
+      orientacio = "portrait";
+    } else {
+      orientacio = "landscape";
+    }
   } else {
-    orientacio = "landscape";
+    if(window.innerWidth < window.innerHeight) {
+      orientacio = "portrait";
+    } else {
+      orientacio = "landscape";
+    }
   }
   console.log("Orientació: " + orientacio);
   var textBoto = '<i class="material-icons icona-24">';
@@ -466,8 +483,20 @@ function registra() {
     H_actual.add(option);
   }
   H_actual.value="100";
+  var precipitacio = document.getElementById("precipitacio");
+  for(i=45;i>=0;i--){
+    option = document.createElement("option");
+    option.text = i;
+    option.value = i;
+    precipitacio.add(option);
+  }
+  precipitacio.value="0";
 }
-function registra_mesures() {
+function registra_lluna() {
+  activa('lluna');
+}
+function registra_beaufort() {
+  activa('beaufort');
 }
 function registra_vents() {
   activa('vents');
@@ -1095,6 +1124,8 @@ function activa(fragment) {
   $("#tria_lloc").css("display","none");
   $("#nuvols").css("display","none");
   $("#vents").css("display","none");
+  $("#beaufort").css("display","none");
+  $("#lluna").css("display","none");
   $("#fenAtm").css("display","none");
   $("#" + fragment).css("display","flex");
   $("#boto_estacions").css("color","graytext");
