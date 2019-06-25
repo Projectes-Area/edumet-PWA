@@ -5,55 +5,55 @@
       <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
       <meta name="description" content="eduMET">
       <meta name="theme-color" content="#418ac8">
+      <link rel="shortcut icon" type=”image/png” href="img/launcher-icon-1x.png">
       <link rel="manifest" href="manifest.json">
-      <link rel="stylesheet" type="text/css" href="css/index.css">
+      <link rel="stylesheet" href="css/index.css">
+      <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
       <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/weather-icons/2.0.10/css/weather-icons.min.css" />
       <link rel="stylesheet" href="https://unpkg.com/leaflet@1.5.1/dist/leaflet.css" integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ==" crossorigin=""/>
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
       <script src="https://unpkg.com/leaflet@1.5.1/dist/leaflet.js" integrity="sha512-GffPMF3RvMeYyc1LWMHtK8EbPv0iNZ8/oTtHPx9/cc2ILxQ+u905qIwdpULaqDkyBKgOaB57QTMg7ztg8Jm2Og==" crossorigin=""></script>
       <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-      <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
-      <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
-      <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+      <script src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
       <script src="https://cdn.jsdelivr.net/npm/exif-js"></script>
-      <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-      <link rel="shortcut icon" type=”image/png” href="img/launcher-icon-1x.png">
       <title>eduMET</title>
     </head>
     <body >
       <div id="capsalera">
-        <div id="div-icona-back"><i id="icona-back" class="material-icons icona-36" onClick="back()" title="Enrera">navigate_before</i></div>
+        <div><i class="material-icons font-36 blanc" onClick="back()" title="Enrera">navigate_before</i></div>
         <div><img id="logo-edumet" src="img/edumet.png" alt="Logo eduMET"></div>
-        <div id="div-icona-login"><i id="icona-login" class="material-icons icona-36" onClick="usuaris()" title="Usuari">person</i></div>
+        <div><i class="material-icons font-36 blanc" onClick="usuaris()" title="Usuari">person</i></div>
       </div>      
       <div id="login">
         <div id="iniciar">
-          <label class="icona-16">INICIAR SESSIÓ</label>
+          <label class="font-16">INICIAR SESSIÓ</label>
         </div>        
         <div>
-          <input class="marge icona-16" id="usuari" placeholder="usuari" type="text" name="usuari" autocomplete="username">
+          <input class="login-marge font-16" id="usuari" placeholder="usuari" type="text" name="usuari" autocomplete="username">
         </div>
         <div>
-          <input class="marge icona-16" id="password" placeholder="contrasenya" type="password" name="contrasenya" autocomplete="new-password"><br>
+          <input class="login-marge font-16" id="password" placeholder="contrasenya" type="password" name="contrasenya" autocomplete="new-password"><br>
         </div>
         <div>  
-          <button id="valida" class="marge icona-16" onClick="valida();">ENTRA</button>
+          <button id="valida" class="login-marge font-16" onClick="valida()">ENTRA</button>
         </div>
       </div>
       <div id="fenologia">
         <div id="calendari" style="width:100%"></div>
-        <div id="menu-botons">
-          <button class="boto-sup" onClick="fesFoto()" title="Fer una foto"><i class="material-icons icona-36">add_a_photo</i></button>
-          <button class="boto-sup" onClick="triaFoto()" title="Triar una foto"><i class="material-icons icona-36">attach_file</i></button>
-          <button class="boto-sup" onClick="triaData()" title="Data i hora"><i class="material-icons icona-36">watch_later</i></button>
-          <button class="boto-sup" onClick="triaLloc()" title="Ubicació"><i class="material-icons icona-36">location_on</i></button>
-          <button class="boto-sup" onClick="actualitzaObservacio()" title="Penjar l'observació"><i class="material-icons icona-36">cloud_upload</i></button>
-          <button class="boto-sup" onClick="observa()" title="Observacions realitzades"><i class="material-icons icona-36">assignment</i></button>
+        <div id="menu-fenologia">
+          <button class="boto-sup" onClick="fesFoto()" title="Fer una foto"><i class="material-icons font-36">add_a_photo</i></button>
+          <button class="boto-sup" onClick="triaFoto()" title="Triar una foto"><i class="material-icons font-36">attach_file</i></button>
+          <button class="boto-sup" onClick="triaData()" title="Data i hora"><i class="material-icons font-36">watch_later</i></button>
+          <button class="boto-sup" onClick="triaLloc()" title="Ubicació"><i class="material-icons font-36">location_on</i></button>
+          <button class="boto-sup" onClick="actualitzaObservacio()" title="Penjar l'observació"><i class="material-icons font-36">cloud_upload</i></button>
+          <button class="boto-sup" onClick="observa()" title="Observacions realitzades"><i class="material-icons font-36">assignment</i></button>
         </div>
-        <div id="div_foto"> 
+        <div id="foto-div"> 
           <img id="foto" src= "img/launcher-icon-4x.png" onClick="fotografia();">
         </div>
         <div class="obs-fen">
-          <select id="fenomen"></select> 
+          <select class="font-16"></select> 
         </div>
         <div class="obs-desc">
           <textarea id="descripcio" placeholder="Escriu en aquest espai una breu descripció del fenomen observat." onKeyUp="if(this.value.length>250) this.value = this.value.slice(0, -1);"></textarea>
@@ -67,7 +67,7 @@
           <iframe id='frame' src='' hspace='0' marginheight='0' marginwidth='0' vspace='0' frameborder='0' scrolling='no'></iframe>
       </div>
       <div id="radar">
-        <div id="slideshow-container" class="slideshow-container"></div>         
+        <div id="slideshow-container"></div>         
         <div id="puntets"></div>
       </div>
       <div id="observacions">
@@ -81,243 +81,237 @@
       </div>
       <div id="estacions">
         <div id="id_estacio">
-          <i id="star" class="material-icons icona-36" style="color:lightgray" onClick="desaPreferida();">star_border</i>
-          <select id="est_nom" onchange="selectEstacio()"></select>
+          <i id="star" class="material-icons font-36" style="color:lightgray" onClick="desaPreferida();">star_border</i>
+          <select id="estacio-nom" onChange="selectEstacio()"></select>
         </div>
         <div id="header">
-          <div id="nom_estacio">
+          <div id="estacio-nom-div">
             <div id="est_poblacio"></div>
             <div id="est_altitud"></div>
           </div>
-          <div id="logoEstacio">
-            <img id=est_logo src="">
+          <div id="estacio-logo">
+            <img id=estacio-logo-div src="">
           </div>
         </div>
         <div id="map"></div>
         <div id="mesurat">
           <div id="data_mesura"></div>
           <div class="mesures">
-            <i class="wi icona-wi wi-sunrise"></i><label id="sunrise"></label><i class="wi icona-wi wi-sunset"></i><label id="sunset"></label>
+            <i class="wi wi-estacions wi-sunrise"></i><label id="sunrise"></label><i class="wi wi-estacions wi-sunset"></i><label id="sunset"></label>
           </div>
           <div class="mesures">
-            <i class="wi icona-wi wi-thermometer"></i><label id="temperatura"></label><i class="wi icona-wi wi-barometer"></i><label id="pressio"></label>
+            <i class="wi wi-estacions wi-thermometer"></i><label id="temperatura"></label><i class="wi wi-estacions wi-barometer"></i><label id="pressio"></label>
           </div>
           <div class="mesures">
-            <i class="wi icona-wiwi-humidity"></i><label id="humitat"></label><i class="wi icona-wi wi-umbrella"></i><label id="pluja"></label><i class="wi icona-wi wi-strong-wind"></i><label id="vent"></label>
+            <i class="wi wi-estacions wi-humidity"></i><label id="humitat"></label><i class="wi wi-estacions wi-umbrella"></i><label id="pluja"></label><i class="wi wi-estacions wi-strong-wind"></i><label id="vent"></label>
           </div>
         </div>  
       </div>
 
       <div id="fitxa">
-        <div id="contingutFitxa">
-          <div id="edicio_fitxa">
-            <img id="fotoFitxa" src="" onClick="fotografia();">
-            <div id="botons_edicio">
-              <button id="edita_obs" class="boto-edit" style="color:#418ac8" onClick="editaObservacio()" title="Editar"><i class="material-icons icona-24">edit</i></button>
-              <button id="elimina_obs" class="boto-edit" style="color:#418ac8" onClick="eliminaObservacio()" title="Eliminar"><i class="material-icons icona-24">delete_forever</i></button>
+        <div id="fitxa-div">
+          <div id="fitxa-edicio">
+            <img id="fitxa-foto" src="" onClick="fotografia();">
+            <div id="edicio-div">
+              <button id="edita_obs" class="boto-edit" onClick="editaObservacio()" title="Editar"><i class="material-icons font-24">edit</i></button>
+              <button id="elimina_obs" class="boto-edit" onClick="eliminaObservacio()" title="Eliminar"><i class="material-icons font-24">delete_forever</i></button>
             </div>
           </div>
-          <div id="desc_map_fitxa">
-            <div id="nomFenomen" class="icona-16"></div>
-            <div id="descripcioFitxa"></div>
+          <div id="fitxa-map-text">
+            <div id="fenomen-nom" class="font-16"></div>
+            <div id="fitxa-text"></div>
             <div id="dataHora"></div>
-            <div id="cont_mapa">
-              <div id="mapaFitxa"></div> 
+            <div id="mapa-div">
+              <div id="fitxa-mapa"></div> 
             </div>
           </div>
         </div>
       </div>
 
-      <div id="tria_lloc">
+      <div id="lloc">
         <div style="display:flex; align-items:center; height:10vh">
-          <div id="desc_mapa" class="icona-16" style="padding:10px"></div>
+          <div id="desc_mapa" class="font-16" style="padding:10px"></div>
         </div>
         <div id="mapaUbica" style="height:60vh"></div>
         <div id="div_boto_desa" style="display:flex; height:10vh">
-          <button id="boto_desa_mapa" class="icona-16" style="width:100%; margin:5px"></button>
+          <button id="boto_desa_mapa" class="font-16" style="width:100%; margin:5px"></button>
         </div>
       </div>
 
       <div id="registra">
-        <div id="nou_registre" style="height:50%">
+        <div id="registre-esquerra">
           <div style="margin-left:10px">
             Nom de l'estació:<br>
-            Data i Hora
+            Data i Hora :
           </div>
-          <div class="icona-16" style="align-self:center">DADES OBSERVADES</div>
-          <div id="menu-registra">
-            <button class="boto-sup" onClick="registra_vents();"><i class="wi wi-wind-direction icona-24"></i></button>
-            <button class="boto-sup" onClick="registra_beaufort();"><i class="wi wi-strong-wind icona-24"></i></button>
-            <button class="boto-sup" onClick="registra_nuvolositat();"><i class="wi wi-day-cloudy icona-24"></i></button>
-            <button class="boto-sup" onClick="registra_nuvols();"><i class="wi wi-cloudy icona-24"></i></button>
-            <button class="boto-sup" onClick="registra_lluna();"><i class="wi wi-moon-alt-waxing-crescent-4 icona-24"></i></button>            
-            <button class="boto-sup" onClick="registra_fenomens();"><i class="wi wi-day-storm-showers icona-24"></i></button>
+          <div class="font-16" style="align-self:center">Dades Observades</div>
+          <div id="menu-observades">
+            <button class="boto-sup" onClick="registra_vents();"><i class="wi wi-wind-direction font-24"></i></button>
+            <button class="boto-sup" onClick="registra_beaufort();"><i class="wi wi-strong-wind font-24"></i></button>
+            <button class="boto-sup" onClick="registra_nuvolositat();"><i class="wi wi-day-cloudy font-24"></i></button>
+            <button class="boto-sup" onClick="registra_nuvols();"><i class="wi wi-cloudy font-24"></i></button>
+            <button class="boto-sup" onClick="registra_lluna();"><i class="wi wi-moon-alt-waxing-crescent-4 font-24"></i></button>            
+            <button class="boto-sup" onClick="registra_fenomens();"><i class="wi wi-day-storm-showers font-24"></i></button>
           </div>
           <div style="margin-left:10px">
-              Direcció del vent:<br>
-              Intensitat del vent (Beaufort):<br>
-              Cobertura nuvolosa:<br>
-              Tipus de núvols:<br>
-              Fenòmens atmosfèrics:
+              Direcció del vent: <label id="dir_vent" class="edumet">-</label><br>
+              Intensitat del vent (Beaufort): <label id="intensitat_vent" class="edumet">-</label><br>
+              Cobertura nuvolosa: <label id="cob_nuvols" class="edumet">-</label><br>
+              Tipus de núvols: <label id="tipus_nuvols" class="edumet">-</label><br>
+              Fase lunar: <label id="fase_lunar" class="edumet">-</label><br>
+              Fenòmens atmosfèrics: <label id="llista_fenomens" class="edumet">-</label>
           </div>          
         </div>
-        <div id="entrada_dades" style="height:50%">
-          <div id="caixa_registra" style="display:flex;flex-direction:column;margin:5px">
-            <div class="icona-16" style="align-self:center">DADES MESURADES</div>
-            <div id="temperatures" style="display:flex;flex-wrap:wrap;justify-content:space-evenly;margin-bottom:5px">
-              <div style="display:flex;flex-direction:column;align-items: center">
-                <label style="text-align:center;color:blue">Temp. mínima</label>
-                <div><select id="temp_min"></select> (ºC)</div>
-              </div>
-              <div style="display:flex;flex-direction:column;align-items: center">
-                <label style="text-align:center;color:red">Temp. màxima</label>
-                <div><select id="temp_max"></select> (ºC)</div>
-              </div>
-              <div style="display:flex;flex-direction:column;align-items: center">
-                <label style="text-align:center">Temp. actual</label>
-                <div><select id="temp_actual"></select> (ºC)</div>
+        <div id="registre-dreta">
+          <div id="caixa_registra">
+            <div class="font-16" style="align-self:center">Dades mesurades</div>
+            <div id="temperatures">
+              <div>
+                <i class="wi wi-thermometer font-16 edumet"></i>
+                <input type="number" min="-30" max="60" step="0.1" placeholder="actual" id="temp_actual"> 
+                <input type="number" min="-30" max="60" step="0.1" placeholder="max" id="temp_max" style="color:red"> 
+                <input type="number" min="-30" max="60" step="0.1" placeholder="min" id="temp_min" style="color:cyan"> ºC
               </div>
             </div>
-            <div id="humitat_pressio" style="display:flex;flex-wrap:wrap;justify-content:space-evenly;margin-bottom:5px;">
-              <div style="display:flex;flex-direction:column;align-items: center">
-                <label style="text-align:center">Humitat relativa</label>
-                <div><select id="humitat_actual"></select> (%)</div>
+            <div id="humitat-pressio">
+              <div>
+                <i class="wi wi-humidity font-16 edumet"></i>
+                <input type="number" min="0" max="100" placeholder="humitat" id="humitat"> %
               </div>
-              <div style="display:flex;flex-direction:column;align-items: center">
-                <label style="text-align:center">Precipitació</label>
-                <div><select id="precipitacio"></select> (mm)</div>
+              <div>
+                <i class="wi wi-umbrella font-16 edumet"></i>
+                <input type="number" min="0" max="45" placeholder="pluja" id="precipitacio"> mm
               </div>
-              <div style="display:flex;flex-direction:column;align-items: center">
-                <label style="text-align:center">Pressió atmosfèrica</label>
-                <div><select id="press_actual"></select> (HPa)</div>
+              <div>
+                <i class="wi wi-barometer font-16 edumet"></i>
+                <input type="number" min="975" max="1045" placeholder="pressió" id="pressio"> HPa
               </div>
             </div>
-            <div style="display:flex;flex-direction:column;align-items: center">
-                <label>Tendència baromètrica</label>
+            <div id="tend-bar-div">
                 <select id="tend_bar">
-                  <option selected="" value="">Tria ...</option>
+                  <option value="" disabled selected>Tendència baromètrica</option>
                   <option value="Pujant molt ràpidament">Pujant molt ràpidament</option>
                   <option value="Pujant ràpidament">Pujant ràpidament</option>
                   <option value="Pujant lentament">Pujant lentament</option>
-                  <option value="Estable">Estable</option><option value="Baixant lentament">Baixant lentament</option>
+                  <option value="Estable">Estable</option>
+                  <option value="Baixant lentament">Baixant lentament</option>
                   <option value="Baixant ràpidament">Baixant ràpidament</option>
                   <option value="Baixant molt ràpidament">Baixant molt ràpidament</option>
                 </select> 
               </div>
-            <div style="display:flex;flex-direction:column;margin:10px;">
+            <div id="registre-fet">
               <input id="autor" style="width:100%;" placeholder="Escriu el nom dels autors del registre" type="text" name="autor">
               <button id="enregistra" style="width:100%;">Enregistra les dades</button>
             </div>
           </div>
         </div>
       </div>
-      <div id="nuvols" style="justify-content:space-evenly">
-        <div style="display:flex;flex-direction:row;justify-content:space-evenly">
-          <div class="quadre"><img src="https://static-m.meteo.cat/wordpressweb/wp-content/uploads/2014/11/21084223/BIG_521555615022712_00.jpg" class="fotoNuvol" alt="Cirrus" title="Cirrus"><div class="bottom-left">Cirrus</div></div>         
-          <div class="quadre"><img src="https://static-m.meteo.cat/wordpressweb/wp-content/uploads/2014/11/21084223/BIG_568565615022712_00.jpg" class="fotoNuvol" alt="Cirrocúmuls" title="Cirrocúmuls"><div class="bottom-left">Cirrocúmuls</div></div>
-          <div class="quadre"><img src="https://static-m.meteo.cat/wordpressweb/wp-content/uploads/2014/11/21090417/BIG_037575615022712_00.jpg" class="fotoNuvol" alt="Altostrats"  title="Altostrats"><div class="bottom-left">Altostrats</div></div>
+      <div id="nuvols" class="evenly">
+        <div class="fila-div">
+          <div class="quadre"><img src="https://static-m.meteo.cat/wordpressweb/wp-content/uploads/2014/11/21084223/BIG_521555615022712_00.jpg" class="quadre-3x3" alt="Cirrus" title="Cirrus" onClick="triaNuvols('Cirrus')"><div class="bottom-left blanc">Cirrus</div></div>         
+          <div class="quadre"><img src="https://static-m.meteo.cat/wordpressweb/wp-content/uploads/2014/11/21084223/BIG_568565615022712_00.jpg" class="quadre-3x3" alt="Cirrocúmuls" title="Cirrocúmuls" onClick="triaNuvols('Cirrocúmuls')"><div class="bottom-left blanc">Cirrocúmuls</div></div>
+          <div class="quadre"><img src="https://static-m.meteo.cat/wordpressweb/wp-content/uploads/2014/11/21090417/BIG_037575615022712_00.jpg" class="quadre-3x3" alt="Altostrats"  title="Altostrats" onClick="triaNuvols('Altostrats')"><div class="bottom-left blanc">Altostrats</div></div>
         </div>
-        <div style="display:flex;flex-direction:row;justify-content:space-evenly">
-          <div class="quadre"><img src="https://static-m.meteo.cat/wordpressweb/wp-content/uploads/2014/11/21090541/BIG_490575615022712_00.jpg" class="fotoNuvol" alt="Altocúmuls" title="Altocúmuls"><div class="bottom-left">Altocúmuls</div></div> 
-          <video id="video" class="fotoNuvol"></video>
-          <div class="quadre"><img src="https://static-m.meteo.cat/wordpressweb/wp-content/uploads/2014/11/21090655/BIG_005585615022712_00.jpg" class="fotoNuvol" alt="Nimbostrats" title="Nimbostrats"><div class="bottom-left">Nimbostrats</div></div> 
+        <div class="fila-div">
+          <div class="quadre"><img src="https://static-m.meteo.cat/wordpressweb/wp-content/uploads/2014/11/21090541/BIG_490575615022712_00.jpg" class="quadre-3x3" alt="Altocúmuls" title="Altocúmuls" onClick="triaNuvols('Altocúmuls')"><div class="bottom-left blanc">Altocúmuls</div></div> 
+          <video id="video" class="quadre-3x3"></video>
+          <div class="quadre"><img src="https://static-m.meteo.cat/wordpressweb/wp-content/uploads/2014/11/21090655/BIG_005585615022712_00.jpg" class="quadre-3x3" alt="Nimbostrats" title="Nimbostrats" onClick="triaNuvols('Nimbostrats')"><div class="bottom-left blanc">Nimbostrats</div></div> 
         </div>
-        <div style="display:flex;flex-direction:row;justify-content:space-evenly">
-          <div class="quadre"><img src="https://static-m.meteo.cat/wordpressweb/wp-content/uploads/2014/11/21084223/BIG_693585615022712_00.jpg" class="fotoNuvol" alt="Cumulonimbus" title="Cumulonimbus"><div class="bottom-left">Cumulonimbus</div></div> 
-          <div class="quadre"><img src="https://static-m.meteo.cat/wordpressweb/wp-content/uploads/2014/11/21084223/BIG_115595615022712_00.jpg" class="fotoNuvol" alt="Cúmuls" title="Cúmuls"><div class="bottom-left">Cúmuls</div></div> 
-          <div class="quadre"><img src="https://static-m.meteo.cat/wordpressweb/wp-content/uploads/2014/11/21091124/BIG_630595615022712_00.jpg" class="fotoNuvol" alt="Estratocúmuls" title="Estratocúmuls"><div class="bottom-left">Estratocúmuls</div></div> 
-        </div>
-      </div>
-
-      <div id="vents" style="justify-content:space-evenly">
-          <div style="display:flex;flex-direction:row;justify-content:space-evenly">
-            <div class="quadre-vents"><img src="img/NO.png" class="fotoNuvol" alt="Mestral" title="Mestral"><div class="centered">Mestral</div></div>         
-            <div class="quadre-vents"><img src="img/N.png" class="fotoNuvol" alt="Tramuntana" title="Tramuntana"><div class="centered">Tramuntana</div></div>
-            <div class="quadre-vents"><img src="img/NE.png" class="fotoNuvol" alt="Gregal"  title="Gregal"><div class="centered">Gregal</div></div>
-          </div>
-          <div style="display:flex;flex-direction:row;justify-content:space-evenly">
-            <div class="quadre-vents"><img src="img/O.png" class="fotoNuvol" alt="Ponent" title="Ponent"><div class="centered">Ponent</div></div> 
-            <div class="quadre-vents"><img src="img/C.png" class="fotoNuvol" alt="Calma" title="Calma"><div class="centered">Calma</div></div> 
-            <div class="quadre-vents"><img src="img/E.png" class="fotoNuvol" alt="Llevant" title="Llevant"><div class="centered">Llevant</div></div> 
-          </div>
-          <div style="display:flex;flex-direction:row;justify-content:space-evenly">
-            <div class="quadre-vents"><img src="img/SO.png" class="fotoNuvol" alt="Lleveig" title="Lleveig"><div class="centered">Lleveig</div></div> 
-            <div class="quadre-vents"><img src="img/S.png" class="fotoNuvol" alt="Migjorn" title="Migjorn"><div class="centered">Migjorn</div></div> 
-            <div class="quadre-vents"><img src="img/SE.png" class="fotoNuvol" alt="Xaloc" title="Xaloc"><div class="centered">Xaloc</div></div> 
-          </div>
-        </div>
-
-      <div id="lluna" style="justify-content:space-evenly">
-        <div style="display:flex;flex-direction:row;justify-content:space-evenly">
-          <div class="quadre-vents"><i class="wi beaufort-wi wi-moon-new fotoNuvol icona-48"></i><div class="bottom-left">Lluna nova</div></div>         
-          <div class="quadre-vents"><i class="wi beaufort-wi wi-moon-waxing-crescent-4 fotoNuvol icona-48"></i><div class="bottom-left">Nova visible</div></div>  
-          <div class="quadre-vents"><i class="wi beaufort-wi wi-moon-first-quarter fotoNuvol icona-48"></i><div class="bottom-left">Quart creixent</div></div>  
-        </div>
-        <div style="display:flex;flex-direction:row;justify-content:space-evenly">
-            <div class="quadre-vents"><i class="wi beaufort-wi wi-moon-waxing-gibbous-4 fotoNuvol icona-48"></i><div class="bottom-left">Gibosa creixent</div></div>         
-            <div class="quadre-vents"><i class="wi beaufort-wi wi-moon-full fotoNuvol icona-48"></i><div class="bottom-left">Lluna plena</div></div>  
-            <div class="quadre-vents"><i class="wi beaufort-wi wi-moon-waning-gibbous-4 fotoNuvol icona-48"></i><div class="bottom-left">Gibosa minvant</div></div>  
-        </div>
-        <div style="display:flex;flex-direction:row;justify-content:space-evenly">
-            <div class="quadre-vents"><i class="wi beaufort-wi wi-moon-third-quarter fotoNuvol icona-48"></i><div class="bottom-left">Quart minvant</div></div>         
-            <div class="quadre-vents"><i class="wi beaufort-wi wi-moon-waning-crescent-3 fotoNuvol icona-48"></i><div class="bottom-left">Lluna vella</div></div>  
-            <div class="quadre-vents"><i class="wi beaufort-wi wi-moon-new fotoNuvol icona-48"></i><div class="bottom-left">Lluna negra</div></div>  
+        <div class="fila-div">
+          <div class="quadre"><img src="https://static-m.meteo.cat/wordpressweb/wp-content/uploads/2014/11/21084223/BIG_693585615022712_00.jpg" class="quadre-3x3" alt="Cumulonimbus" title="Cumulonimbus" onClick="triaNuvols('Cumulonimbus')"><div class="bottom-left blanc">Cumulonimbus</div></div> 
+          <div class="quadre"><img src="https://static-m.meteo.cat/wordpressweb/wp-content/uploads/2014/11/21084223/BIG_115595615022712_00.jpg" class="quadre-3x3" alt="Cúmuls" title="Cúmuls" onClick="triaNuvols('Cúmuls')"><div class="bottom-left blanc">Cúmuls</div></div> 
+          <div class="quadre"><img src="https://static-m.meteo.cat/wordpressweb/wp-content/uploads/2014/11/21091124/BIG_630595615022712_00.jpg" class="quadre-3x3" alt="Estratocúmuls" title="Estratocúmuls" onClick="triaNuvols('Estratocúmuls')"><div class="bottom-left blanc">Estratocúmuls</div></div> 
         </div>
       </div>
 
-      <div id="beaufort" style="justify-content:space-evenly">
-        <div style="display:flex;flex-direction:row;justify-content:space-evenly">
-          <div class="quadre-vents"><i class="wi beaufort-wi wi-wind-beaufort-0 fotoBeaufort icona-48"></i><div class="bottom-left">Calma</div></div>         
-          <div class="quadre-vents"><i class="wi beaufort-wi wi-wind-beaufort-1 fotoBeaufort icona-48"></i><div class="bottom-left">Ventolina</div></div>  
-          <div class="quadre-vents"><i class="wi beaufort-wi wi-wind-beaufort-2 fotoBeaufort icona-48"></i><div class="bottom-left">Fluixet</div></div>  
+      <div id="vents" class="evenly">
+          <div class="fila-div">
+            <div class="quadre"><img src="img/NO.png" class="quadre-3x3" alt="Mestral" title="Mestral" onClick="triaVent('NO - Mestral')"><div class="centered">NO - Mestral</div></div>         
+            <div class="quadre"><img src="img/N.png" class="quadre-3x3" alt="Tramuntana" title="Tramuntana" onClick="triaVent('N - Tramuntana')"><div class="centered">N - Tramuntana</div></div>
+            <div class="quadre"><img src="img/NE.png" class="quadre-3x3" alt="Gregal"  title="Gregal" onClick="triaVent('NE - Gregal')"><div class="centered">NE - Gregal</div></div>
+          </div>
+          <div class="fila-div">
+            <div class="quadre"><img src="img/O.png" class="quadre-3x3" alt="Ponent" title="Ponent" onClick="triaVent('O - Ponent')"><div class="centered">O - Ponent</div></div> 
+            <div class="quadre"><img src="img/C.png" class="quadre-3x3" alt="Calma" title="Calma" onClick="triaVent('Cap')"><div class="centered">Calma</div></div> 
+            <div class="quadre"><img src="img/E.png" class="quadre-3x3" alt="Llevant" title="Llevant" onClick="triaVent('E - Llevant')"><div class="centered">E - Llevant</div></div> 
+          </div>
+          <div class="fila-div">
+            <div class="quadre"><img src="img/SO.png" class="quadre-3x3" alt="Lleveig" title="Lleveig" onClick="triaVent('SO - Lleveig')"><div class="centered">SO - Lleveig</div></div> 
+            <div class="quadre"><img src="img/S.png" class="quadre-3x3" alt="Migjorn" title="Migjorn" onClick="triaVent('S - Migjorn')"><div class="centered">S - Migjorn</div></div> 
+            <div class="quadre"><img src="img/SE.png" class="quadre-3x3" alt="Xaloc" title="Xaloc" onClick="triaVent('SE - Xaloc')"><div class="centered">SE - Xaloc</div></div> 
+          </div>
         </div>
-        <div style="display:flex;flex-direction:row;justify-content:space-evenly">
-            <div class="quadre-vents"><i class="wi beaufort-wi wi-wind-beaufort-3 fotoBeaufort icona-48"></i><div class="bottom-left">Fluix</div></div>         
-            <div class="quadre-vents"><i class="wi beaufort-wi wi-wind-beaufort-4 fotoBeaufort icona-48"></i><div class="bottom-left">Moderat</div></div>  
-            <div class="quadre-vents"><i class="wi beaufort-wi wi-wind-beaufort-5 fotoBeaufort icona-48"></i><div class="bottom-left">Fresquet</div></div>  
+
+      <div id="lluna" class="evenly">
+        <div class="fila-div">
+          <div class="quadre" style="background-color:#699297"><i class="wi wi-lluna wi-moon-new quadre-3x3 font-48" onClick="triaLluna('Lluna nova')"></i><div class="bottom-left blanc">Lluna nova</div></div>         
+          <div class="quadre" style="background-color: #778789"><i class="wi wi-lluna wi-moon-waxing-crescent-4 quadre-3x3 font-48"  onClick="triaLluna('Nova visible')"></i><div class="bottom-left blanc">Nova visible</div></div>  
+          <div class="quadre" style="background-color: #2f2f2f"><i class="wi wi-lluna wi-moon-first-quarter quadre-3x3 font-48" onClick="triaLluna('Quart creixent')"></i><div class="bottom-left blanc">Quart creixent</div></div>  
         </div>
-        <div style="display:flex;flex-direction:row;justify-content:space-evenly">
-            <div class="quadre-vents"><i class="wi beaufort-wi wi-wind-beaufort-6 fotoBeaufort icona-48"></i><div class="bottom-left">Fresc</div></div>         
-            <div class="quadre-vents"><i class="wi beaufort-wi wi-wind-beaufort-7 fotoBeaufort icona-48"></i><div class="bottom-left">Fort</div></div>  
-            <div class="quadre-vents"><i class="wi beaufort-wi wi-wind-beaufort-8 fotoBeaufort icona-48"></i><div class="bottom-left">Temporal</div></div>  
+        <div class="fila-div">
+            <div class="quadre" style="background-color: #171717"><i class="wi wi-lluna wi-moon-waxing-gibbous-4 quadre-3x3 font-48" onClick="triaLluna('Gibosa creixent')"></i><div class="bottom-left blanc">Gibosa creixent</div></div>         
+            <div class="quadre" style="background-color: black"><i class="wi wi-lluna wi-moon-full quadre-3x3 font-48" onClick="triaLluna('Lluna plena')"></i><div class="bottom-left blanc">Lluna plena</div></div>  
+            <div class="quadre" style="background-color: #171717"><i class="wi wi-lluna wi-moon-waning-gibbous-4 quadre-3x3 font-48" onClick="triaLluna('Gibosa minvant')"></i><div class="bottom-left blanc">Gibosa minvant</div></div>  
         </div>
-        <div style="display:flex;flex-direction:row;justify-content:space-evenly">
-            <div class="quadre-vents"><i class="wi beaufort-wi wi-wind-beaufort-9 fotoBeaufort icona-48"></i><div class="bottom-left">Temporal fort</div></div>         
-            <div class="quadre-vents"><i class="wi beaufort-wi wi-wind-beaufort-10 fotoBeaufort icona-48"></i><div class="bottom-left">Temporal molt fort</div></div>  
-            <div class="quadre-vents"><i class="wi beaufort-wi wi-wind-beaufort-11 fotoBeaufort icona-48"></i><div class="bottom-left">Temporal violent</div></div>  
-        </div>
-        <div style="display:flex;flex-direction:row;justify-content:space-evenly">
-            <div class="quadre-vents"><i class="wi beaufort-wi wi-wind-beaufort-12 fotoBeaufort icona-48"></i><div class="bottom-left">Huracà</div></div>         
-        </div>
-      </div>
-      <div id="fenAtm" style="justify-content:space-evenly">
-        <div style="display:flex;flex-direction:row;justify-content:space-evenly">
-          <div class="quadre"><img src="https://static-m.meteo.cat/wordpressweb/wp-content/uploads/2014/11/21082911/BIG_459395615022712_00.jpg" class="fotoNuvol" alt="Pluja" title="Pluja"><div class="top-left"><input type="checkbox" name="Pluja" value="Pluja">Pluja</div></div>         
-          <div class="quadre"><img src="https://static-m.meteo.cat/wordpressweb/wp-content/uploads/2014/11/21084115/BIG_006495615022712_00.jpg" class="fotoNuvol" alt="Calamarsa" title="Calamarsa"><div class="top-left"><input type="checkbox" name="Calamarsa" value="Calamarsa">Calamarsa</div></div> 
-          <div class="quadre"><img src="https://static-m.meteo.cat/wordpressweb/wp-content/uploads/2014/11/21084223/BIG_177515615022712_00.jpg" class="fotoNuvol" alt="Neu"  title="Neu"><div class="top-left"><input type="checkbox" name="Neu" value="Neu">Neu</div></div> 
-        </div>
-        <div style="display:flex;flex-direction:row;justify-content:space-evenly">
-          <div class="quadre"><img src="https://static-m.meteo.cat/wordpressweb/wp-content/uploads/2014/11/21084223/BIG_459315615022712_00.jpg" class="fotoNuvol" alt="Rosada" title="Rosada"><div class="top-left"><input type="checkbox" name="Rosada" value="Rosada">Rosada</div></div>  
-          <div class="quadre"><button style="width:33vw; height:26vh" class="icona-16">Desa els fenòmens atmosfèrics seleccionats</button></div> 
-          <div class="quadre"><img src="https://static-m.meteo.cat/wordpressweb/wp-content/uploads/2014/11/21084223/BIG_584325615022712_00.jpg" class="fotoNuvol" alt="Gebre" title="Gebre"><div class="top-left"><input type="checkbox" name="Gebre" value="Gebre">Gebre</div></div> 
-        </div>
-        <div style="display:flex;flex-direction:row;justify-content:space-evenly">
-          <div class="quadre"><img src="https://static-m.meteo.cat/wordpressweb/wp-content/uploads/2014/11/21080737/BIG_146335615022712_00.jpg" class="fotoNuvol" alt="Boira" title="Boira"><div class="top-left"><input type="checkbox" name="Boira" value="Boira">Boira</div></div>  
-          <div class="quadre"><img src="https://static-m.meteo.cat/wordpressweb/wp-content/uploads/2014/11/21084115/BIG_396255615022712_00.jpg" class="fotoNuvol" alt="Arc de Sant Martí" title="Arc de Sant Martí"><div class="top-left"><input type="checkbox" name="Arc de Sant Martí" value="Arc de Sant Martí">Arc de Sant Martí</div></div>  
-          <div class="quadre"><img src="https://static-m.meteo.cat/wordpressweb/wp-content/uploads/2014/11/21084223/BIG_552435615022712_00.jpg" class="fotoNuvol" alt="Llamp" title="Llamp"><div class="top-left"><input type="checkbox" name="Llamp" value="Llamp">Llamp</div></div> 
+        <div class="fila-div">
+            <div class="quadre" style="background-color:#2f2f2f"><i class="wi wi-lluna wi-moon-third-quarter quadre-3x3 font-48" onClick="triaLluna('Quart minvant')"></i><div class="bottom-left blanc">Quart minvant</div></div>         
+            <div class="quadre" style="background-color: #778789"><i class="wi wi-lluna wi-moon-waning-crescent-3 quadre-3x3 font-48" onClick="triaLluna('Lluna vella')"></i><div class="bottom-left blanc">Lluna vella</div></div>  
+            <div class="quadre" style="background-color:#699297"><i class="wi wi-lluna wi-moon-new quadre-3x3 font-48" onClick="triaLluna('Lluna negra')"></i><div class="bottom-left blanc">Lluna negra</div></div>  
         </div>
       </div>
-      <div id="sector-inferior">
-        <div id="hr"></div>
-        <div id="menu-inferior">
-          <button id="boto_observacions" class="boto-inf" style="color:graytext;" onClick="login();" title="Observacions"><i class="material-icons icona-24">camera_alt</i></button>
-          <button id="boto_estacions" class="boto-inf" style="color:#418ac8;" onClick="estacio();" title="Estacions"><i class="material-icons icona-24">router</i></button>
-          <button id="boto_registra" class="boto-inf" style="color:graytext;" onClick="registra();" title="Registra"><i class="material-icons icona-24">bookmark</i></button>
-          <button id="boto_prediccio" class="boto-inf" style="color:graytext;" onClick="prediccio();" title="Predicció"><i class="material-icons icona-24">cloud</i></button>
-          <button id="boto_radar" class="boto-inf" style="color:graytext;" onClick="radar();" title="Radar"><i class="material-icons icona-24">wifi_tethering</i></button>
+
+      <div id="beaufort" style="overflow-y:scroll">
+        <div class="hr"></div>
+        <div class="beaufort-div" onClick=""><div class="font-24 beaufort-num">0</div><div class="font-16 beaufort-nom">Calma</div><div class="beaufort-text">La superfície del mar sembla un mirall. El fum puja verticalment.</div></div>
+        <div class="beaufort-div" onClick=""><div class="font-24 beaufort-num">1</div><div class="font-16 beaufort-nom">Ventolina</div><div class="beaufort-text">Ones del mar petites sense escuma. El fum indica la direcció del vent.</div></div>
+        <div class="beaufort-div" onClick=""><div class="font-24 beaufort-num">2</div><div class="font-16 beaufort-nom">Fluixet</div><div class="beaufort-text">Ones del mar petites amb crestes que no s'arriven a trencar. Es mouen les fulles dels arbres.</div></div>
+        <div class="beaufort-div" onClick=""><div class="font-24 beaufort-num">3</div><div class="font-16 beaufort-nom">Fluix</div><div class="beaufort-text">Ones del mar llargues amb crestes que es comencen a trencar. Les fulles dels arbres s'agiten i es despleguen les banderes.</div></div>
+        <div class="beaufort-div" onClick=""><div class="font-24 beaufort-num">4</div><div class="font-16 beaufort-nom">Moderat</div><div class="beaufort-text">Ones del mar més llargues. S'observen crestes amb escuma. El vent dispersa la pols.</div></div>
+        <div class="beaufort-div" onClick=""><div class="font-24 beaufort-num">5</div><div class="font-16 beaufort-nom">Fresquet</div><div class="beaufort-text">Ones del mar moderades i allargades, amb dispersió de gotetes d'aigua. Es mouen les branques dels arbres petits. En els estanys es formen petites ones.</div></div>
+        <div class="beaufort-div" onClick=""><div class="font-24 beaufort-num">6</div><div class="font-16 beaufort-nom">Fresc</div><div class="beaufort-text">Ones del mar grans, és perillosa la navegació de vaixells petits. Es mouen les branques dels arbres. Costa mantenir obert un paraigües.</div></div>
+        <div class="beaufort-div" onClick=""><div class="font-24 beaufort-num">7</div><div class="font-16 beaufort-nom">Fort</div><div class="beaufort-text">Es redueix la visibilitat en el mar. Els arbres grans es mouen i és dificil caminar en contra del vent.</div></div>
+        <div class="beaufort-div" onClick=""><div class="font-24 beaufort-num">8</div><div class="font-16 beaufort-nom">Temporal</div><div class="beaufort-text">Ones del mar moderadament altes amb formació de remolins. Es trenquen les branques més primes dels arbres i costa caminar.</div></div>
+        <div class="beaufort-div" onClick=""><div class="font-24 beaufort-num">9</div><div class="font-16 beaufort-nom">Temporal fort</div><div class="beaufort-text">Poca visibilitat en el mar a causa de la dispersió de petites gotes d'aigua. És impossible caminar en contra del vent.</div></div>
+        <div class="beaufort-div" onClick=""><div class="font-24 beaufort-num">10</div><div class="font-16 beaufort-nom">Temporal molt fort</div><div class="beaufort-text">Ones del mar molt altes que redueixen la visibilitat. Arrenca arbres i ocasiona danys de consideració en els edificis.</div></div>
+        <div class="beaufort-div" onClick=""><div class="font-24 beaufort-num">11</div><div class="font-16 beaufort-nom">Temporal violent</div><div class="beaufort-text">La navegació és perillosa, amb escassa visibilitat. Ocasiona destrosses a tot arreu.</div></div>
+        <div class="beaufort-div" onClick=""><div class="font-24 beaufort-num">12</div><div class="font-16 beaufort-nom">Huracà</div><div class="beaufort-text">És impossible la navegació, amb visibilitat gairebé nul·la. A terra, destrucció total.</div></div>     
+      </div>
+
+      <div id="nuvolositat">
+        <img id="img_cobertura" src="img/25.png">
+        <input type="range" id="cobertura" min="0" max="100" step="25" value="25" style="width:40vh" onChange="canvi_cobertura()">
+        <label style="width:40vh">Ajusta amb el cursor el grau de cobertura del cel a causa dels núvols.</label>
+        <button class="font-16" onClick="triaNuvolositat()">D'acord</button>
+      </div>
+
+      <div id="fenomens" class="evenly">
+        <div class="fila-div">
+          <div class="quadre"><img src="https://static-m.meteo.cat/wordpressweb/wp-content/uploads/2014/11/21082911/BIG_459395615022712_00.jpg" class="quadre-3x3" alt="Pluja" title="Pluja"><div class="top-left blanc"><input type="checkbox" id="Pluja" name="Pluja" value="Pluja">Pluja</div></div>         
+          <div class="quadre"><img src="https://static-m.meteo.cat/wordpressweb/wp-content/uploads/2014/11/21084115/BIG_006495615022712_00.jpg" class="quadre-3x3" alt="Calamarsa" title="Calamarsa"><div class="top-left blanc"><input type="checkbox" id="Calamarsa" name="Calamarsa" value="Calamarsa">Calamarsa</div></div> 
+          <div class="quadre"><img src="https://static-m.meteo.cat/wordpressweb/wp-content/uploads/2014/11/21084223/BIG_177515615022712_00.jpg" class="quadre-3x3" alt="Neu"  title="Neu"><div class="top-left blanc"><input type="checkbox" id="neu" name="Neu" value="Neu">Neu</div></div> 
+        </div>
+        <div class="fila-div">
+          <div class="quadre"><img src="https://static-m.meteo.cat/wordpressweb/wp-content/uploads/2014/11/21084223/BIG_459315615022712_00.jpg" class="quadre-3x3" alt="Rosada" title="Rosada"><div class="top-left blanc"><input type="checkbox" id="Rosada" name="Rosada" value="Rosada">Rosada</div></div>  
+          <div class="quadre"><button id="boto-fenomens" class="font-16" onClick="triaFenomens()">D'acord</button></div> 
+          <div class="quadre"><img src="https://static-m.meteo.cat/wordpressweb/wp-content/uploads/2014/11/21084223/BIG_584325615022712_00.jpg" class="quadre-3x3" alt="Gebre" title="Gebre"><div class="top-left blanc"><input type="checkbox" id="Gebre" name="Gebre" value="Gebre">Gebre</div></div> 
+        </div>
+        <div class="fila-div">
+          <div class="quadre"><img src="https://static-m.meteo.cat/wordpressweb/wp-content/uploads/2014/11/21080737/BIG_146335615022712_00.jpg" class="quadre-3x3" alt="Boira" title="Boira"><div class="top-left blanc"><input type="checkbox" id="Boira" name="Boira" value="Boira">Boira</div></div>  
+          <div class="quadre"><img src="https://static-m.meteo.cat/wordpressweb/wp-content/uploads/2014/11/21084115/BIG_396255615022712_00.jpg" class="quadre-3x3" alt="Arc de Sant Martí" title="Arc de Sant Martí"><div class="top-left blanc"><input type="checkbox" id="Arc" name="Arc de Sant Martí" value="Arc de Sant Martí">Arc de Sant Martí</div></div>  
+          <div class="quadre"><img src="https://static-m.meteo.cat/wordpressweb/wp-content/uploads/2014/11/21084223/BIG_552435615022712_00.jpg" class="quadre-3x3" alt="Llamp" title="Llamp"><div class="top-left blanc"><input type="checkbox" id="Llamp" name="Llamp" value="Llamp">Llamp</div></div> 
+        </div>
+      </div>
+      <div id="peu-div">
+        <div class="hr"></div>
+        <div id="menu-inferior">          
+          <button id="boto_estacions" class="boto-inf edumet" onClick="estacio();" title="Estacions"><i class="material-icons font-24">router</i><div class="etiqueta">Estació<div></button>
+          <button id="boto_prediccio" class="boto-inf" style="color:graytext;" onClick="prediccio();" title="Predicció"><i class="material-icons font-24">cloud</i><div class="etiqueta">Prediccio</div></button>        
+          <button id="boto_radar" class="boto-inf" style="color:graytext;" onClick="radar();" title="Radar"><i class="material-icons font-24">wifi_tethering</i><div class="etiqueta">Radar</div></button>
+          <button id="boto_observacions" class="boto-inf" style="color:graytext;" onClick="login();" title="Observacions"><i class="material-icons font-24">camera_alt</i><div class="etiqueta">Observa</div></button>
+          <button id="boto_registra" class="boto-inf" style="color:graytext;" onClick="registra();" title="Registra"><i class="material-icons font-24">edit</i><div class="etiqueta">Registra</div></button>
         </div>  
         <input type="file" style='display:none;' accept="image/*" id="fitxer" name="fitxer" capture="camera"/>
-        <input type='file' style='display: none;' accept="image/jpeg" id="fitxer_galeria" name="fitxer_galeria" />
+        <input type='file' style='display:none;' accept="image/jpeg" id="fitxer_galeria" name="fitxer_galeria" />
         <canvas id="canvas" style="display:none;"></canvas>
       </div>   
 

@@ -6,13 +6,13 @@ body {
 button, select, input, textarea {
     font-family: Roboto,"Open Sans",Arial,Serif,Times !important;
 }
-.icona-wi {
+.wi-estacions {
     color:#418ac8;
     margin-right:7px;
     margin-left:15px;
 }
-.beaufort-wi {
-    color:#418ac8;
+.wi-lluna {
+    color:whitesmoke;
     transform: translateY(30%);
 }
 .material-icons {
@@ -26,11 +26,8 @@ button, select, input, textarea {
     word-wrap: normal;
     white-space: nowrap;
     direction: ltr;  
-    /* Support for all WebKit browsers. */
     -webkit-font-smoothing: antialiased;
-    /* Support for Safari and Chrome. */
     text-rendering: optimizeLegibility;  
-    /* Support for Firefox. */
     -moz-osx-font-smoothing: grayscale;
 }
 .loader {
@@ -43,20 +40,16 @@ button, select, input, textarea {
     animation: spin 1s linear infinite;
     animation-play-state: paused;
 }  
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
-.icona-16 {
+.font-16 {
     font-size:16px !important; 
 }
-.icona-24 {
+.font-24 {
     font-size:24px !important; 
 }
-.icona-36{
+.font-36{
     font-size:36px !important; 
 }
-.icona-48{
+.font-48{
     font-size:48px !important; 
 }
 .mesures {
@@ -65,24 +58,25 @@ button, select, input, textarea {
 }
 .boto-inf {
     width:20%;
-    background: none;
+    background:none;
     border:none;
     outline:none;
 }
 .boto-sup {
-    background: none;
-    color: #418ac8;
+    background:none;
+    color:#418ac8;
     border:none;
     outline:none;
 }
 .boto-edit {
-    width: 75%;
-    height: 25%;
+    width:75%;
+    height:25%;
     border-radius: 8px;
     outline:none;
+    color:#418ac8;
 }
-.marge {
-    margin: 1vh;
+.login-marge {
+    margin:1vh;
 }
 .obs-fen {
     display:flex;
@@ -94,68 +88,104 @@ button, select, input, textarea {
     width:90%;
     align-items:center;
 }
-.btn {
-    font-weight:unset !important;
-}
-.fotoNuvol {
+.quadre-3x3 {
     width:33vw;
     height:26vh;
 }
-.fotoBeaufort {
-    width:33vw;
-    height:16vh;
-}
 .quadre {
-    position: relative;
-    text-align: center;
-    color: white;
-}
-.quadre-vents {
-    position: relative;
-    text-align: center;
+    position:relative;
+    text-align:center;
 }
 .bottom-left {
-    position: absolute;
-    bottom: 5px;
-    left: 5px;
+    position:absolute;
+    bottom:5px;
+    left:5px;
 }
 .top-left {
-    position: absolute;
-    top: 5px;
-    left: 5px;
+    position:absolute;
+    top:5px;
+    left:5px;
 }
 .centered {
-    position: absolute;
-    top: 50%;
+    position:absolute;
+    top:50%;
     left: 50%;
-    transform: translate(-50%, -50%);
+    transform:translate(-50%, -50%);
+}
+.beaufort-num {
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    width:10vw;
+    height:10vw;
+    background-color:#418ac8;
+    color:white
+}
+.beaufort-div {
+    display:flex;
+    align-items:center;
+    min-height:15vh;
+}
+.beaufort-nom {
+    width:20vw;
+    display:flex;
+    align-items:center;
+    padding:5px;
+}
+.beaufort-text {
+    width:70vw;
+}
+.fila-div {
+    display:flex;
+    flex-direction:row;
+    justify-content:space-evenly;
+}
+.evenly{
+    justify-content:space-evenly;
+}
+.hr {
+    height: 1px;
+    background-color: lightgray;
+}
+.blanc {
+    color:white;
+}
+.edumet {
+    color:#418ac8;
+}
+.dot {
+    height: 15px;
+    width: 15px;
+    margin: 2px 2px;
+    background-color: #bbb;
+    border-radius: 50%;
+    display: inline-block;
+    transition: background-color 0.6s ease;
+}
+.active {
+    background-color: #717171;
 }
 #capsalera {
-    height: 10vh;
-    background-color: #418ac8;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    height:10vh;
+    background-color:#418ac8;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
 }
-#content {
-    height:80vh;
-}
-#menu-botons {
+#menu-fenologia {
     display:flex;
     justify-content: space-evenly;
     width:100%;
     height:10vh;
 }
-#menu-registra {
+#menu-observades {
     display:flex;
     justify-content:space-evenly;
     width:100%;
 }
-#nou_registre {
-    height: 100%;
-    width: 50%;
-    display: flex;
-    flex-direction: column;
+#registre-esquerra {
+    display:flex;
+    flex-direction:column;
     justify-content: space-evenly;
 }
 #login {
@@ -172,18 +202,14 @@ button, select, input, textarea {
     align-items: center;
     flex-direction:column;
     height: 80vh;
-    width: 100%;
     background: transparent;
 }
 #radar {
     display: none;
     height: 80vh;
-    width: 100%;
-    flex-direction:column;
     justify-content:center;
     align-items:center;
 }
-
 #fotografia {
     display:none;
     height: 80vh;
@@ -200,10 +226,14 @@ button, select, input, textarea {
     align-items:center;
     height:80vh;
 }
-#observacions, #fitxa, #registra, #tria_lloc, #nuvols, #vents, #beaufort, #lluna, #fenAtm {
+#observacions, #fitxa, #lloc, #nuvols, #vents, #beaufort, #lluna, #fenomens, #nuvolositat {
     display:none;
     height:80vh;    
     flex-direction:column;
+}
+#registra {
+    display:none;
+    height:80vh;    
 }
 #fila {
     height:5vh;
@@ -221,7 +251,7 @@ button, select, input, textarea {
     flex-direction:column;
     height:80vh;
 }
-#div_foto {
+#foto-div {
     display: flex;
     height: 38vh;
     align-items: center;
@@ -231,21 +261,14 @@ button, select, input, textarea {
     max-width:90%;
     max-height:95%;
 }
-#fenomen {
-    font-size:14px !important;
-}
 #descripcio {
     width:100%;
     height:90%;
     resize: none;
     font-size:14px !important;
 }
-#sector-inferior {
+#peu-div {
     height:10vh;
-}
-#hr {
-    height: 1px;
-    background-color: lightgray;
 }
 #menu-inferior {
     height:9vh;
@@ -263,33 +286,32 @@ button, select, input, textarea {
     width:100%;
     height:55vh;
 }
-#cont_mapa {
+#mapa-div {
     height:50%;
     padding:5px;
 }
-
-#mapaFitxa {
+#fitxa-mapa {
     width:100%;
     height:100%;
 }
-#descripcioFitxa {
+#fitxa-text {
     height:30%;
     margin: 10px;
     overflow-y:scroll;
 }
-#logoEstacio {
+#estacio-logo {
     height:100%;
     text-align: right;
 }
-#est_nom {
+#estacio-nom {
     height:5vh;
     width:100%;
     margin-right:10px;
 }
-#est_logo {
+#estacio-logo-div {
     height:100%;
 }
-#nom_estacio {
+#estacio-nom-div {
     display:flex;
     flex-direction:column;
     justify-content:center;
@@ -303,17 +325,17 @@ button, select, input, textarea {
     justify-content: space-evenly;
     height:20vh;
 }
-#contingutFitxa {
-    display: flex;
+#fitxa-div {
+    display:flex;
     height:80vh;
 }
-#nomFenomen, #dataHora {
+#fenomen-nom, #dataHora {
     display: flex;
     height: 10%;
     justify-content: center;
     align-items: center;
 }
-#fotoFitxa{
+#fitxa-foto{
     width:70%;
     margin:5px;
     object-fit: contain;
@@ -325,7 +347,7 @@ button, select, input, textarea {
     padding-right:48px;
     margin-top:24px;
 }
- #enregistra {
+#enregistra {
     padding-bottom:12px;
     padding-top:12px;
     margin-top:10px;
@@ -335,22 +357,46 @@ button, select, input, textarea {
     align-items:center;
     height:10vh;
 }
-#edicio_fitxa {
+#fitxa-edicio {
     display:flex;
-    height:50%;
     justify-content: space-around;
 }
-#desc_map_fitxa {
+#fitxa-map-text {
     display:flex;
     flex-direction:column;
-    height:50%;
 }
-#botons_edicio {
+#edicio-div {
     display:flex;
     flex-direction:column; 
     justify-content:space-evenly;
     align-items: center;
     width: 20%;
+}
+#caixa_registra {
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
+    padding:5px;
+}
+#temperatures {
+    display:flex;
+    justify-content:center;
+    margin-bottom:5px;
+}
+#humitat-pressio{
+    display:flex;
+    justify-content:space-evenly;
+    margin-bottom:5px;
+}
+#tend-bar-div {
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+}
+#registre-fet {
+    display:flex;
+    flex-direction:column;
+    margin:10px;
 }
 #frame{
     margin-top:10px;
@@ -365,88 +411,130 @@ button, select, input, textarea {
 #star{
     margin-left:5px;
 }
-
-#icona-login, #icona-back{
-    color:white;
-}
-
-@media (min-height: 800px) {
-    body, input, #valida, #est_nom, #fenomen, #descripcio, .boto-inf, .boto-sup {
-        font-size:16px !important;
-    }
-    .icona-36 {
-        font-size:48px !important;
-    }
-    .icona-48 {
-        font-size:64px !important;
-    }
-    .obs-icon, .icona-24 {
-        font-size:36px !important;
-    }
-    .icona-16 {
-        font-size:24px !important; 
-    }
-}
-@media (min-height: 1000px) {
-    body, input, #valida, #est_nom, #fenomen, #descripcio, .boto-inf, .boto-sup {
-        font-size:18px !important;
-    }
-    .icona-36 {
-        font-size:64px !important;
-    }
-    .icona-48 {
-        font-size:96px !important;
-    }
-    .obs-icon, .icona-24 {
-        font-size:48px !important;
-    }
-    .icona-16 {
-        font-size:32px !important; 
-    }
-}
-@media (min-height: 1200px) {
-    body, input, #valida, #est_nom, #fenomen, #descripcio, .boto-inf, .boto-sup {
-        font-size:24px !important;
-    }
-    .icona-36 {
-        font-size:96px !important;
-    }
-    .icona-48 {
-        font-size:128px !important;
-    }
-    .obs-icon, .icona-24 {
-        font-size:64px !important;
-    }
-    .icona-16 {
-        font-size:48px !important; 
-    }
-}
-
-/* Slideshow container */
-.slideshow-container {
-    width:100%;
-}  
-.imgSlidesPortrait, .mySlidesPortrait{
-    width:100%;
-    height:auto;
-}
-.imgSlidesLandscape, .mySlidesLandscape{
+#img_cobertura {
     width:auto;
-    height:80vh;
+    height:40vh;
+}
+#nuvolositat{
+    justify-content:space-around;
+    align-items: center;
+}
+#boto-fenomens {
+    margin-left:4vw;
+    margin-right:4vw;
+    margin-top:9vh;
+    width:25vw;
+    height:8vh
 }
 #puntets {
     display:flex;
     margin:10px;
 }
-.dot {
-    height: 15px;
-    width: 15px;
-    margin: 2px 2px;
-    background-color: #bbb;
-    border-radius: 50%;
-    display: inline-block;
-    transition: background-color 0.6s ease;
+
+@media (min-height: 800px) {
+    body, input, #valida, #estacio-nom, #descripcio, .boto-inf, .boto-sup {
+        font-size:16px !important;
+    }
+    .font-16 {
+        font-size:24px !important; 
+    }
+    .font-24 {
+        font-size:36px !important;
+    }
+    .font-36 {
+        font-size:48px !important;
+    }
+    .font-48 {
+        font-size:64px !important;
+    }
 }
-.active {
-    background-color: #717171;
+@media (min-height: 1000px) {
+    body, input, #valida, #estacio-nom, #descripcio, .boto-inf, .boto-sup {
+        font-size:18px !important;
+    }
+    .font-16 {
+        font-size:32px !important; 
+    }
+    .font-24 {
+        font-size:48px !important;
+    }
+    .font-36 {
+        font-size:64px !important;
+    }
+    .font-48 {
+        font-size:96px !important;
+    }
+}
+@media (min-height: 1200px) {
+    body, input, #valida, #estacio-nom, #descripcio, .boto-inf, .boto-sup {
+        font-size:24px !important;
+    }
+    .font-16 {
+        font-size:48px !important; 
+    }
+    .font-24 {
+        font-size:64px !important;
+    }
+    .font-36 {
+        font-size:96px !important;
+    }
+    .font-48 {
+        font-size:128px !important;
+    }
+}
+@media (orientation:landscape) {
+    #fitxa-div, #registra {
+        flex-direction:row;
+    }
+    #radar{
+        flex-direction:row;
+        width:auto;
+    }
+    #puntets {
+        flex-direction:column;
+    }
+    #slideshow-container, .imgSlides, .mySlides {
+        height:80vh;
+        width:auto;
+    }
+    #fitxa-edicio, #fitxa-map-text, #registre-esquerra, #registre-dreta {
+        width:50%;
+        height:100%
+    }
+    #caixa_registra {
+        height:80vh;
+    }
+    .etiqueta {
+        display:none;
+    }
+}
+@media (orientation:portrait) {
+    #fitxa-div, #registra {
+        flex-direction:column;
+    }
+    #radar {
+        flex-direction:column;
+        width:100%;
+    }
+    #puntets {
+        flex-direction:row;
+    }
+    #slideshow-container, .imgSlides, .mySlides {
+        height:auto;
+        width:100%;
+    }
+    #fitxa-edicio, #fitxa-map-text, #registre-esquerra, #registre-dreta {
+        width:100%;
+        height:50%
+    }
+    #caixa_registra {
+        height:40vh;
+    }
+    .etiqueta {
+        display:unset;
+    }
+}
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
 }

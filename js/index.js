@@ -46,11 +46,6 @@ window.onload = function() {
     console.log("Canvi d'orientació");
     ajustaOrientacio();
   });
-  window.addEventListener("resize", function(){
-    console.log("Resize");
-    ajustaOrientacio();
-  });
-  ajustaOrientacio();   
   
   document.getElementById('fitxer_galeria').addEventListener("change", function(event) {
     readURL(this);
@@ -67,14 +62,14 @@ window.onload = function() {
     timePicker24Hour: true,
     timePickerSeconds: true,
     locale: {
-        "format": "DD/MM/YYYY",
-        "separator": " - ",
-        "applyLabel": "Desa la data i l'hora",
-        "cancelLabel": "Cancel·la",
-        "customRangeLabel": "Custom",
-        "daysOfWeek": ["Di","Dl","Dm","Dc","Dj","Dv","Ds"],
-        "monthNames": ["Gener","Febrer","Març","Abril","Maig","Juny","Juliol","Agost","Setembre","Octubre","Novembre","Desembre"],
-        "firstDay": 1
+      "format": "DD/MM/YYYY",
+      "separator": " - ",
+      "applyLabel": "Desa la data i l'hora",
+      "cancelLabel": "Cancel·la",
+      "customRangeLabel": "Custom",
+      "daysOfWeek": ["Di","Dl","Dm","Dc","Dj","Dv","Ds"],
+      "monthNames": ["Gener","Febrer","Març","Abril","Maig","Juny","Juliol","Agost","Setembre","Octubre","Novembre","Desembre"],
+      "firstDay": 1
     }
   }, function(start) {
     var dia = start.format('YYYY-MM-DD');
@@ -125,7 +120,7 @@ var ExifLongitud;
 var ExifLongitud;
 var observacioActual = 0;
 var observacioFitxa;
-var mapaFitxa;
+var fitxaMapa;
 var marcadorFitxa;
 var marcadorUbica;
 var vistaActual;
@@ -141,7 +136,6 @@ var flagRadar = false;
 var flagDataTriada;
 var timeOut;
 var midaFoto = 800;
-var orientacio;
 var origen;
 var hasWebcam = false;
 var isWebcamAlreadyCaptured = false;
@@ -173,10 +167,11 @@ function back() {
     case 'fotografia':
       activa(vistaOrigen);
       break;
-    case 'fenAtm':
+    case 'fenomens':
     case 'vents':
     case 'beaufort':
     case 'nuvols':
+    case 'nuvolositat':
     case 'lluna':
       activa('registra');
       break;
@@ -186,65 +181,6 @@ function back() {
 }
 
 function ajustaOrientacio() {
-  console.log("window.orientation: " + window.orientation);
-  console.log("window.innerWidth: " + window.innerWidth);
-  console.log("window.innerHeight: " + window.innerHeight);
-  if(window.orientation != undefined) {
-    if(window.orientation == 0 || window.orientation == 180) {
-      orientacio = "portrait";
-    } else {
-      orientacio = "landscape";
-    }
-  } else {
-    if(window.innerWidth < window.innerHeight) {
-      orientacio = "portrait";
-    } else {
-      orientacio = "landscape";
-    }
-  }
-  console.log("Orientació: " + orientacio);
-  var textBoto = '<i class="material-icons icona-24">';
-  if(orientacio == "landscape") {
-    $("#boto_observacions").html(textBoto + 'camera_alt</i>');
-    $("#boto_estacions").html(textBoto + 'router</i>');
-    $("#boto_registra").html(textBoto + 'bookmark</i>');
-    $("#boto_prediccio").html(textBoto + 'cloud</i>');
-    $("#boto_radar").html(textBoto + 'wifi_tethering</i>');
-    $("#radar").css("flexDirection","row");
-    $("#puntets").css("flexDirection","column");
-    $("#slideshow-container").css("height","80vh"); 
-    $("#slideshow-container").css("width","auto"); 
-    $("#contingutFitxa").css("flexDirection","row"); 
-    $("#edicio_fitxa").css("width","50%"); 
-    $("#edicio_fitxa").css("height","100%"); 
-    $("#desc_map_fitxa").css("width","50%"); 
-    $("#desc_map_fitxa").css("height","100%"); 
-    $("#registra").css("flexDirection","row"); 
-    $("#nou_registre").css("width","50%"); 
-    $("#nou_registre").css("height","100%"); 
-    $("#entrada_dades").css("width","50%"); 
-    $("#entrada_dades").css("height","100%"); 
-  } else {
-    $("#boto_observacions").html(textBoto + 'camera_alt</i><br>Observa');
-    $("#boto_estacions").html(textBoto + 'router</i><br>Estació');
-    $("#boto_registra").html(textBoto + 'bookmark</i><br>Registra');
-    $("#boto_prediccio").html(textBoto + 'cloud</i><br>Predicció');
-    $("#boto_radar").html(textBoto + 'wifi_tethering</i><br>Radar');
-    $("#radar").css("flexDirection","column");
-    $("#puntets").css("flexDirection","row");
-    $("#slideshow-container").css("width","100%");
-    $("#slideshow-container").css("height","auto");    
-    $("#contingutFitxa").css("flexDirection","column"); 
-    $("#edicio_fitxa").css("width","100%"); 
-    $("#edicio_fitxa").css("height","50%"); 
-    $("#desc_map_fitxa").css("width","100%"); 
-    $("#desc_map_fitxa").css("height","50%"); 
-    $("#registra").css("flexDirection","column"); 
-    $("#nou_registre").css("width","100%"); 
-    $("#nou_registre").css("height","50%"); 
-    $("#entrada_dades").css("width","100%"); 
-    $("#entrada_dades").css("height","50%"); 
-  }
   if (vistaActual == 'radar'){
     flagRadar= false;
     clearTimeout(timeOut);
@@ -329,7 +265,7 @@ function baixaEstacions() {
 
 function mostraEstacions() {
   watchID = navigator.geolocation.watchPosition(geoSuccess, geoFail);
-  var x = document.getElementById("est_nom");
+  var x = document.getElementById("estacio-nom");
   indexedDB.open("eduMET").onsuccess = function(event) {
     event.target.result.transaction(["Estacions"], "readonly").objectStore("Estacions").getAll().onsuccess = function(event) {
       for(i=0;i<event.target.result.length;i++){
@@ -337,7 +273,7 @@ function mostraEstacions() {
         marcador[i].i = i
         marcador[i].Codi_estacio = event.target.result[i]["Codi_estacio"];
         marcador[i].on('click',function(e) {
-          $("#est_nom").val(this.Codi_estacio);
+          $("#estacio-nom").val(this.Codi_estacio);
           mostra(this.Codi_estacio);
         });   
         var option = document.createElement("option");
@@ -354,7 +290,7 @@ function mostraEstacions() {
         estacioActual = preferida;
         estacioPreferida = preferida;
         console.log("Preferida (Desada): " + estacioPreferida);
-        $("#est_nom").val(estacioPreferida);
+        $("#estacio-nom").val(estacioPreferida);
       }
       mostraEstacio();
     };
@@ -366,7 +302,7 @@ function mostra(Codi_estacio) {
 }
 
 function selectEstacio() {  
-  estacioActual = $("#est_nom").val();
+  estacioActual = $("#estacio-nom").val();
   mostraEstacio();
 }
 
@@ -376,7 +312,7 @@ function mostraEstacio() {
       $("#est_poblacio").html(e.target.result["Poblacio"]);
       $("#est_altitud").html("Altitud: " + e.target.result["Altitud"] + " m");
       var URLlogo = "https://edumet.cat/edumet-data/" + e.target.result["Codi_estacio"] + "/estacio/profile1/imatges/fotocentre.jpg";
-      $("#est_logo").attr("src", URLlogo);
+      $("#estacio-logo-div").attr("src", URLlogo);
       if(navigator.onLine){
         getMesures();
       } else {
@@ -396,7 +332,7 @@ function mostraEstacio() {
 }
 
 function desaPreferida() {
-  estacioPreferida = $("#est_nom").val();
+  estacioPreferida = $("#estacio-nom").val();
   console.log("Preferida (Triada): " + estacioPreferida);
   storage.setItem("estacio", estacioPreferida);  
   $("#star").html("star");
@@ -447,7 +383,7 @@ function buidaMesures() {
 
 function registra() {
   activa('registra');
-  var T_actual = document.getElementById("temp_actual");
+  /*var T_actual = document.getElementById("temp_actual");
   var T_max = document.getElementById("temp_max");
   var T_min = document.getElementById("temp_min");
   for(i=500;i>-200;i--){
@@ -490,7 +426,7 @@ function registra() {
     option.value = i;
     precipitacio.add(option);
   }
-  precipitacio.value="0";
+  precipitacio.value="0";*/
 }
 function registra_lluna() {
   activa('lluna');
@@ -502,7 +438,7 @@ function registra_vents() {
   activa('vents');
 }
 function registra_fenomens() {
-  activa('fenAtm');
+  activa('fenomens');
 }
 function registra_nuvols() {
   activa('nuvols');
@@ -531,6 +467,78 @@ function mira() {
       console.log("No hi ha càmera frontal de video");
     });
   }
+}
+function registra_nuvolositat() {
+  activa('nuvolositat');
+}
+function canvi_cobertura() {
+  var cob = $("#cobertura").val();
+  $("#img_cobertura").attr("src","img/" + cob + ".png");
+}
+
+function triaVent(vent){
+  $("#dir_vent").text(vent);
+  back();
+}
+function triaLluna(lluna){
+  $("#fase_lunar").text(lluna);
+  back();
+}
+function triaBeaufort(beaufort){
+  $("#intensitat_vent").text(beaufort);
+  back();
+}
+function triaNuvols(nuvols){
+  $("#tipus_nuvols").text(nuvols);
+  back();
+}
+function triaNuvolositat(){
+  $("#cob_nuvols").text($("#cobertura").val() + " %");
+  back();
+}
+function triaFenomens(){
+  var numFenomens = 0;
+  var llista = "";
+  if($("#Pluja").prop('checked')) {
+    numFenomens++;
+    llista+= "Pluja, "
+  };
+  if($("#Calamarsa").prop('checked')) {
+    numFenomens++;
+    llista+= "Calamarsa, "
+  };
+  if($("#Neu").prop('checked')) {
+    numFenomens++;
+    llista+= "Neu, "
+  };
+  if($("#Rosada").prop('checked')) {
+    numFenomens++;
+    llista+= "Rosada, "
+  };
+  if($("#Gebre").prop('checked')) {
+    numFenomens++;
+    llista+= "Gebre, "
+  };
+  if($("#Boira").prop('checked')) {
+    numFenomens++;
+    llista+= "Boira, "
+  };
+  if($("#Arc").prop('checked')) {
+    numFenomens++;
+    llista+= "Arc de Sant Martí, "
+  };
+  if($("#Llamp").prop('checked')) {
+    numFenomens++;
+    llista+= "Llamp, "
+  };
+  if (numFenomens>0) {
+    llista = llista.slice(0, -2);
+    llista+= ".";
+    $("#llista_fenomens").text(llista);
+  } else {
+    $("#llista_fenomens").text("-");
+  }
+  back();
 }
 
 // OBSERVACIONS
@@ -1029,7 +1037,7 @@ function llistaObservacions() {
         } else {
           llista+= 'Sense identificar';
         }
-        llista+= '</label><div style="width:25%"><i id="' + obs[i]["GUID"] + '" class="material-icons icona-36" style="color:';     
+        llista+= '</label><div style="width:25%"><i id="' + obs[i]["GUID"] + '" class="material-icons font-36" style="color:';     
         if(obs[i]["Penjada"] == "1") {
           llista+= 'limegreen';
         } else {
@@ -1123,10 +1131,11 @@ function activa(fragment) {
   $("#registra").css("display","none");
   $("#tria_lloc").css("display","none");
   $("#nuvols").css("display","none");
+  $("#nuvolositat").css("display","none");
   $("#vents").css("display","none");
   $("#beaufort").css("display","none");
   $("#lluna").css("display","none");
-  $("#fenAtm").css("display","none");
+  $("#fenomens").css("display","none");
   $("#" + fragment).css("display","flex");
   $("#boto_estacions").css("color","graytext");
   $("#boto_observacions").css("color","graytext");
@@ -1147,8 +1156,9 @@ function activa(fragment) {
       break;
     case "registra":
     case "nuvols":
+    case "nuvolositat":
     case "vents":
-    case "fenAtm":
+    case "fenomens":
       boto = $("#boto_registra");
       break;
     case "prediccio":
@@ -1201,11 +1211,11 @@ function radar() {
     .then(response => {
       var stringDiv ='';
       for(i=0;i<response.length;i++) {
-        if(orientacio == "landscape" || orientacio == "landscape-primary" || orientacio == "landscape-secondary") {
-          stringDiv+='<div class="mySlidesLandscape"><img class="imgSlidesLandscape" src="https://edumet.cat/edumet-data/meteocat/radar/';
-        } else {
+        //if(orientacio == "landscape" || orientacio == "landscape-primary" || orientacio == "landscape-secondary") {
+          stringDiv+='<div class="mySlides"><img class="imgSlides" src="https://edumet.cat/edumet-data/meteocat/radar/';
+        /*} else {
           stringDiv+='<div class="mySlidesPortrait"><img class="imgSlidesPortrait" src="https://edumet.cat/edumet-data/meteocat/radar/';
-        }
+        }*/
         stringDiv+= response[i];
         stringDiv+='"></div>';
       }
@@ -1224,11 +1234,11 @@ function radar() {
   }
 }
 function showSlides() {
-  if(orientacio == "landscape" || orientacio == "landscape-primary" || orientacio == "landscape-secondary") {
-    var slides = document.getElementsByClassName("mySlidesLandscape");
-  } else {
+  //if(orientacio == "landscape" || orientacio == "landscape-primary" || orientacio == "landscape-secondary") {
+    var slides = document.getElementsByClassName("mySlides");
+  /*} else {
     var slides = document.getElementsByClassName("mySlidesPortrait");
-  }
+  }*/
   var dots = document.getElementsByClassName("dot");
   for (i = 0; i < slides.length; i++) {
     slides[i].style.display = "none";  
@@ -1277,7 +1287,7 @@ function fotografia() {
     if(vistaOrigen == 'fenologia') {
       $("#fotoGran").attr("src", $("#foto").attr("src"));
     } else {
-      $("#fotoGran").attr("src", $("#fotoFitxa").attr("src"));
+      $("#fotoGran").attr("src", $("#fitxa-foto").attr("src"));
     }
   }
 }
@@ -1288,20 +1298,20 @@ function fitxa(observacio) {
   indexedDB.open("eduMET").onsuccess = function(event) {
     event.target.result.transaction(["Observacions"], "readonly").objectStore("Observacions").get(observacioFitxa).onsuccess = function(e) {
       if(e.target.result["Id_feno"] != "0") {
-        $("#nomFenomen").html(fenomens[e.target.result["Id_feno"]]["Bloc_feno"] + ': ' + fenomens[e.target.result["Id_feno"]]["Titol_feno"]);
+        $("#fenomen-nom").html(fenomens[e.target.result["Id_feno"]]["Bloc_feno"] + ': ' + fenomens[e.target.result["Id_feno"]]["Titol_feno"]);
       } else {
-        $("#nomFenomen").html("Sense identificar");
+        $("#fenomen-nom").html("Sense identificar");
       }
       if(e.target.result["Data_observacio"] != "") {
         $("#dataHora").text(formatDate(e.target.result["Data_observacio"]) + '  -  ' + e.target.result["Hora_observacio"]);
       }
       var foto = e.target.result["Fotografia_observacio"];
         if(foto == 0) {
-          $("#fotoFitxa").attr("src", e.target.result["Imatge"]);
+          $("#fitxa-foto").attr("src", e.target.result["Imatge"]);
         } else {
-          $("#fotoFitxa").attr("src", url_imatges + foto);
+          $("#fitxa-foto").attr("src", url_imatges + foto);
         }
-      $("#descripcioFitxa").text(e.target.result["Descripcio_observacio"]);
+      $("#fitxa-text").text(e.target.result["Descripcio_observacio"]);
       if(navigator.onLine) {
         var online = true;
       } else {
@@ -1319,20 +1329,20 @@ function fitxa(observacio) {
         }
       }
       try {
-        mapaFitxa = L.map('mapaFitxa');
+        fitxaMapa = L.map('fitxaMapa');
         if(online){
-          mapaFitxa.setView(new L.LatLng(laLatitud, laLongitud), 15);
+          fitxaMapa.setView(new L.LatLng(laLatitud, laLongitud), 15);
           L.tileLayer('https://maps.wikimedia.org/osm-intl/{z}/{x}/{y}{r}.png', {
             minZoom: 1,
             maxZoom: 19,
             attribution: 'Wikimedia'
-          }).addTo(mapaFitxa);
+          }).addTo(fitxaMapa);
         } else{
-          mapaFitxa.setView(new L.LatLng(laLatitud, laLongitud), 10);
+          fitxaMapa.setView(new L.LatLng(laLatitud, laLongitud), 10);
           fetch("https://edumet.cat/edumet/app/json/municipis.geojson")
           .then(response => response.json())
           .then(response => {
-            L.geoJSON(response,{style:{"color": "#0000FF","weight": 1,"opacity": 0.5}}).addTo(mapaFitxa);
+            L.geoJSON(response,{style:{"color": "#0000FF","weight": 1,"opacity": 0.5}}).addTo(fitxaMapa);
           });
         }
       } catch (error) {
@@ -1341,13 +1351,13 @@ function fitxa(observacio) {
         } else {
           var zoom = 10;
         }
-        mapaFitxa.invalidateSize();
-        mapaFitxa.setView(new L.LatLng(laLatitud,laLongitud), zoom);
-        mapaFitxa.removeLayer(marcadorFitxa);
+        fitxaMapa.invalidateSize();
+        fitxaMapa.setView(new L.LatLng(laLatitud,laLongitud), zoom);
+        fitxaMapa.removeLayer(marcadorFitxa);
       }      
       if(e.target.result["Latitud"] != "") {
         marcadorFitxa = L.marker(new L.LatLng(laLatitud,laLongitud));
-        marcadorFitxa.addTo(mapaFitxa);  
+        marcadorFitxa.addTo(fitxaMapa);  
       }  
     }
   }
@@ -1403,7 +1413,7 @@ function geoSuccess(position){
           estacioPreferida = estacioActual;
           storage.setItem("estacio", estacioPreferida);
           estacioDesada = true;
-          $("#est_nom").val(estacioPreferida);
+          $("#estacio-nom").val(estacioPreferida);
           mostraEstacio();
         };
       };
