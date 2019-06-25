@@ -507,6 +507,9 @@ button, select, input, textarea {
     .etiqueta {
         display:none;
     }
+    .imgBeaufort{
+        width:15%;
+    }
 }
 @media (orientation:portrait) {
     #fitxa-div, #registra {
@@ -532,6 +535,9 @@ button, select, input, textarea {
     }
     .etiqueta {
         display:unset;
+    }
+    .imgBeaufort {
+        width:30%;
     }
 }
 @keyframes spin {

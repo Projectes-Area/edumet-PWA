@@ -145,22 +145,31 @@
             Data i Hora :
           </div>
           <div class="font-16" style="align-self:center">Dades Observades</div>
-          <div id="menu-observades">
-            <button class="boto-sup" onClick="registra_vents();"><i class="wi wi-wind-direction font-24"></i></button>
-            <button class="boto-sup" onClick="registra_beaufort();"><i class="wi wi-strong-wind font-24"></i></button>
-            <button class="boto-sup" onClick="registra_nuvolositat();"><i class="wi wi-day-cloudy font-24"></i></button>
-            <button class="boto-sup" onClick="registra_nuvols();"><i class="wi wi-cloudy font-24"></i></button>
-            <button class="boto-sup" onClick="registra_lluna();"><i class="wi wi-moon-alt-waxing-crescent-4 font-24"></i></button>            
-            <button class="boto-sup" onClick="registra_fenomens();"><i class="wi wi-day-storm-showers font-24"></i></button>
-          </div>
-          <div style="margin-left:10px">
-              Direcció del vent: <label id="dir_vent" class="edumet">-</label><br>
-              Intensitat del vent (Beaufort): <label id="intensitat_vent" class="edumet">-</label><br>
-              Cobertura nuvolosa: <label id="cob_nuvols" class="edumet">-</label><br>
-              Tipus de núvols: <label id="tipus_nuvols" class="edumet">-</label><br>
-              Fase lunar: <label id="fase_lunar" class="edumet">-</label><br>
-              Fenòmens atmosfèrics: <label id="llista_fenomens" class="edumet">-</label>
-          </div>          
+            <table style="margin-left:10px;border:0;border-spacing:0px;">
+              <tr>
+                <td><i class="wi wi-wind-direction font-16 edumet" onClick="registra_vents()"></i></td>
+                <td>Direcció del vent: <label id="dir_vent" class="edumet">-</label></td> 
+              </tr>
+              <tr>
+                <td><i class="wi wi-strong-wind font-16 edumet" onClick="registra_beaufort()"></i></td>
+                <td>Intensitat del vent (Beaufort): <label id="intensitat_vent" class="edumet">-</label></td>
+              </tr>
+              <tr>
+                <td><i class="wi wi-day-cloudy font-16 edumet" onClick="registra_nuvolositat()"></i></td>
+                <td>Cobertura nuvolosa: <label id="cob_nuvols" class="edumet">-</label></td>
+              </tr>
+              <tr>
+                <td><i class="wi wi-cloudy font-16 edumet" onClick="registra_nuvols()"></i></td>
+                <td>Tipus de núvols: <label id="tipus_nuvols" class="edumet">-</label></td>
+              </tr>
+              <tr>
+                <td><i class="wi wi-moon-alt-waxing-crescent-4 font-16 edumet" onClick="registra_lluna()"></i></td>
+                <td>Fase lunar: <label id="fase_lunar" class="edumet">-</label></td>
+              </tr>
+                <td><i class="wi wi-day-storm-showers font-16 edumet" onClick="registra_fenomens()"></i></td>
+                <td>Fenòmens atmosfèrics: <label id="llista_fenomens" class="edumet">-</label></td>
+              </tr>
+            </table>
         </div>
         <div id="registre-dreta">
           <div id="caixa_registra">
@@ -244,37 +253,37 @@
 
       <div id="lluna" class="evenly">
         <div class="fila-div">
-          <div class="quadre" style="background-color:#699297"><i class="wi wi-lluna wi-moon-new quadre-3x3 font-48" onClick="triaLluna('Lluna nova')"></i><div class="bottom-left blanc">Lluna nova</div></div>         
-          <div class="quadre" style="background-color: #778789"><i class="wi wi-lluna wi-moon-waxing-crescent-4 quadre-3x3 font-48"  onClick="triaLluna('Nova visible')"></i><div class="bottom-left blanc">Nova visible</div></div>  
-          <div class="quadre" style="background-color: #2f2f2f"><i class="wi wi-lluna wi-moon-first-quarter quadre-3x3 font-48" onClick="triaLluna('Quart creixent')"></i><div class="bottom-left blanc">Quart creixent</div></div>  
+          <div class="quadre quadre-3x3" style="background-image: linear-gradient(#0000ff,#b0fffd,#b0fffd,#b0fffd,#b0fffd)"><img src="img/lluna/lluna0.png" onClick="triaLluna('Lluna nova')"><div class="bottom-left">Lluna nova</div></div>         
+          <div class="quadre quadre-3x3" style="background-image: linear-gradient(to left top, #3498DB, #4a28ea, blue, #0000cc, #111C40,black)"><img src="img/lluna/lluna5.png" style="transform:rotate(20deg);" onClick="triaLluna('Nova visible')"><div class="bottom-left blanc">Nova visible</div></div>  
+          <div class="quadre quadre-3x3" style="background-color: #2B4088"><img src="img/lluna/lluna8.png" onClick="triaLluna('Quart creixent')"><div class="bottom-left blanc">Quart creixent</div></div>  
         </div>
         <div class="fila-div">
-            <div class="quadre" style="background-color: #171717"><i class="wi wi-lluna wi-moon-waxing-gibbous-4 quadre-3x3 font-48" onClick="triaLluna('Gibosa creixent')"></i><div class="bottom-left blanc">Gibosa creixent</div></div>         
-            <div class="quadre" style="background-color: black"><i class="wi wi-lluna wi-moon-full quadre-3x3 font-48" onClick="triaLluna('Lluna plena')"></i><div class="bottom-left blanc">Lluna plena</div></div>  
-            <div class="quadre" style="background-color: #171717"><i class="wi wi-lluna wi-moon-waning-gibbous-4 quadre-3x3 font-48" onClick="triaLluna('Gibosa minvant')"></i><div class="bottom-left blanc">Gibosa minvant</div></div>  
+            <div class="quadre quadre-3x3" style="background-color: #111C40"><img src="img/lluna/lluna11.png" style="transform:rotate(30deg);" onClick="triaLluna('Gibosa creixent')"><div class="bottom-left blanc">Gibosa creixent</div></div>         
+            <div class="quadre quadre-3x3" style="background-color: black"><img src="img/lluna/lluna15.png"   onClick="triaLluna('Lluna plena')"><div class="bottom-left blanc">Lluna plena</div></div>
+            <div class="quadre quadre-3x3" style="background-color: #111C40"><img src="img/lluna/lluna19.png" style="transform:rotate(-20deg);" onClick="triaLluna('Gibosa minvant')"><div class="bottom-left blanc">Gibosa minvant</div></div>  
         </div>
         <div class="fila-div">
-            <div class="quadre" style="background-color:#2f2f2f"><i class="wi wi-lluna wi-moon-third-quarter quadre-3x3 font-48" onClick="triaLluna('Quart minvant')"></i><div class="bottom-left blanc">Quart minvant</div></div>         
-            <div class="quadre" style="background-color: #778789"><i class="wi wi-lluna wi-moon-waning-crescent-3 quadre-3x3 font-48" onClick="triaLluna('Lluna vella')"></i><div class="bottom-left blanc">Lluna vella</div></div>  
-            <div class="quadre" style="background-color:#699297"><i class="wi wi-lluna wi-moon-new quadre-3x3 font-48" onClick="triaLluna('Lluna negra')"></i><div class="bottom-left blanc">Lluna negra</div></div>  
+            <div class="quadre quadre-3x3" style="background-color:#2B4088"><img src="img/lluna/lluna22.png" onClick="triaLluna('Quart minvant')"><div class="bottom-left blanc">Quart minvant</div></div>         
+            <div class="quadre quadre-3x3" style="background-image: linear-gradient(to right top,  #3498DB, #4a28ea, blue, #0000cc, #111C40,black)"><img src="img/lluna/lluna25.png" style="transform:rotate(-20deg);" onClick="triaLluna('Lluna vella')"><div class="bottom-left blanc">Lluna vella</div></div>  
+            <div class="quadre quadre-3x3" style="background-image: linear-gradient(#0000ff,#b0fffd)"><img src="img/lluna/lluna29.png" onClick="triaLluna('Lluna negra')"><div class="bottom-left">Lluna negra</div></div>  
         </div>
       </div>
 
       <div id="beaufort" style="overflow-y:scroll">
         <div class="hr"></div>
-        <div class="beaufort-div" onClick=""><div class="font-24 beaufort-num">0</div><div class="font-16 beaufort-nom">Calma</div><div class="beaufort-text">La superfície del mar sembla un mirall. El fum puja verticalment.</div></div>
-        <div class="beaufort-div" onClick=""><div class="font-24 beaufort-num">1</div><div class="font-16 beaufort-nom">Ventolina</div><div class="beaufort-text">Ones del mar petites sense escuma. El fum indica la direcció del vent.</div></div>
-        <div class="beaufort-div" onClick=""><div class="font-24 beaufort-num">2</div><div class="font-16 beaufort-nom">Fluixet</div><div class="beaufort-text">Ones del mar petites amb crestes que no s'arriven a trencar. Es mouen les fulles dels arbres.</div></div>
-        <div class="beaufort-div" onClick=""><div class="font-24 beaufort-num">3</div><div class="font-16 beaufort-nom">Fluix</div><div class="beaufort-text">Ones del mar llargues amb crestes que es comencen a trencar. Les fulles dels arbres s'agiten i es despleguen les banderes.</div></div>
-        <div class="beaufort-div" onClick=""><div class="font-24 beaufort-num">4</div><div class="font-16 beaufort-nom">Moderat</div><div class="beaufort-text">Ones del mar més llargues. S'observen crestes amb escuma. El vent dispersa la pols.</div></div>
-        <div class="beaufort-div" onClick=""><div class="font-24 beaufort-num">5</div><div class="font-16 beaufort-nom">Fresquet</div><div class="beaufort-text">Ones del mar moderades i allargades, amb dispersió de gotetes d'aigua. Es mouen les branques dels arbres petits. En els estanys es formen petites ones.</div></div>
-        <div class="beaufort-div" onClick=""><div class="font-24 beaufort-num">6</div><div class="font-16 beaufort-nom">Fresc</div><div class="beaufort-text">Ones del mar grans, és perillosa la navegació de vaixells petits. Es mouen les branques dels arbres. Costa mantenir obert un paraigües.</div></div>
-        <div class="beaufort-div" onClick=""><div class="font-24 beaufort-num">7</div><div class="font-16 beaufort-nom">Fort</div><div class="beaufort-text">Es redueix la visibilitat en el mar. Els arbres grans es mouen i és dificil caminar en contra del vent.</div></div>
-        <div class="beaufort-div" onClick=""><div class="font-24 beaufort-num">8</div><div class="font-16 beaufort-nom">Temporal</div><div class="beaufort-text">Ones del mar moderadament altes amb formació de remolins. Es trenquen les branques més primes dels arbres i costa caminar.</div></div>
-        <div class="beaufort-div" onClick=""><div class="font-24 beaufort-num">9</div><div class="font-16 beaufort-nom">Temporal fort</div><div class="beaufort-text">Poca visibilitat en el mar a causa de la dispersió de petites gotes d'aigua. És impossible caminar en contra del vent.</div></div>
-        <div class="beaufort-div" onClick=""><div class="font-24 beaufort-num">10</div><div class="font-16 beaufort-nom">Temporal molt fort</div><div class="beaufort-text">Ones del mar molt altes que redueixen la visibilitat. Arrenca arbres i ocasiona danys de consideració en els edificis.</div></div>
-        <div class="beaufort-div" onClick=""><div class="font-24 beaufort-num">11</div><div class="font-16 beaufort-nom">Temporal violent</div><div class="beaufort-text">La navegació és perillosa, amb escassa visibilitat. Ocasiona destrosses a tot arreu.</div></div>
-        <div class="beaufort-div" onClick=""><div class="font-24 beaufort-num">12</div><div class="font-16 beaufort-nom">Huracà</div><div class="beaufort-text">És impossible la navegació, amb visibilitat gairebé nul·la. A terra, destrucció total.</div></div>     
+        <div class="beaufort-div" onClick=""><div class="font-24 beaufort-num">0</div><div class="font-16 beaufort-nom">Calma</div><div class="beaufort-text">El fum indica la direcció del vent.<br> 0 - 5 km/h</div><img class="imgBeaufort" src="img/beaufort/1.png"></div>
+        <div class="beaufort-div" onClick=""><div class="font-24 beaufort-num">1</div><div class="font-16 beaufort-nom">Ventolina</div><div class="beaufort-text">Es mouen les fulles dels arbres.<br> 5 - 11 km/h</div><img class="imgBeaufort" src="img/beaufort/1.png"></div>
+        <div class="beaufort-div" onClick=""><div class="font-24 beaufort-num">2</div><div class="font-16 beaufort-nom">Fluixet</div><div class="beaufort-text">Les fulles dels arbres s'agiten i es despleguen les banderes.<br> 11 - 19 km/h</div><img class="imgBeaufort" src="img/beaufort/2.png"></div>
+        <div class="beaufort-div" onClick=""><div class="font-24 beaufort-num">3</div><div class="font-16 beaufort-nom">Fluix</div><div class="beaufort-text">El vent dispersa la pols.<br> 19 - 28 km/h</div><img class="imgBeaufort" src="img/beaufort/3.png"></div>
+        <div class="beaufort-div" onClick=""><div class="font-24 beaufort-num">4</div><div class="font-16 beaufort-nom">Moderat</div><div class="beaufort-text">Ones del mar més llargues. S'observen crestes amb escuma. El vent dispersa la pols.</div><img class="imgBeaufort" src="img/beaufort/4.png"></div>
+        <div class="beaufort-div" onClick=""><div class="font-24 beaufort-num">5</div><div class="font-16 beaufort-nom">Fresquet</div><div class="beaufort-text">Es mouen les branques dels arbres petits.<br> 28 - 38 km/h</div><img class="imgBeaufort" src="img/beaufort/5.png"></div>
+        <div class="beaufort-div" onClick=""><div class="font-24 beaufort-num">6</div><div class="font-16 beaufort-nom">Fresc</div><div class="beaufort-text">Ones del mar grans, és perillosa la navegació de vaixells petits. Es mouen les branques dels arbres. Costa mantenir obert un paraigües.</div><img class="imgBeaufort" src="img/beaufort/6.png"></div>
+        <div class="beaufort-div" onClick=""><div class="font-24 beaufort-num">7</div><div class="font-16 beaufort-nom">Fort</div><div class="beaufort-text">Els arbres grans es mouen i és dificil caminar en contra del vent.<br> 48 - 61 km/h</div><img class="imgBeaufort" src="img/beaufort/7.png"></div>
+        <div class="beaufort-div" onClick=""><div class="font-24 beaufort-num">8</div><div class="font-16 beaufort-nom">Temporal</div><div class="beaufort-text">Es trenquen les branques més primes dels arbres i costa caminar.<br> 61 - 74 km/h</div><img class="imgBeaufort" src="img/beaufort/8.png"></div>
+        <div class="beaufort-div" onClick=""><div class="font-24 beaufort-num">9</div><div class="font-16 beaufort-nom">Temporal fort</div><div class="beaufort-text">És impossible caminar en contra del vent.<br> 74 - 88 km/h</div><img class="imgBeaufort" src="img/beaufort/9.png"></div>
+        <div class="beaufort-div" onClick=""><div class="font-24 beaufort-num">10</div><div class="font-16 beaufort-nom">Temporal molt fort</div><div class="beaufort-text">Arrenca arbres i ocasiona danys de consideració en els edificis.<br> 88 - 102 km/h</div><img class="imgBeaufort" src="img/beaufort/10.png"></div>
+        <div class="beaufort-div" onClick=""><div class="font-24 beaufort-num">11</div><div class="font-16 beaufort-nom">Temporal violent</div><div class="beaufort-text">Ocasiona destrosses a tot arreu.<br> 102 - 117 km/h</div><img class="imgBeaufort" src="img/beaufort/11.png"></div>
+        <div class="beaufort-div" onClick=""><div class="font-24 beaufort-num">12</div><div class="font-16 beaufort-nom">Huracà</div><div class="beaufort-text">Destrucció total.<br> > 117 km/h</div><img class="imgBeaufort" src="img/beaufort/12.png"></div>     
       </div>
 
       <div id="nuvolositat">
