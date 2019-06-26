@@ -52,6 +52,9 @@ button, select, input, textarea {
 .font-48{
     font-size:48px !important; 
 }
+.font-96{
+    font-size:96px !important; 
+}
 .mesures {
     display:flex; 
     justify-content: center;
@@ -152,12 +155,20 @@ button, select, input, textarea {
     min-height: 1px;
     background-color: lightgray;
 }
+.vr {
+    min-width: 1px;
+    background-color: lightgray;
+}
 .blanc {
     color:white;
 }
 .edumet {
     color:#418ac8;
 }
+.lightgreen {
+    color:lightgreen;
+}
+
 .dot {
     height: 15px;
     width: 15px;
@@ -399,8 +410,6 @@ button, select, input, textarea {
     align-items:center;
 }
 #registre-fet {
-    display:flex;
-    flex-direction:column;
     margin:10px;
 }
 #frame{
@@ -452,6 +461,9 @@ button, select, input, textarea {
     .font-48 {
         font-size:64px !important;
     }
+    .font-96 {
+        font-size:128px !important;
+    }
 }
 @media (min-height: 1000px) {
     body, input, #valida, #estacio-nom, #descripcio, .boto-inf, .boto-sup {
@@ -469,6 +481,9 @@ button, select, input, textarea {
     .font-48 {
         font-size:96px !important;
     }
+    .font-96 {
+        font-size:164px !important;
+    }
 }
 @media (min-height: 1200px) {
     body, input, #valida, #estacio-nom, #descripcio, .boto-inf, .boto-sup {
@@ -485,6 +500,9 @@ button, select, input, textarea {
     }
     .font-48 {
         font-size:128px !important;
+    }
+    .font-96 {
+        font-size:216px !important;
     }
 }
 @media (orientation:landscape) {

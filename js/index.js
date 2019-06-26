@@ -41,19 +41,7 @@ window.onload = function() {
     mostraEstacions();
     getFenomens();
   }
- 
-  window.addEventListener("orientationchange", function(){
-    console.log("Canvi d'orientació");
-    ajustaOrientacio();
-  });
-  
-  document.getElementById('fitxer_galeria').addEventListener("change", function(event) {
-    readURL(this);
-  });
-  document.getElementById('fitxer').addEventListener("change", function(event) {
-    readURL(this);
-  });
-  $("#calendari").daterangepicker({
+  var options = {
     singleDatePicker: true,
     startDate: moment(),
     showDropdowns: true,
@@ -62,7 +50,7 @@ window.onload = function() {
     timePicker24Hour: true,
     timePickerSeconds: true,
     locale: {
-      "format": "DD/MM/YYYY",
+      "format": "DD/MM/YYYY HH:mm:ss",
       "separator": " - ",
       "applyLabel": "Desa la data i l'hora",
       "cancelLabel": "Cancel·la",
@@ -71,11 +59,19 @@ window.onload = function() {
       "monthNames": ["Gener","Febrer","Març","Abril","Maig","Juny","Juliol","Agost","Setembre","Octubre","Novembre","Desembre"],
       "firstDay": 1
     }
-  }, function(start) {
+  }
+  
+  document.getElementById('fitxer_galeria').addEventListener("change", function(event) {
+    readURL(this);
+  });
+  document.getElementById('fitxer').addEventListener("change", function(event) {
+    readURL(this);
+  });
+  $("#calendari").daterangepicker(options, function(start) {
     var dia = start.format('YYYY-MM-DD');
     var hora = start.format('HH:mm:ss'); 
-    flagDataTriada = true;
-    desaData(dia,hora);
+    flagDataRegistre = true;
+    //desaData(dia,hora);
   });
   $("#calendari").on('show.daterangepicker', function(ev, picker) {
     flagDataTriada = false;
@@ -97,6 +93,34 @@ window.onload = function() {
       var Data_actual = any + '-' + mes + '-' + dia;
       var Hora_actual = hora + ':' + minut + ':' + segon;
       desaData(Data_actual,Hora_actual);
+    }
+  });
+  $("#data_registre").daterangepicker(options, function(start) {
+    //start.format('YYYY-MM-DD HH:mm:ss');
+    //var hora = start.format('HH:mm:ss'); 
+    flagDataRegistre = true;
+    //desaData(dia,hora);
+  });
+  $("#data_registre").on('show.daterangepicker', function(ev, picker) {
+    flagDataRegistre = false;
+  });
+  $("#data_registre").on('apply.daterangepicker', function(ev, picker) {
+    if(!flagDataRegistre) {
+      /*var ara = new Date(Date.now());
+      var any = ara.getFullYear();
+      var mes = (ara.getMonth() + 1).toString();
+      var dia = ara.getDate().toString();
+      var hora = ara.getHours().toString();
+      var minut = ara.getMinutes().toString();
+      var segon = ara.getSeconds().toString();
+      if (mes.length < 2) mes = '0' + mes;
+      if (dia.length < 2) dia = '0' + dia;
+      if (hora.length < 2) hora = '0' + hora;
+      if (minut.length < 2) minut = '0' + minut;
+      if (segon.length < 2) segon = '0' + segon;
+      var Data_actual = any + '-' + mes + '-' + dia;
+      var Hora_actual = hora + ':' + minut + ':' + segon;*/
+      //desaData(Data_actual,Hora_actual);
     }
   });
 };
@@ -134,6 +158,7 @@ var map;
 var slideIndex;
 var flagRadar = false;
 var flagDataTriada;
+var flagDataRegistre;
 var timeOut;
 var midaFoto = 800;
 var origen;
@@ -177,14 +202,6 @@ function back() {
       break;
     default:
       alert("Per sortir de l'App eduMET has de prémer el botó Tornar o Inici del teu mòbil.")
-  }
-}
-
-function ajustaOrientacio() {
-  if (vistaActual == 'radar'){
-    flagRadar= false;
-    clearTimeout(timeOut);
-    radar();
   }
 }
 
@@ -383,50 +400,21 @@ function buidaMesures() {
 
 function registra() {
   activa('registra');
-  /*var T_actual = document.getElementById("temp_actual");
-  var T_max = document.getElementById("temp_max");
-  var T_min = document.getElementById("temp_min");
-  for(i=500;i>-200;i--){
-    option = document.createElement("option");
-    option.text = i/10;
-    option.value = i/10;
-    T_actual.add(option);
-    option = document.createElement("option");
-    option.text = i/10;
-    option.value = i/10;
-    T_max.add(option);
-    option = document.createElement("option");
-    option.text = i/10;
-    option.value = i/10;
-    T_min.add(option);
-  }
-  T_actual.value="0";
-  T_max.value="0";
-  T_min.value="0";
-  var P_actual = document.getElementById("press_actual");
-  for(i=1045;i>975;i--){
-    option = document.createElement("option");
-    option.text = i;
-    option.value = i;
-    P_actual.add(option);
-  }
-  P_actual.value="1013";
-  var H_actual = document.getElementById("humitat_actual");
-  for(i=100;i>=0;i--){
-    option = document.createElement("option");
-    option.text = i;
-    option.value = i;
-    H_actual.add(option);
-  }
-  H_actual.value="100";
-  var precipitacio = document.getElementById("precipitacio");
-  for(i=45;i>=0;i--){
-    option = document.createElement("option");
-    option.text = i;
-    option.value = i;
-    precipitacio.add(option);
-  }
-  precipitacio.value="0";*/
+  var ara = new Date(Date.now());
+  var any = ara.getFullYear();
+  var mes = (ara.getMonth() + 1).toString();
+  var dia = ara.getDate().toString();
+  var hora = ara.getHours().toString();
+  var minut = ara.getMinutes().toString();
+  var segon = ara.getSeconds().toString();
+  if (mes.length < 2) mes = '0' + mes;
+  if (dia.length < 2) dia = '0' + dia;
+  if (hora.length < 2) hora = '0' + hora;
+  if (minut.length < 2) minut = '0' + minut;
+  if (segon.length < 2) segon = '0' + segon;  
+  var Data_actual = any + '-' + mes + '-' + dia;
+  var Hora_actual = hora + ':' + minut + ':' + segon;
+  //$("#data_registre").prop("placeholder", Data_actual + " " + Hora_actual);
 }
 function registra_lluna() {
   activa('lluna');
@@ -496,38 +484,47 @@ function triaNuvolositat(){
   $("#cob_nuvols").text($("#cobertura").val() + " %");
   back();
 }
+function clicaFenomen(nom){
+  var valor = $("#" + nom);
+  if (valor.css("display") == "none") {
+    valor.css("display","flex");
+  } else {
+    valor.css("display","none");
+  }
+}
 function triaFenomens(){
   var numFenomens = 0;
   var llista = "";
-  if($("#Pluja").prop('checked')) {
+  console.log($("#Pluja").css("display"));
+  if($("#Pluja").css("display") == "flex") {
     numFenomens++;
-    llista+= "Pluja, "
+    llista+= "Pluja, ";
   };
-  if($("#Calamarsa").prop('checked')) {
+  if($("#Calamarsa").css("display") == "flex") {
     numFenomens++;
     llista+= "Calamarsa, "
   };
-  if($("#Neu").prop('checked')) {
+  if($("#Neu").css("display") == "flex") {
     numFenomens++;
     llista+= "Neu, "
   };
-  if($("#Rosada").prop('checked')) {
+  if($("#Rosada").css("display") == "flex") {
     numFenomens++;
     llista+= "Rosada, "
   };
-  if($("#Gebre").prop('checked')) {
+  if($("#Gebre").css("display") == "flex") {
     numFenomens++;
     llista+= "Gebre, "
   };
-  if($("#Boira").prop('checked')) {
+  if($("#Boira").css("display") == "flex") {
     numFenomens++;
     llista+= "Boira, "
   };
-  if($("#Arc").prop('checked')) {
+  if($("#Arc").css("display") == "flex") {
     numFenomens++;
     llista+= "Arc de Sant Martí, "
   };
-  if($("#Llamp").prop('checked')) {
+  if($("#Llamp").css("display") == "flex") {
     numFenomens++;
     llista+= "Llamp, "
   };
@@ -1120,6 +1117,11 @@ function desaObservacio(string64){
 
 function activa(fragment) {
   flagRadar = false;
+  /*if (vistaActual == 'radar'){
+    flagRadar= false;
+    clearTimeout(timeOut);
+    radar();
+  }*/
   $("#fenologia").css("display","none");
   $("#estacions").css("display","none");
   $("#radar").css("display","none");
@@ -1211,11 +1213,7 @@ function radar() {
     .then(response => {
       var stringDiv ='';
       for(i=0;i<response.length;i++) {
-        //if(orientacio == "landscape" || orientacio == "landscape-primary" || orientacio == "landscape-secondary") {
-          stringDiv+='<div class="mySlides"><img class="imgSlides" src="https://edumet.cat/edumet-data/meteocat/radar/';
-        /*} else {
-          stringDiv+='<div class="mySlidesPortrait"><img class="imgSlidesPortrait" src="https://edumet.cat/edumet-data/meteocat/radar/';
-        }*/
+        stringDiv+='<div class="mySlides"><img class="imgSlides" src="https://edumet.cat/edumet-data/meteocat/radar/';
         stringDiv+= response[i];
         stringDiv+='"></div>';
       }
@@ -1234,11 +1232,7 @@ function radar() {
   }
 }
 function showSlides() {
-  //if(orientacio == "landscape" || orientacio == "landscape-primary" || orientacio == "landscape-secondary") {
-    var slides = document.getElementsByClassName("mySlides");
-  /*} else {
-    var slides = document.getElementsByClassName("mySlidesPortrait");
-  }*/
+  var slides = document.getElementsByClassName("mySlides");
   var dots = document.getElementsByClassName("dot");
   for (i = 0; i < slides.length; i++) {
     slides[i].style.display = "none";  
