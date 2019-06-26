@@ -144,7 +144,7 @@
             Nom de l'estació:<br>
             Data i Hora :
           </div>
-          <div class="font-16" style="align-self:center">Dades Observades</div>
+          <div class="font-16" style="align-self:center">Dades observades</div>
             <table style="margin-left:10px;border:0;border-spacing:0px;">
               <tr>
                 <td><i class="wi wi-wind-direction font-16 edumet" onClick="registra_vents()"></i></td>
@@ -270,20 +270,19 @@
       </div>
 
       <div id="beaufort" style="overflow-y:scroll">
-        <div class="hr"></div>
-        <div class="beaufort-div" onClick=""><div class="font-24 beaufort-num">0</div><div class="font-16 beaufort-nom">Calma</div><div class="beaufort-text">El fum indica la direcció del vent.<br> 0 - 5 km/h</div><img class="imgBeaufort" src="img/beaufort/1.png"></div>
-        <div class="beaufort-div" onClick=""><div class="font-24 beaufort-num">1</div><div class="font-16 beaufort-nom">Ventolina</div><div class="beaufort-text">Es mouen les fulles dels arbres.<br> 5 - 11 km/h</div><img class="imgBeaufort" src="img/beaufort/1.png"></div>
-        <div class="beaufort-div" onClick=""><div class="font-24 beaufort-num">2</div><div class="font-16 beaufort-nom">Fluixet</div><div class="beaufort-text">Les fulles dels arbres s'agiten i es despleguen les banderes.<br> 11 - 19 km/h</div><img class="imgBeaufort" src="img/beaufort/2.png"></div>
-        <div class="beaufort-div" onClick=""><div class="font-24 beaufort-num">3</div><div class="font-16 beaufort-nom">Fluix</div><div class="beaufort-text">El vent dispersa la pols.<br> 19 - 28 km/h</div><img class="imgBeaufort" src="img/beaufort/3.png"></div>
-        <div class="beaufort-div" onClick=""><div class="font-24 beaufort-num">4</div><div class="font-16 beaufort-nom">Moderat</div><div class="beaufort-text">Ones del mar més llargues. S'observen crestes amb escuma. El vent dispersa la pols.</div><img class="imgBeaufort" src="img/beaufort/4.png"></div>
-        <div class="beaufort-div" onClick=""><div class="font-24 beaufort-num">5</div><div class="font-16 beaufort-nom">Fresquet</div><div class="beaufort-text">Es mouen les branques dels arbres petits.<br> 28 - 38 km/h</div><img class="imgBeaufort" src="img/beaufort/5.png"></div>
-        <div class="beaufort-div" onClick=""><div class="font-24 beaufort-num">6</div><div class="font-16 beaufort-nom">Fresc</div><div class="beaufort-text">Ones del mar grans, és perillosa la navegació de vaixells petits. Es mouen les branques dels arbres. Costa mantenir obert un paraigües.</div><img class="imgBeaufort" src="img/beaufort/6.png"></div>
-        <div class="beaufort-div" onClick=""><div class="font-24 beaufort-num">7</div><div class="font-16 beaufort-nom">Fort</div><div class="beaufort-text">Els arbres grans es mouen i és dificil caminar en contra del vent.<br> 48 - 61 km/h</div><img class="imgBeaufort" src="img/beaufort/7.png"></div>
-        <div class="beaufort-div" onClick=""><div class="font-24 beaufort-num">8</div><div class="font-16 beaufort-nom">Temporal</div><div class="beaufort-text">Es trenquen les branques més primes dels arbres i costa caminar.<br> 61 - 74 km/h</div><img class="imgBeaufort" src="img/beaufort/8.png"></div>
-        <div class="beaufort-div" onClick=""><div class="font-24 beaufort-num">9</div><div class="font-16 beaufort-nom">Temporal fort</div><div class="beaufort-text">És impossible caminar en contra del vent.<br> 74 - 88 km/h</div><img class="imgBeaufort" src="img/beaufort/9.png"></div>
-        <div class="beaufort-div" onClick=""><div class="font-24 beaufort-num">10</div><div class="font-16 beaufort-nom">Temporal molt fort</div><div class="beaufort-text">Arrenca arbres i ocasiona danys de consideració en els edificis.<br> 88 - 102 km/h</div><img class="imgBeaufort" src="img/beaufort/10.png"></div>
-        <div class="beaufort-div" onClick=""><div class="font-24 beaufort-num">11</div><div class="font-16 beaufort-nom">Temporal violent</div><div class="beaufort-text">Ocasiona destrosses a tot arreu.<br> 102 - 117 km/h</div><img class="imgBeaufort" src="img/beaufort/11.png"></div>
-        <div class="beaufort-div" onClick=""><div class="font-24 beaufort-num">12</div><div class="font-16 beaufort-nom">Huracà</div><div class="beaufort-text">Destrucció total.<br> > 117 km/h</div><img class="imgBeaufort" src="img/beaufort/12.png"></div>     
+        <div class="beaufort-div" onClick="triaBeaufort('0-Calma')"><div class="font-24 beaufort-num">0</div><div class="beaufort-nom">Calma</div><div class="beaufort-text">El fum indica la direcció del vent.<br> 0 - 5 km/h</div><img class="beaufort-img" src="img/beaufort/1.png"></div><div class="hr"></div>
+        <div class="beaufort-div" onClick="triaBeaufort('1-Ventolina')"><div class="font-24 beaufort-num">1</div><div class="beaufort-nom">Ventolina</div><div class="beaufort-text">Es mouen les fulles dels arbres.<br> 5 - 11 km/h</div><img class="beaufort-img" src="img/beaufort/1.png"></div><div class="hr"></div>
+        <div class="beaufort-div" onClick="triaBeaufort('2-Fluixet')"><div class="font-24 beaufort-num">2</div><div class="beaufort-nom">Fluixet</div><div class="beaufort-text">Les fulles dels arbres s'agiten i es despleguen les banderes.<br> 11 - 19 km/h</div><img class="beaufort-img" src="img/beaufort/2.png"></div><div class="hr"></div>
+        <div class="beaufort-div" onClick="triaBeaufort('3-Fluix')"><div class="font-24 beaufort-num">3</div><div class="beaufort-nom">Fluix</div><div class="beaufort-text">El vent dispersa la pols.<br> 19 - 28 km/h</div><img class="beaufort-img" src="img/beaufort/3.png"></div><div class="hr"></div>
+        <div class="beaufort-div" onClick="triaBeaufort('4-Moderat')"><div class="font-24 beaufort-num">4</div><div class="beaufort-nom">Moderat</div><div class="beaufort-text">Es mouen les branques dels arbres petits.<br> 28 - 38 km/h</div><img class="beaufort-img" src="img/beaufort/4.png"></div><div class="hr"></div>
+        <div class="beaufort-div" onClick="triaBeaufort('5-Fresquet')"><div class="font-24 beaufort-num">5</div><div class="beaufort-nom">Fresquet</div><div class="beaufort-text">Es mouen les branques dels arbres petits.<br> 28 - 38 km/h</div><img class="beaufort-img" src="img/beaufort/5.png"></div><div class="hr"></div>
+        <div class="beaufort-div" onClick="triaBeaufort('6-Fresc')"><div class="font-24 beaufort-num">6</div><div class="beaufort-nom">Fresc</div><div class="beaufort-text">Es mouen les branques dels arbres. Costa mantenir obert un paraigües.<br> 38 - 49 km/h</div><img class="beaufort-img" src="img/beaufort/6.png"></div><div class="hr"></div>
+        <div class="beaufort-div" onClick="triaBeaufort('7-Fort')"><div class="font-24 beaufort-num">7</div><div class="beaufort-nom">Fort</div><div class="beaufort-text">Els arbres grans es mouen i és dificil caminar en contra del vent.<br> 48 - 61 km/h</div><img class="beaufort-img" src="img/beaufort/7.png"></div><div class="hr"></div>
+        <div class="beaufort-div" onClick="triaBeaufort('8-Temporal')"><div class="font-24 beaufort-num">8</div><div class="beaufort-nom">Temporal</div><div class="beaufort-text">Es trenquen les branques més primes dels arbres i costa caminar.<br> 61 - 74 km/h</div><img class="beaufort-img" src="img/beaufort/8.png"></div><div class="hr"></div>
+        <div class="beaufort-div" onClick="triaBeaufort('9-Temporal fort')"><div class="font-24 beaufort-num">9</div><div class="beaufort-nom">Temporal fort</div><div class="beaufort-text">És impossible caminar en contra del vent.<br> 74 - 88 km/h</div><img class="beaufort-img" src="img/beaufort/9.png"></div><div class="hr"></div>
+        <div class="beaufort-div" onClick="triaBeaufort('10-Temporal molt fort')"><div class="font-24 beaufort-num">10</div><div class="beaufort-nom">Temporal molt fort</div><div class="beaufort-text">Arrenca arbres i ocasiona danys de consideració en els edificis.<br> 88 - 102 km/h</div><img class="beaufort-img" src="img/beaufort/10.png"></div><div class="hr"></div>
+        <div class="beaufort-div" onClick="triaBeaufort('11-Temporal violent')"><div class="font-24 beaufort-num">11</div><div class="beaufort-nom">Temporal violent</div><div class="beaufort-text">Ocasiona destrosses a tot arreu.<br> 102 - 117 km/h</div><img class="beaufort-img" src="img/beaufort/11.png"></div><div class="hr"></div>
+        <div class="beaufort-div" onClick="triaBeaufort('12-Huracà')"><div class="font-24 beaufort-num">12</div><div class="beaufort-nom">Huracà</div><div class="beaufort-text">Destrucció total.<br> > 117 km/h</div><img class="beaufort-img" src="img/beaufort/12.png"></div> 
       </div>
 
       <div id="nuvolositat">
@@ -313,11 +312,11 @@
       <div id="peu-div">
         <div class="hr"></div>
         <div id="menu-inferior">          
-          <button id="boto_estacions" class="boto-inf edumet" onClick="estacio();" title="Estacions"><i class="material-icons font-24">router</i><div class="etiqueta">Estació<div></button>
-          <button id="boto_prediccio" class="boto-inf" style="color:graytext;" onClick="prediccio();" title="Predicció"><i class="material-icons font-24">cloud</i><div class="etiqueta">Prediccio</div></button>        
-          <button id="boto_radar" class="boto-inf" style="color:graytext;" onClick="radar();" title="Radar"><i class="material-icons font-24">wifi_tethering</i><div class="etiqueta">Radar</div></button>
-          <button id="boto_observacions" class="boto-inf" style="color:graytext;" onClick="login();" title="Observacions"><i class="material-icons font-24">camera_alt</i><div class="etiqueta">Observa</div></button>
-          <button id="boto_registra" class="boto-inf" style="color:graytext;" onClick="registra();" title="Registra"><i class="material-icons font-24">edit</i><div class="etiqueta">Registra</div></button>
+          <button id="boto_estacions" class="boto-inf edumet" onClick="estacio();" title="Estacions"><i class="material-icons font-24">router</i><br><label class="etiqueta">Estació</label></button>
+          <button id="boto_prediccio" class="boto-inf" style="color:graytext;" onClick="prediccio();" title="Predicció"><i class="material-icons font-24">cloud</i><br><label class="etiqueta">Prediccio</label></button>        
+          <button id="boto_radar" class="boto-inf" style="color:graytext;" onClick="radar();" title="Radar"><i class="material-icons font-24">wifi_tethering</i><br><label class="etiqueta">Radar</label></button>
+          <button id="boto_observacions" class="boto-inf" style="color:graytext;" onClick="login();" title="Observacions"><i class="material-icons font-24">camera_alt</i><br><label class="etiqueta">Observa</label</button>
+          <button id="boto_registra" class="boto-inf" style="color:graytext;" onClick="registra();" title="Registra"><i class="material-icons font-24">edit</i><br><label class="etiqueta">Registra</label></button>
         </div>  
         <input type="file" style='display:none;' accept="image/*" id="fitxer" name="fitxer" capture="camera"/>
         <input type='file' style='display:none;' accept="image/jpeg" id="fitxer_galeria" name="fitxer_galeria" />

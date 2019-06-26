@@ -112,6 +112,11 @@ button, select, input, textarea {
     left: 50%;
     transform:translate(-50%, -50%);
 }
+.beaufort-div {
+    display:flex;
+    align-items:center;
+    min-height:15vh;
+}
 .beaufort-num {
     display:flex;
     justify-content:center;
@@ -121,11 +126,6 @@ button, select, input, textarea {
     background-color:#418ac8;
     color:white
 }
-.beaufort-div {
-    display:flex;
-    align-items:center;
-    min-height:15vh;
-}
 .beaufort-nom {
     width:20vw;
     display:flex;
@@ -133,8 +133,13 @@ button, select, input, textarea {
     padding:5px;
 }
 .beaufort-text {
-    width:70vw;
+    width:50vw;
 }
+.beaufort-img {
+    width:20vw;
+    max-height:15vh;
+}
+
 .fila-div {
     display:flex;
     flex-direction:row;
@@ -144,7 +149,7 @@ button, select, input, textarea {
     justify-content:space-evenly;
 }
 .hr {
-    height: 1px;
+    min-height: 1px;
     background-color: lightgray;
 }
 .blanc {
@@ -507,9 +512,6 @@ button, select, input, textarea {
     .etiqueta {
         display:none;
     }
-    .imgBeaufort{
-        width:15%;
-    }
 }
 @media (orientation:portrait) {
     #fitxa-div, #registra {
@@ -535,9 +537,6 @@ button, select, input, textarea {
     }
     .etiqueta {
         display:unset;
-    }
-    .imgBeaufort {
-        width:30%;
     }
 }
 @keyframes spin {
