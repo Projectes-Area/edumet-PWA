@@ -84,6 +84,7 @@ button, select, input, textarea {
 .obs-fen {
     display:flex;
     height:10vh;
+    justify-content:center;
 }
 .obs-desc {
     display:flex;
@@ -180,6 +181,9 @@ button, select, input, textarea {
 }
 .active {
     background-color: #717171;
+}
+.just_dreta{
+    text-align:right;
 }
 #capsalera {
     height:10vh;
@@ -345,6 +349,9 @@ button, select, input, textarea {
     display:flex;
     height:80vh;
 }
+#fenomen {
+    width:90%;
+}
 #fenomen-nom, #dataHora {
     display: flex;
     height: 10%;
@@ -396,7 +403,7 @@ button, select, input, textarea {
 }
 #temperatures {
     display:flex;
-    justify-content:center;
+    justify-content:space-evenly;
     margin-bottom:5px;
 }
 #humitat-pressio{

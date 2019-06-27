@@ -70,8 +70,8 @@ window.onload = function() {
   $("#calendari").daterangepicker(options, function(start) {
     var dia = start.format('YYYY-MM-DD');
     var hora = start.format('HH:mm:ss'); 
-    flagDataRegistre = true;
-    //desaData(dia,hora);
+    flagDataTriada = true;
+    desaData(dia,hora);
   });
   $("#calendari").on('show.daterangepicker', function(ev, picker) {
     flagDataTriada = false;
@@ -96,31 +96,16 @@ window.onload = function() {
     }
   });
   $("#data_registre").daterangepicker(options, function(start) {
-    //start.format('YYYY-MM-DD HH:mm:ss');
-    //var hora = start.format('HH:mm:ss'); 
+    Data_UTC = start.format('YYYY-MM-DD');
+    Hora_UTC = start.format('HH:mm:ss'); 
     flagDataRegistre = true;
-    //desaData(dia,hora);
   });
   $("#data_registre").on('show.daterangepicker', function(ev, picker) {
     flagDataRegistre = false;
   });
   $("#data_registre").on('apply.daterangepicker', function(ev, picker) {
     if(!flagDataRegistre) {
-      /*var ara = new Date(Date.now());
-      var any = ara.getFullYear();
-      var mes = (ara.getMonth() + 1).toString();
-      var dia = ara.getDate().toString();
-      var hora = ara.getHours().toString();
-      var minut = ara.getMinutes().toString();
-      var segon = ara.getSeconds().toString();
-      if (mes.length < 2) mes = '0' + mes;
-      if (dia.length < 2) dia = '0' + dia;
-      if (hora.length < 2) hora = '0' + hora;
-      if (minut.length < 2) minut = '0' + minut;
-      if (segon.length < 2) segon = '0' + segon;
-      var Data_actual = any + '-' + mes + '-' + dia;
-      var Hora_actual = hora + ':' + minut + ':' + segon;*/
-      //desaData(Data_actual,Hora_actual);
+      getTime();
     }
   });
 };
@@ -164,6 +149,11 @@ var midaFoto = 800;
 var origen;
 var hasWebcam = false;
 var isWebcamAlreadyCaptured = false;
+var fen_atm = ["Pluja","Calamarsa","Neu","Rosada","Gebre","Boira","Arc de Sant Martí","Llamp"];
+
+var Vent_Beaufort;
+var Vent_Dir_actual;
+var Nuvulositat;
 
 var MediaDevices = [];
 var canEnumerate = false;
@@ -186,7 +176,7 @@ function back() {
       activa('observacions');
       break;
     case 'observacions':
-    case 'tria_lloc':
+    case 'lloc':
       activa('fenologia');
       break
     case 'fotografia':
@@ -215,10 +205,10 @@ function baixaFenomens() {
   .then(response => {
     console.log("Fenomens: Baixats");
     var x = document.getElementById("fenomen");
-    var option = document.createElement("option");
+    /*var option = document.createElement("option");
     option.text = "Tria el tipus de fenomen";
     option.value = "0";    
-    x.add(option);
+    x.add(option);*/
     for(i=0;i<response.length;i++){
       fenomens[response[i]["Id_feno"]] = response[i];
       option = document.createElement("option");
@@ -246,10 +236,7 @@ function getFenomens() {
 function assignaFenomens(response) {
   fenomens = [];
   var x = document.getElementById("fenomen");
-  var option = document.createElement("option");
-  option.text = "Tria el tipus de fenomen";
-  option.value = "0";
-  x.add(option);  
+
   for(i=0;i<response.length;i++){
     fenomens[response[i]["Id_feno"]] = response[i];
     option = document.createElement("option");
@@ -400,21 +387,23 @@ function buidaMesures() {
 
 function registra() {
   activa('registra');
-  var ara = new Date(Date.now());
-  var any = ara.getFullYear();
-  var mes = (ara.getMonth() + 1).toString();
-  var dia = ara.getDate().toString();
-  var hora = ara.getHours().toString();
-  var minut = ara.getMinutes().toString();
-  var segon = ara.getSeconds().toString();
-  if (mes.length < 2) mes = '0' + mes;
-  if (dia.length < 2) dia = '0' + dia;
-  if (hora.length < 2) hora = '0' + hora;
-  if (minut.length < 2) minut = '0' + minut;
-  if (segon.length < 2) segon = '0' + segon;  
-  var Data_actual = any + '-' + mes + '-' + dia;
-  var Hora_actual = hora + ':' + minut + ':' + segon;
-  //$("#data_registre").prop("placeholder", Data_actual + " " + Hora_actual);
+  getTime();
+  indexedDB.open("eduMET").onsuccess = function(event) {
+    event.target.result.transaction(["Estacions"], "readonly").objectStore("Estacions").get(estacioActual).onsuccess = function(e) {
+      $("#nom_estacio").val(e.target.result["Nom_centre"]);
+      var url = url_servidor + "?tab=mobilApp&codEst=" + estacioActual;
+      fetch(url)
+      .then(response => response.text())
+      .then(response => JSON.parse(response))
+      .then(response => {     
+        $("#sun_rise").html(response[0]["Sortida_sol"].slice(0,5));
+        $("#sun_set").html(response[0]["Posta_sol"].slice(0,5));
+      })
+      .catch(reason => {
+        console.log("Error:" + reason);
+      });
+    }
+  }
 }
 function registra_lluna() {
   activa('lluna');
@@ -460,20 +449,22 @@ function registra_nuvolositat() {
   activa('nuvolositat');
 }
 function canvi_cobertura() {
-  var cob = $("#cobertura").val();
+  cob = $("#cobertura").val();
   $("#img_cobertura").attr("src","img/" + cob + ".png");
 }
 
-function triaVent(vent){
-  $("#dir_vent").text(vent);
+function triaVent(vent, desc){
+  Vent_Dir_actual = vent
+  $("#dir_vent").text(desc);
   back();
 }
 function triaLluna(lluna){
   $("#fase_lunar").text(lluna);
   back();
 }
-function triaBeaufort(beaufort){
-  $("#intensitat_vent").text(beaufort);
+function triaBeaufort(beaufort, desc){
+  Vent_Beaufort =  beaufort;
+  $("#intensitat_vent").text(desc);
   back();
 }
 function triaNuvols(nuvols){
@@ -481,11 +472,12 @@ function triaNuvols(nuvols){
   back();
 }
 function triaNuvolositat(){
-  $("#cob_nuvols").text($("#cobertura").val() + " %");
+  Nuvulositat = $("#cobertura").val()
+  $("#cob_nuvols").text(Nuvulositat + " %");
   back();
 }
-function clicaFenomen(nom){
-  var valor = $("#" + nom);
+function clicaFenomen(num){
+  var valor = $("#" + num);
   if (valor.css("display") == "none") {
     valor.css("display","flex");
   } else {
@@ -495,39 +487,12 @@ function clicaFenomen(nom){
 function triaFenomens(){
   var numFenomens = 0;
   var llista = "";
-  console.log($("#Pluja").css("display"));
-  if($("#Pluja").css("display") == "flex") {
-    numFenomens++;
-    llista+= "Pluja, ";
-  };
-  if($("#Calamarsa").css("display") == "flex") {
-    numFenomens++;
-    llista+= "Calamarsa, "
-  };
-  if($("#Neu").css("display") == "flex") {
-    numFenomens++;
-    llista+= "Neu, "
-  };
-  if($("#Rosada").css("display") == "flex") {
-    numFenomens++;
-    llista+= "Rosada, "
-  };
-  if($("#Gebre").css("display") == "flex") {
-    numFenomens++;
-    llista+= "Gebre, "
-  };
-  if($("#Boira").css("display") == "flex") {
-    numFenomens++;
-    llista+= "Boira, "
-  };
-  if($("#Arc").css("display") == "flex") {
-    numFenomens++;
-    llista+= "Arc de Sant Martí, "
-  };
-  if($("#Llamp").css("display") == "flex") {
-    numFenomens++;
-    llista+= "Llamp, "
-  };
+  for(i=0;i<fen_atm.length;i++){
+    if($("#" + i).css("display") == "flex") {
+      numFenomens++;
+      llista+= fen_atm[i] + ", ";
+    };
+  }
   if (numFenomens>0) {
     llista = llista.slice(0, -2);
     llista+= ".";
@@ -536,6 +501,48 @@ function triaFenomens(){
     $("#llista_fenomens").text("-");
   }
   back();
+}
+
+function penja_registre() {
+  var envio = { 
+    tab: "salvarFenoApp",
+    Codi_estacio: estacioActual,
+    Codi_grup: "",
+    Observadors: $("#autor").val(),
+    Data_UTC: Data_UTC,
+    Hora_UTC: Hora_UTC,
+    Sortida_sol: $("#sun_rise").html(),
+    Posta_sol: $("#sun_set").html(),
+    Fase_lluna: $("#fase lunar").html(),
+    Temp_Ext: $("#temp_actual").val(),
+    Temp_Ext_Max: $("#temp_max").val(),
+    Temp_Ext_Min: $("#temp_min").val(),
+    Hum_ext: $("#humitat").val(),
+    Pressio: $("#pressio").val(),
+    Pres_tend_barometre: $("#tend_bar").val(),
+    Vent_Vel: $("#vent").val(),
+    Vent_Beaufort: Vent_Beaufort,
+    Vent_Dir_actual: Vent_Dir_actual,
+    Precip_acum_avui: $("#precipitacio").val(),
+    Nuvulositat: Nuvulositat,
+    Tipus_nuvols: $("#tipus_nuvols").html(),
+    Fenomens_observats: $("#llista_fenomens").html()
+  }
+  var JSONenvio = JSON.stringify(envio);
+  console.log(JSONenvio);
+  fetch(url_servidor,{
+    method:'POST',
+    headers:{
+      'Content-Type': 'application/json; charset=UTF-8'
+      },
+    body: JSONenvio
+  })
+  .then(response => {  
+    alert("S'han enregistrat les dades al servidor eduMET.");                   
+  })
+  .catch(error => {
+    console.log("Error: " + error);
+  });
 }
 
 // OBSERVACIONS
@@ -641,7 +648,7 @@ function triaLloc() {
   } else {
     indexedDB.open("eduMET").onsuccess = function(event) {
       event.target.result.transaction(["Observacions"], "readwrite").objectStore("Observacions").get(observacioActual).onsuccess = function(e) {
-        activa("tria_lloc");
+        activa("lloc");
         var laLatitud;
         var laLongitud;
         if(e.target.result["Latitud"] != "") {
@@ -1131,7 +1138,7 @@ function activa(fragment) {
   $("#login").css("display","none");
   $("#fotografia").css("display","none");
   $("#registra").css("display","none");
-  $("#tria_lloc").css("display","none");
+  $("#lloc").css("display","none");
   $("#nuvols").css("display","none");
   $("#nuvolositat").css("display","none");
   $("#vents").css("display","none");
@@ -1153,7 +1160,7 @@ function activa(fragment) {
     case "observacions":
     case "fitxa":
     case "fotografia":
-    case "tria_lloc":
+    case "lloc":
       boto = $("#boto_observacions");
       break;
     case "registra":
@@ -1323,7 +1330,7 @@ function fitxa(observacio) {
         }
       }
       try {
-        fitxaMapa = L.map('fitxaMapa');
+        fitxaMapa = L.map('fitxa-mapa');
         if(online){
           fitxaMapa.setView(new L.LatLng(laLatitud, laLongitud), 15);
           L.tileLayer('https://maps.wikimedia.org/osm-intl/{z}/{x}/{y}{r}.png', {
@@ -1360,7 +1367,7 @@ function fitxa(observacio) {
 function valida() {
   usuari = $("#usuari").val();
   contrasenya = $("#password").val();
-  var url = url_servidor + "?ident=" + usuari + "&psw=" + contrasenya + "&tab=registrar_se"
+  var url = url_servidor + "?ident=" + usuari + "&psw=" + contrasenya + "&tab=registrar_se_app"
   fetch(url)
   .then(response => response.text())
   .then(response => response.trim())
@@ -1371,6 +1378,7 @@ function valida() {
       alert("Usuari i/o contrasenya incorrectes. Si us plau, torna-ho a provar.");
     } else {
       console.log("Auth OK: " + usuari);
+      console.log("Codi_estacio: " + response);
       storage.setItem("user", usuari);
       baixaObsInicial();
       activa('fenologia');
@@ -1529,4 +1537,21 @@ function ConvertDMSToDD(degrees, minutes, seconds, direction) {
       dd = dd * -1; 
   }    
   return dd;
+}
+
+function getTime() {
+  var ara = new Date(Date.now());
+  var any = ara.getFullYear();
+  var mes = (ara.getMonth() + 1).toString();
+  var dia = ara.getDate().toString();
+  var hora = ara.getHours().toString();
+  var minut = ara.getMinutes().toString();
+  var segon = ara.getSeconds().toString();
+  if (mes.length < 2) mes = '0' + mes;
+  if (dia.length < 2) dia = '0' + dia;
+  if (hora.length < 2) hora = '0' + hora;
+  if (minut.length < 2) minut = '0' + minut;
+  if (segon.length < 2) segon = '0' + segon;
+  Data_UTC = any + '-' + mes + '-' + dia;
+  Hora_UTC = hora + ':' + minut + ':' + segon;
 }
