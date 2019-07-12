@@ -1,5 +1,6 @@
 window.onload = function() {
   usuari = storage.getItem("user");
+  estacioAssignada = storage.getItem("user");
   var stringDatabase = storage.getItem("database");
   var online;
   map = L.map('map');
@@ -34,6 +35,7 @@ window.onload = function() {
       db.createObjectStore("Fenomens", {keyPath: "Id_feno"});
       db.createObjectStore("Estacions", {keyPath: "Codi_estacio"});
       db.createObjectStore("Observacions", {keyPath: "GUID", autoIncrement:true});
+      db.createObjectStore("Registres", {keyPath: "GUID", autoIncrement:true});
       baixaFenomens();
       baixaEstacions();
     }
@@ -78,21 +80,8 @@ window.onload = function() {
   });
   $("#calendari").on('apply.daterangepicker', function(ev, picker) {
     if(!flagDataTriada) {
-      var ara = new Date(Date.now());
-      var any = ara.getFullYear();
-      var mes = (ara.getMonth() + 1).toString();
-      var dia = ara.getDate().toString();
-      var hora = ara.getHours().toString();
-      var minut = ara.getMinutes().toString();
-      var segon = ara.getSeconds().toString();
-      if (mes.length < 2) mes = '0' + mes;
-      if (dia.length < 2) dia = '0' + dia;
-      if (hora.length < 2) hora = '0' + hora;
-      if (minut.length < 2) minut = '0' + minut;
-      if (segon.length < 2) segon = '0' + segon;
-      var Data_actual = any + '-' + mes + '-' + dia;
-      var Hora_actual = hora + ':' + minut + ':' + segon;
-      desaData(Data_actual,Hora_actual);
+      getTime();
+      desaData(Data_UTC,Hora_UTC);
     }
   });
   $("#data_registre").daterangepicker(options, function(start) {
@@ -115,6 +104,7 @@ var usuari = "";
 var contrasenya;
 var estacioActual;
 var estacioPreferida;
+var estacioAssignada = "";
 var fenomens = [];
 var latitudActual;
 var longitudActual;
@@ -151,9 +141,10 @@ var hasWebcam = false;
 var isWebcamAlreadyCaptured = false;
 var fen_atm = ["Pluja","Calamarsa","Neu","Rosada","Gebre","Boira","Arc de Sant Martí","Llamp"];
 
-var Vent_Beaufort;
-var Vent_Dir_actual;
-var Nuvulositat;
+var Vent_Beaufort = "";
+var Vent_Dir_actual = "";
+var Nuvulositat = "";
+var Pres_tend_barometre = "";
 
 var MediaDevices = [];
 var canEnumerate = false;
@@ -350,12 +341,12 @@ function getMesures() {
   .then(response => JSON.parse(response))
   .then(response => {     
     $("#temperatura").html(response[0]["Temp_ext_actual"]+ " ºC <label style='color:red'>" + response[0]["Temp_ext_max_avui"] + " ºC <label style='color:cyan'>" + response[0]["Temp_ext_min_avui"] + " ºC</label>");
-    $("#humitat").html(response[0]["Hum_ext_actual"] + "%");
-    $("#pressio").html(response[0]["Pres_actual"] + " HPa");
+    $("#lHumitat").html(response[0]["Hum_ext_actual"] + "%");
+    $("#lPressio").html(response[0]["Pres_actual"] + " HPa");
     $("#sunrise").html(response[0]["Sortida_sol"].slice(0,5));
     $("#sunset").html(response[0]["Posta_sol"].slice(0,5));
-    $("#pluja").html(response[0]["Precip_acum_avui"] + " mm");
-    $("#vent").html(response[0]["Vent_vel_actual"] + " Km/h");    
+    $("#lPluja").html(response[0]["Precip_acum_avui"] + " mm");
+    $("#lVent").html(response[0]["Vent_vel_actual"] + " Km/h");    
     INEinicial = response[0]["codi_INE"];
     var stringDataFoto = response[0]["Data_UTC"] + 'T' + response[0]["Hora_UTC"];
     var interval = (new Date() - new Date(stringDataFoto)) / 3600000;
@@ -375,12 +366,12 @@ function getMesures() {
 function buidaMesures() {
   $("#data_mesura").css("color","#FF0000");
   $("#temperatura").html("");
-  $("#humitat").html("");
-  $("#pressio").html("");
+  $("#lHumitat").html("");
+  $("#lPressio").html("");
   $("#sunrise").html("");
   $("#sunset").html("");
-  $("#pluja").html("");
-  $("#vent").html("");  
+  $("#lPpluja").html("");
+  $("#lVent").html("");  
 }
 
 // REGISTRA
@@ -389,9 +380,9 @@ function registra() {
   activa('registra');
   getTime();
   indexedDB.open("eduMET").onsuccess = function(event) {
-    event.target.result.transaction(["Estacions"], "readonly").objectStore("Estacions").get(estacioActual).onsuccess = function(e) {
+    event.target.result.transaction(["Estacions"], "readonly").objectStore("Estacions").get(estacioAssignada).onsuccess = function(e) {
       $("#nom_estacio").val(e.target.result["Nom_centre"]);
-      var url = url_servidor + "?tab=mobilApp&codEst=" + estacioActual;
+      var url = url_servidor + "?tab=mobilApp&codEst=" + estacioAssignada;
       fetch(url)
       .then(response => response.text())
       .then(response => JSON.parse(response))
@@ -498,28 +489,33 @@ function triaFenomens(){
     llista+= ".";
     $("#llista_fenomens").text(llista);
   } else {
-    $("#llista_fenomens").text("-");
+    $("#llista_fenomens").text("");
   }
   back();
 }
 
 function penja_registre() {
+  if($("#tend_bar").val() == null) {
+    Pres_tend_barometre = "";
+  } else {
+    Pres_tend_barometre = $("#tend_bar").val();
+  }
   var envio = { 
-    tab: "salvarFenoApp",
-    Codi_estacio: estacioActual,
-    Codi_grup: "",
+    tab: "salvarObservacio",
+    Codi_estacio: estacioAssignada,
+    Codi_grup: usuari,
     Observadors: $("#autor").val(),
     Data_UTC: Data_UTC,
     Hora_UTC: Hora_UTC,
     Sortida_sol: $("#sun_rise").html(),
     Posta_sol: $("#sun_set").html(),
-    Fase_lluna: $("#fase lunar").html(),
+    Fase_lluna: $("#fase_lunar").html(),
     Temp_Ext: $("#temp_actual").val(),
     Temp_Ext_Max: $("#temp_max").val(),
     Temp_Ext_Min: $("#temp_min").val(),
-    Hum_ext: $("#humitat").val(),
+    Hum_Ext: $("#humitat").val(),
     Pressio: $("#pressio").val(),
-    Pres_tend_barometre: $("#tend_bar").val(),
+    Pres_tend_barometre: Pres_tend_barometre,
     Vent_Vel: $("#vent").val(),
     Vent_Beaufort: Vent_Beaufort,
     Vent_Dir_actual: Vent_Dir_actual,
@@ -530,6 +526,7 @@ function penja_registre() {
   }
   var JSONenvio = JSON.stringify(envio);
   console.log(JSONenvio);
+  alert("S'han enregistrat les dades al servidor eduMET.");     
   fetch(url_servidor,{
     method:'POST',
     headers:{
@@ -537,11 +534,14 @@ function penja_registre() {
       },
     body: JSONenvio
   })
-  .then(response => {  
-    alert("S'han enregistrat les dades al servidor eduMET.");                   
-  })
+  .then()
   .catch(error => {
     console.log("Error: " + error);
+    indexedDB.open("eduMET").onsuccess = function(event) { 
+      var db = event.target.result;    
+      var regObjStore = db.transaction("Registres", "readwrite").objectStore("Registres");
+        regObjStore.add(envio);
+    };
   });
 }
 
@@ -549,7 +549,7 @@ function penja_registre() {
 
 function usuaris() {
   if (usuari == "" || usuari == null) {
-    login();
+    login('fenologia');
   } else {
     if (confirm("Vols tancar la sessió ?")) {
       tancar_sessio();
@@ -564,6 +564,8 @@ function tancar_sessio() {
   } 
   localStorage.removeItem("user");
   usuari = "";
+  localStorage.removeItem("assignada");
+  estacioAssignada= "";
   resetObservacio();
   observacioActual = 0;
   estacio();
@@ -1059,20 +1061,7 @@ function llistaObservacions() {
 }
 
 function desaObservacio(string64){  
-  var ara = new Date(Date.now());
-  var any = ara.getFullYear();
-  var mes = (ara.getMonth() + 1).toString();
-  var dia = ara.getDate().toString();
-  var hora = ara.getHours().toString();
-  var minut = ara.getMinutes().toString();
-  var segon = ara.getSeconds().toString();
-  if (mes.length < 2) mes = '0' + mes;
-  if (dia.length < 2) dia = '0' + dia;
-  if (hora.length < 2) hora = '0' + hora;
-  if (minut.length < 2) minut = '0' + minut;
-  if (segon.length < 2) segon = '0' + segon;
-  var Data_actual = any + '-' + mes + '-' + dia;
-  var Hora_actual = hora + ':' + minut + ':' + segon;
+  getTime();
 
   var fotoData = "";
   var fotoHora = "";
@@ -1080,8 +1069,8 @@ function desaObservacio(string64){
   var fotoLongitud = "";
 
   if (origen == "camera") {
-    fotoData = Data_actual;
-    fotoHora = Hora_actual;
+    fotoData = Data_UTC;
+    fotoHora = Hora_UTC;
     if(mobilLocalitzat) {
       fotoLatitud = latitudActual;
       fotoLongitud = longitudActual;
@@ -1183,12 +1172,15 @@ function activa(fragment) {
   vistaActual = fragment;
 }
 
-function login() {
+function login(fragment) {
   if (usuari == "" || usuari == null) {
     $("#password").keyup(function(event) {
       if (event.keyCode === 13) {
-        valida();
+        valida(fragment);
       }
+    });
+    $("#valida").click(function(event) {
+        valida(fragment);
     });
     $("#usuari").val("");
     $("#password").val("");
@@ -1199,7 +1191,12 @@ function login() {
     }
   }
   else {
-    fenologia();
+    if(fragment == 'fenologia') {
+      fenologia();
+    }
+    if(fragment == 'registra') {
+      registra();
+    }
   }
 }
 function fenologia() {
@@ -1364,7 +1361,7 @@ function fitxa(observacio) {
   }
 }
 
-function valida() {
+function valida(fragment) {
   usuari = $("#usuari").val();
   contrasenya = $("#password").val();
   var url = url_servidor + "?ident=" + usuari + "&psw=" + contrasenya + "&tab=registrar_se_app"
@@ -1378,10 +1375,17 @@ function valida() {
       alert("Usuari i/o contrasenya incorrectes. Si us plau, torna-ho a provar.");
     } else {
       console.log("Auth OK: " + usuari);
-      console.log("Codi_estacio: " + response);
+      console.log("Assignada: " + response);
+      estacioAssignada = response;
       storage.setItem("user", usuari);
+      storage.setItem("assignada", response);
       baixaObsInicial();
-      activa('fenologia');
+      if(fragment == 'fenologia') {
+        activa('fenologia');
+      }
+      if(fragment == 'registra') {
+        registra();
+      }
     }
   });
 }

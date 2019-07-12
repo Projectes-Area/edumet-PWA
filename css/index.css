@@ -11,10 +11,6 @@ button, select, input, textarea {
     margin-right:7px;
     margin-left:15px;
 }
-.wi-lluna {
-    color:whitesmoke;
-    transform: translateY(30%);
-}
 .material-icons {
     font-family: 'Material Icons';
     font-weight: normal;
@@ -40,6 +36,9 @@ button, select, input, textarea {
     animation: spin 1s linear infinite;
     animation-play-state: paused;
 }  
+.font-12 {
+    font-size:12px !important; 
+}
 .font-16 {
     font-size:16px !important; 
 }
@@ -184,6 +183,18 @@ button, select, input, textarea {
 }
 .just_dreta{
     text-align:right;
+    width:3em;
+}
+.titol{
+    align-self: center;
+    width: 95%;
+    display: flex;
+    justify-content: center;
+    color: white;
+    background-color: #418ac8;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    margin:2px;
 }
 #capsalera {
     height:10vh;
@@ -203,10 +214,10 @@ button, select, input, textarea {
     justify-content:space-evenly;
     width:100%;
 }
-#registre-esquerra {
+#registre-esquerra, #registre-dreta {
+    width:100%;
     display:flex;
     flex-direction:column;
-    justify-content: space-evenly;
 }
 #login {
     display:none;
@@ -253,7 +264,8 @@ button, select, input, textarea {
 }
 #registra {
     display:none;
-    height:80vh;    
+    height:80vh;  
+    flex-direction:column;  
 }
 #fila {
     height:5vh;
@@ -285,7 +297,6 @@ button, select, input, textarea {
     width:100%;
     height:90%;
     resize: none;
-    font-size:14px !important;
 }
 #peu-div {
     height:10vh;
@@ -370,11 +381,6 @@ button, select, input, textarea {
     padding-right:48px;
     margin-top:24px;
 }
-#enregistra {
-    padding-bottom:12px;
-    padding-top:12px;
-    margin-top:10px;
-}
 #id_estacio {
     display:flex;
     align-items:center;
@@ -395,29 +401,22 @@ button, select, input, textarea {
     align-items: center;
     width: 20%;
 }
-#caixa_registra {
-    display:flex;
-    flex-direction:column;
-    justify-content:space-between;
-    padding:5px;
-}
 #temperatures {
     display:flex;
     justify-content:space-evenly;
-    margin-bottom:5px;
+    margin-top:10px;
+    margin-bottom:10px;
 }
 #humitat-pressio{
     display:flex;
     justify-content:space-evenly;
-    margin-bottom:5px;
+    margin-bottom:10px;
 }
 #tend-bar-div {
     display:flex;
     flex-direction:column;
     align-items:center;
-}
-#registre-fet {
-    margin:10px;
+    margin-bottom:5px;
 }
 #frame{
     margin-top:10px;
@@ -452,8 +451,8 @@ button, select, input, textarea {
     margin:10px;
 }
 
-@media (min-height: 800px) {
-    body, input, #valida, #estacio-nom, #descripcio, .boto-inf, .boto-sup {
+@media (min-height: 750px) {
+    body, input, #valida, #estacio-nom, .boto-inf, .boto-sup, .font-12 {
         font-size:16px !important;
     }
     .font-16 {
@@ -473,7 +472,7 @@ button, select, input, textarea {
     }
 }
 @media (min-height: 1000px) {
-    body, input, #valida, #estacio-nom, #descripcio, .boto-inf, .boto-sup {
+    body, input, #valida, #estacio-nom, .boto-inf, .boto-sup, .font-12 {
         font-size:18px !important;
     }
     .font-16 {
@@ -493,7 +492,7 @@ button, select, input, textarea {
     }
 }
 @media (min-height: 1200px) {
-    body, input, #valida, #estacio-nom, #descripcio, .boto-inf, .boto-sup {
+    body, input, #valida, #estacio-nom, .boto-inf, .boto-sup, .font-12 {
         font-size:24px !important;
     }
     .font-16 {
@@ -513,7 +512,7 @@ button, select, input, textarea {
     }
 }
 @media (orientation:landscape) {
-    #fitxa-div, #registra {
+    #fitxa-div {
         flex-direction:row;
     }
     #radar{
@@ -527,19 +526,19 @@ button, select, input, textarea {
         height:80vh;
         width:auto;
     }
-    #fitxa-edicio, #fitxa-map-text, #registre-esquerra, #registre-dreta {
+    #fitxa-edicio, #fitxa-map-text {
         width:50%;
         height:100%
     }
-    #caixa_registra {
-        height:80vh;
+    #div-dades {
+        flex-direction:row;
     }
     .etiqueta {
         display:none;
     }
 }
 @media (orientation:portrait) {
-    #fitxa-div, #registra {
+    #fitxa-div {
         flex-direction:column;
     }
     #radar {
@@ -553,12 +552,12 @@ button, select, input, textarea {
         height:auto;
         width:100%;
     }
-    #fitxa-edicio, #fitxa-map-text, #registre-esquerra, #registre-dreta {
+    #fitxa-edicio, #fitxa-map-text {
         width:100%;
         height:50%
     }
-    #caixa_registra {
-        height:40vh;
+    #div-dades {
+        flex-direction:column;
     }
     .etiqueta {
         display:unset;

@@ -36,7 +36,7 @@
           <input class="login-marge font-16" id="password" placeholder="contrasenya" type="password" name="contrasenya" autocomplete="new-password"><br>
         </div>
         <div>  
-          <button id="valida" class="login-marge font-16" onClick="valida()">ENTRA</button>
+          <button id="valida" class="login-marge font-16">ENTRA</button>
         </div>
       </div>
       <div id="fenologia">
@@ -58,7 +58,7 @@
           </select> 
         </div>
         <div class="obs-desc">
-          <textarea id="descripcio" placeholder="Escriu en aquest espai una breu descripció del fenomen observat." onKeyUp="if(this.value.length>250) this.value = this.value.slice(0, -1);"></textarea>
+          <textarea id="descripcio" class="font-16" placeholder="Escriu en aquest espai una breu descripció del fenomen observat." onKeyUp="if(this.value.length>250) this.value = this.value.slice(0, -1);"></textarea>
         </div>
       </div>
       <div id="fotografia">
@@ -102,10 +102,10 @@
             <i class="wi wi-estacions wi-sunrise"></i><label id="sunrise"></label><i class="wi wi-estacions wi-sunset"></i><label id="sunset"></label>
           </div>
           <div class="mesures">
-            <i class="wi wi-estacions wi-thermometer"></i><label id="temperatura"></label><i class="wi wi-estacions wi-barometer"></i><label id="pressio"></label>
+            <i class="wi wi-estacions wi-thermometer"></i><label id="temperatura"></label><i class="wi wi-estacions wi-barometer"></i><label id="lPressio"></label>
           </div>
           <div class="mesures">
-            <i class="wi wi-estacions wi-humidity"></i><label id="humitat"></label><i class="wi wi-estacions wi-umbrella"></i><label id="pluja"></label><i class="wi wi-estacions wi-strong-wind"></i><label id="vent"></label>
+            <i class="wi wi-estacions wi-humidity"></i><label id="lHumitat"></label><i class="wi wi-estacions wi-umbrella"></i><label id="lPluja"></label><i class="wi wi-estacions wi-strong-wind"></i><label id="lVent"></label>
           </div>
         </div>  
       </div>
@@ -141,149 +141,157 @@
       </div>
 
       <div id="registra">
-        <div id="registre-esquerra">
-          <div style="margin-left:10px">
+        <div style="height:70vh">
+        <div style="display:flex;flex-wrap: wrap;justify-content: space-evenly;margin-top:5px;">
+
             <div style="display:flex">
               <i class="material-icons font-24 edumet">router</i>
-              <input id="nom_estacio" style="width:80%;" placeholder="Nom de l'estació" type="text" name="estacio" disabled>
+              <input id="nom_estacio" placeholder="Nom de l'estació" type="text" name="estacio" disabled>
             </div>
-            <div style="display:flex;margin-top:5px">
+            <div style="display:flex">
               <i class="material-icons font-24 edumet">edit</i>
-              <input id="autor" style="width:80%;" placeholder="Autors del registre" type="text" name="autor">
+              <input id="autor" placeholder="Autors del registre" type="text" name="autor">
             </div>
-            <div style="display:flex;margin-top:5px">
-              <i class="material-icons font-24 edumet">access_time</i>
-              <input id="data_registre"></input>
-              <div><i class="wi wi-estacions wi-sunrise font-16"></i><label id="sun_rise"></label><br><i class="wi wi-estacions wi-sunset font-16"></i><label id="sun_set"></label></div>
-            </div>            
-          </div>
-          <div class="font-16" style="align-self:center">Dades mesurades</div>
-          <div id="temperatures">
-            <div>
-              <i class="wi wi-thermometer font-16 edumet"></i>
-              <input type="number" class="just_dreta" min="-30" max="60" step="0.1" placeholder="actual" id="temp_actual"> 
-              <input type="number" class="just_dreta" min="-30" max="60" step="0.1" placeholder="max" id="temp_max" style="color:red"> 
-              <input type="number" class="just_dreta" min="-30" max="60" step="0.1" placeholder="min" id="temp_min" style="color:cyan"> ºC
-            </div>
-            <div>
-              <i class="wi wi-humidity font-16 edumet"></i>
-              <input type="number" class="just_dreta" min="0" max="100" placeholder="humitat" id="humitat"> %
-            </div>
-          </div>
-          <div id="humitat-pressio">
-            <div>
-              <i class="wi wi-strong-wind font-16 edumet"></i>
-              <input type="number" class="just_dreta" min="0" max="200" placeholder="vent" id="vent"> km/h
-            </div>
-            <div>
-              <i class="wi wi-umbrella font-16 edumet"></i>
-              <input type="number" class="just_dreta" min="0" max="45" placeholder="pluja" id="precipitacio"> mm
-            </div>
-            <div>
-              <i class="wi wi-barometer font-16 edumet"></i>
-              <input type="number" class="just_dreta" min="975" max="1045" placeholder="pressió" id="pressio"> HPa
-            </div>
-          </div>
-          <div id="tend-bar-div">
-              <select id="tend_bar">
-                <option value="" disabled selected>Tendència baromètrica</option>
-                <option value="Pujant molt ràpidament">Pujant molt ràpidament</option>
-                <option value="Pujant ràpidament">Pujant ràpidament</option>
-                <option value="Pujant lentament">Pujant lentament</option>
-                <option value="Estable">Estable</option>
-                <option value="Baixant lentament">Baixant lentament</option>
-                <option value="Baixant ràpidament">Baixant ràpidament</option>
-                <option value="Baixant molt ràpidament">Baixant molt ràpidament</option>
-              </select> 
-            </div>
+              
         </div>
-        <div class="vr"></div>
-        <div id="registre-dreta">
-          <div id="caixa_registra">
-              <div class="font-16" style="align-self:center">Dades observades</div>
+        <div id="div-dades" style="display:flex">
+            <div id="registre-esquerra">          
+              <div class="font-16 titol">Mesures instrumentals</div>
+                <div style="display:flex;justify-content:center">
+                <div>
+                  <i class="material-icons font-16 edumet">access_time</i>
+                  <input id="data_registre"></input>
+                </div> 
+                <div>
+                  <i class="wi wi-estacions wi-sunrise font-16"></i><label id="sun_rise"></label><br><i class="wi wi-estacions wi-sunset font-16"></i><label id="sun_set"></label>
+                </div>
+              </div>  
+              <div id="temperatures">
+                <div>
+                  <i class="wi wi-thermometer font-16 edumet"></i>
+                  <input type="number" class="just_dreta" min="-30" max="60" step="0.1" placeholder="actual" id="temp_actual"> 
+                  <input type="number" class="just_dreta" min="-30" max="60" step="0.1" placeholder="max" id="temp_max" style="color:red"> 
+                  <input type="number" class="just_dreta" min="-30" max="60" step="0.1" placeholder="min" id="temp_min" style="color:cyan"> ºC
+                </div>
+                <div>
+                  <i class="wi wi-humidity font-16 edumet"></i>
+                  <input type="number" class="just_dreta" min="0" max="100" placeholder="humitat" id="humitat"> %
+                </div>
+              </div>
+              <div id="humitat-pressio">
+                <div>
+                  <i class="wi wi-strong-wind font-16 edumet"></i>
+                  <input type="number" class="just_dreta" min="0" max="200" placeholder="vent" id="vent"> km/h
+                </div>
+                <div>
+                  <i class="wi wi-umbrella font-16 edumet"></i>
+                  <input type="number" class="just_dreta" min="0" max="45" placeholder="pluja" id="precipitacio"> mm
+                </div>
+                <div>
+                  <i class="wi wi-barometer font-16 edumet"></i>
+                  <input type="number" class="just_dreta" min="975" max="1045" placeholder="pressió" id="pressio"> HPa
+                </div>
+              </div>
+              <div id="tend-bar-div">
+                <select id="tend_bar" class="font-12">
+                  <option value="" disabled selected>Tendència baromètrica</option>
+                  <option value="Pujant molt ràpidament">Pujant molt ràpidament</option>
+                  <option value="Pujant ràpidament">Pujant ràpidament</option>
+                  <option value="Pujant lentament">Pujant lentament</option>
+                  <option value="Estable">Estable</option>
+                  <option value="Baixant lentament">Baixant lentament</option>
+                  <option value="Baixant ràpidament">Baixant ràpidament</option>
+                  <option value="Baixant molt ràpidament">Baixant molt ràpidament</option>
+                </select> 
+              </div>
+            </div>
+
+            <div id="registre-dreta">
+              <div class="font-16 titol">Observacions</div>
               <table style="margin-left:10px;border:0;border-spacing:0px;">
                 <tr>
                   <td><i class="wi wi-wind-direction font-24 edumet" onClick="registra_vents()"></i></td>
-                  <td>Direcció del vent: <label id="dir_vent" class="edumet">-</label></td> 
+                  <td>Direcció del vent: <label id="dir_vent" class="edumet"></label></td> 
                 </tr>
                 <tr>
                   <td><i class="wi wi-strong-wind font-24 edumet" onClick="registra_beaufort()"></i></td>
-                  <td>Intensitat del vent (Beaufort): <label id="intensitat_vent" class="edumet">-</label></td>
+                  <td>Intensitat del vent (Beaufort): <label id="intensitat_vent" class="edumet"></label></td>
                 </tr>
                 <tr>
                   <td><i class="wi wi-day-cloudy font-24 edumet" onClick="registra_nuvolositat()"></i></td>
-                  <td>Cobertura nuvolosa: <label id="cob_nuvols" class="edumet">-</label></td>
+                  <td>Cobertura nuvolosa: <label id="cob_nuvols" class="edumet"></label></td>
                 </tr>
                 <tr>
                   <td><i class="wi wi-cloudy font-24 edumet" onClick="registra_nuvols()"></i></td>
-                  <td>Tipus de núvols: <label id="tipus_nuvols" class="edumet">-</label></td>
+                  <td>Tipus de núvols: <label id="tipus_nuvols" class="edumet"></label></td>
                 </tr>
                 <tr>
                   <td><i class="wi wi-moon-alt-waxing-crescent-4 font-24 edumet" onClick="registra_lluna()"></i></td>
-                  <td>Fase lunar: <label id="fase_lunar" class="edumet">-</label></td>
+                  <td>Fase lunar: <label id="fase_lunar" class="edumet"></label></td>
                 </tr>
                   <td><i class="wi wi-day-storm-showers font-24 edumet" onClick="registra_fenomens()"></i></td>
-                  <td>Fenòmens atmosfèrics: <label id="llista_fenomens" class="edumet">-</label></td>
+                  <td>Fenòmens atmosfèrics: <label id="llista_fenomens" class="edumet"></label></td>
                 </tr>
-              </table>
-            
-            <div id="registre-fet">
-              <button id="enregistra" style="width:100%;" onClick="penja_registre()">Registra les dades</button>
-            </div>
-          </div>
+              </table>              
+            </div>        
+        </div>
+        </div>
+        <div style="height:10vh;display:flex;justify-content:center;align-items:center;">
+          <button id="enregistra" class="font-14" style="width:95%;height:90%" onClick="penja_registre()">Registra les dades</button>
         </div>
       </div>
+
       <div id="nuvols" class="evenly">
         <div class="fila-div">
-          <div class="quadre"><img src="img/nuvols/BIG_521555615022712_00.jpg" class="quadre-3x3" alt="Cirrus" title="Cirrus" onClick="triaNuvols('Cirrus')"><div class="bottom-left blanc">Cirrus</div></div>         
-          <div class="quadre"><img src="img/nuvols/BIG_568565615022712_00.jpg" class="quadre-3x3" alt="Cirrocúmuls" title="Cirrocúmuls" onClick="triaNuvols('Cirrocúmuls')"><div class="bottom-left blanc">Cirrocúmuls</div></div>
-          <div class="quadre"><img src="img/nuvols/BIG_037575615022712_00.jpg" class="quadre-3x3" alt="Altostrats"  title="Altostrats" onClick="triaNuvols('Altostrats')"><div class="bottom-left blanc">Altostrats</div></div>
+          <div class="quadre"><img src="img/nuvols/BIG_521555615022712_00.jpg" class="quadre-3x3" alt="Cirrus" title="Cirrus" onClick="triaNuvols('Cirrus')"><div class="bottom-left font-16 blanc">Cirrus</div></div>         
+          <div class="quadre"><img src="img/nuvols/BIG_568565615022712_00.jpg" class="quadre-3x3" alt="Cirrocúmuls" title="Cirrocúmuls" onClick="triaNuvols('Cirrocúmuls')"><div class="bottom-left font-16 blanc">Cirrocúmuls</div></div>
+          <div class="quadre"><img src="img/nuvols/BIG_037575615022712_00.jpg" class="quadre-3x3" alt="Altostrats"  title="Altostrats" onClick="triaNuvols('Altostrats')"><div class="bottom-left font-16 blanc">Altostrats</div></div>
         </div>
         <div class="fila-div">
-          <div class="quadre"><img src="img/nuvols/BIG_490575615022712_00.jpg" class="quadre-3x3" alt="Altocúmuls" title="Altocúmuls" onClick="triaNuvols('Altocúmuls')"><div class="bottom-left blanc">Altocúmuls</div></div> 
+          <div class="quadre"><img src="img/nuvols/BIG_490575615022712_00.jpg" class="quadre-3x3" alt="Altocúmuls" title="Altocúmuls" onClick="triaNuvols('Altocúmuls')"><div class="bottom-left font-16 blanc">Altocúmuls</div></div> 
           <video id="video" class="quadre-3x3"></video>
-          <div class="quadre"><img src="img/nuvols/BIG_005585615022712_00.jpg" class="quadre-3x3" alt="Nimbostrats" title="Nimbostrats" onClick="triaNuvols('Nimbostrats')"><div class="bottom-left blanc">Nimbostrats</div></div> 
+          <div class="quadre"><img src="img/nuvols/BIG_005585615022712_00.jpg" class="quadre-3x3" alt="Nimbostrats" title="Nimbostrats" onClick="triaNuvols('Nimbostrats')"><div class="bottom-left font-16 blanc">Nimbostrats</div></div> 
         </div>
         <div class="fila-div">
-          <div class="quadre"><img src="img/nuvols/BIG_693585615022712_00.jpg" class="quadre-3x3" alt="Cumulonimbus" title="Cumulonimbus" onClick="triaNuvols('Cumulonimbus')"><div class="bottom-left blanc">Cumulonimbus</div></div> 
-          <div class="quadre"><img src="img/nuvols/BIG_115595615022712_00.jpg" class="quadre-3x3" alt="Cúmuls" title="Cúmuls" onClick="triaNuvols('Cúmuls')"><div class="bottom-left blanc">Cúmuls</div></div> 
-          <div class="quadre"><img src="img/nuvols/BIG_630595615022712_00.jpg" class="quadre-3x3" alt="Estratocúmuls" title="Estratocúmuls" onClick="triaNuvols('Estratocúmuls')"><div class="bottom-left blanc">Estratocúmuls</div></div> 
+          <div class="quadre"><img src="img/nuvols/BIG_693585615022712_00.jpg" class="quadre-3x3" alt="Cumulonimbus" title="Cumulonimbus" onClick="triaNuvols('Cumulonimbus')"><div class="bottom-left font-16 blanc">Cumulonimbus</div></div> 
+          <div class="quadre"><img src="img/nuvols/BIG_115595615022712_00.jpg" class="quadre-3x3" alt="Cúmuls" title="Cúmuls" onClick="triaNuvols('Cúmuls')"><div class="bottom-left font-16 blanc">Cúmuls</div></div> 
+          <div class="quadre"><img src="img/nuvols/BIG_630595615022712_00.jpg" class="quadre-3x3" alt="Estratocúmuls" title="Estratocúmuls" onClick="triaNuvols('Estratocúmuls')"><div class="bottom-left font-16 blanc">Estratocúmuls</div></div> 
         </div>
       </div>
 
       <div id="vents" class="evenly">
           <div class="fila-div">
-            <div class="quadre"><img src="img/NO.png" class="quadre-3x3" alt="Mestral" onClick="triaVent('NO','NO - Mestral')"><div class="centered">NO - Mestral</div></div>         
-            <div class="quadre"><img src="img/N.png" class="quadre-3x3" alt="Tramuntana" onClick="triaVent('N','N - Tramuntana')"><div class="centered">N - Tramuntana</div></div>
-            <div class="quadre"><img src="img/NE.png" class="quadre-3x3" alt="Gregal"  onClick="triaVent('NE','NE - Gregal')"><div class="centered">NE - Gregal</div></div>
+            <div class="quadre"><img src="img/NO.png" class="quadre-3x3" alt="Mestral" onClick="triaVent('NO','NO - Mestral')"><div class="centered font-16">NO - Mestral</div></div>         
+            <div class="quadre"><img src="img/N.png" class="quadre-3x3" alt="Tramuntana" onClick="triaVent('N','N - Tramuntana')"><div class="centered font-16">N - Tramuntana</div></div>
+            <div class="quadre"><img src="img/NE.png" class="quadre-3x3" alt="Gregal"  onClick="triaVent('NE','NE - Gregal')"><div class="centered font-16">NE - Gregal</div></div>
           </div>
           <div class="fila-div">
-            <div class="quadre"><img src="img/O.png" class="quadre-3x3" alt="Ponent" onClick="triaVent('O','O - Ponent')"><div class="centered">O - Ponent</div></div> 
-            <div class="quadre"><img src="img/C.png" class="quadre-3x3" alt="Calma" onClick="triaVent('','-')"><div class="centered">Calma</div></div> 
-            <div class="quadre"><img src="img/E.png" class="quadre-3x3" alt="Llevant" onClick="triaVent('E','E - Llevant')"><div class="centered">E - Llevant</div></div> 
+            <div class="quadre"><img src="img/O.png" class="quadre-3x3" alt="Ponent" onClick="triaVent('O','O - Ponent')"><div class="centered font-16">O - Ponent</div></div> 
+            <div class="quadre"><img src="img/C.png" class="quadre-3x3" alt="Calma" onClick="triaVent('','-')"><div class="centered font-16">Calma</div></div> 
+            <div class="quadre"><img src="img/E.png" class="quadre-3x3" alt="Llevant" onClick="triaVent('E','E - Llevant')"><div class="centered font-16">E - Llevant</div></div> 
           </div>
           <div class="fila-div">
-            <div class="quadre"><img src="img/SO.png" class="quadre-3x3" alt="Lleveig" onClick="triaVent('SO','SO - Lleveig')"><div class="centered">SO - Lleveig</div></div> 
-            <div class="quadre"><img src="img/S.png" class="quadre-3x3" alt="Migjorn" onClick="triaVent('S','S - Migjorn')"><div class="centered">S - Migjorn</div></div> 
-            <div class="quadre"><img src="img/SE.png" class="quadre-3x3" alt="Xaloc" onClick="triaVent('SE','SE - Xaloc')"><div class="centered">SE - Xaloc</div></div> 
+            <div class="quadre"><img src="img/SO.png" class="quadre-3x3" alt="Lleveig" onClick="triaVent('SO','SO - Lleveig')"><div class="centered font-16">SO - Lleveig</div></div> 
+            <div class="quadre"><img src="img/S.png" class="quadre-3x3" alt="Migjorn" onClick="triaVent('S','S - Migjorn')"><div class="centered font-16">S - Migjorn</div></div> 
+            <div class="quadre"><img src="img/SE.png" class="quadre-3x3" alt="Xaloc" onClick="triaVent('SE','SE - Xaloc')"><div class="centered font-16">SE - Xaloc</div></div> 
           </div>
         </div>
 
       <div id="lluna" class="evenly">
         <div class="fila-div">
-          <div class="quadre quadre-3x3" style="background-image: linear-gradient(#0000ff,#b0fffd,#b0fffd,#b0fffd,#b0fffd)" onClick="triaLluna('Lluna nova')"><img src="img/lluna/lluna0.png"><div class="bottom-left">Lluna nova</div></div>         
-          <div class="quadre quadre-3x3" style="background-image: linear-gradient(to left top, #3498DB, #4a28ea, blue, #0000cc, #111C40,black)" onClick="triaLluna('Nova visible')"><img src="img/lluna/lluna5.png" style="transform:rotate(20deg);"><div class="bottom-left blanc">Nova visible</div></div>  
-          <div class="quadre quadre-3x3" style="background-color: #2B4088" onClick="triaLluna('Quart creixent')"><img src="img/lluna/lluna8.png"><div class="bottom-left blanc">Quart creixent</div></div>  
+          <div class="quadre quadre-3x3" style="background-image: linear-gradient(#0000ff,#b0fffd,#b0fffd,#b0fffd,#b0fffd)" onClick="triaLluna('Lluna nova')"><img src="img/lluna/lluna0.png"><div class="bottom-left font-16">Lluna nova</div></div>         
+          <div class="quadre quadre-3x3" style="background-image: linear-gradient(to left top, #3498DB, #4a28ea, blue, #0000cc, #111C40,black)" onClick="triaLluna('Nova visible')"><img src="img/lluna/lluna5.png" style="transform:rotate(20deg);"><div class="bottom-left font-16 blanc">Nova visible</div></div>  
+          <div class="quadre quadre-3x3" style="background-color: #2B4088" onClick="triaLluna('Quart creixent')"><img src="img/lluna/lluna8.png"><div class="bottom-left font-16 blanc">Quart creixent</div></div>  
         </div>
         <div class="fila-div">
-            <div class="quadre quadre-3x3" style="background-color: #111C40" onClick="triaLluna('Gibosa creixent')"><img src="img/lluna/lluna11.png" style="transform:rotate(30deg);"><div class="bottom-left blanc">Gibosa creixent</div></div>         
-            <div class="quadre quadre-3x3" style="background-color: black" onClick="triaLluna('Lluna plena')"><img src="img/lluna/lluna15.png"><div class="bottom-left blanc">Lluna plena</div></div>
-            <div class="quadre quadre-3x3" style="background-color: #111C40"  onClick="triaLluna('Gibosa minvant')"><img src="img/lluna/lluna19.png" style="transform:rotate(-20deg);"><div class="bottom-left blanc">Gibosa minvant</div></div>  
+            <div class="quadre quadre-3x3" style="background-color: #111C40" onClick="triaLluna('Gibosa creixent')"><img src="img/lluna/lluna11.png" style="transform:rotate(30deg);"><div class="bottom-left font-16 blanc">Gibosa creixent</div></div>         
+            <div class="quadre quadre-3x3" style="background-color: black" onClick="triaLluna('Lluna plena')"><img src="img/lluna/lluna15.png"><div class="bottom-left font-16 blanc">Lluna plena</div></div>
+            <div class="quadre quadre-3x3" style="background-color: #111C40"  onClick="triaLluna('Gibosa minvant')"><img src="img/lluna/lluna19.png" style="transform:rotate(-20deg);"><div class="bottom-left font-16 blanc">Gibosa minvant</div></div>  
         </div>
         <div class="fila-div">
-            <div class="quadre quadre-3x3" style="background-color:#2B4088" onClick="triaLluna('Quart minvant')"><img src="img/lluna/lluna22.png"><div class="bottom-left blanc">Quart minvant</div></div>         
-            <div class="quadre quadre-3x3" style="background-image: linear-gradient(to right top,  #3498DB, #4a28ea, blue, #0000cc, #111C40,black)" onClick="triaLluna('Lluna vella')"><img src="img/lluna/lluna25.png" style="transform:rotate(-20deg);"><div class="bottom-left blanc">Lluna vella</div></div>  
-            <div class="quadre quadre-3x3" style="background-image: linear-gradient(#0000ff,#b0fffd)" onClick="triaLluna('Lluna negra')"><img src="img/lluna/lluna29.png"><div class="bottom-left">Lluna negra</div></div>  
+            <div class="quadre quadre-3x3" style="background-color:#2B4088" onClick="triaLluna('Quart minvant')"><img src="img/lluna/lluna22.png"><div class="bottom-left font-16 blanc">Quart minvant</div></div>         
+            <div class="quadre quadre-3x3" style="background-image: linear-gradient(to right top,  #3498DB, #4a28ea, blue, #0000cc, #111C40,black)" onClick="triaLluna('Lluna vella')"><img src="img/lluna/lluna25.png" style="transform:rotate(-20deg);"><div class="bottom-left font-16 blanc">Lluna vella</div></div>  
+            <div class="quadre quadre-3x3" style="background-image: linear-gradient(#0000ff,#b0fffd)" onClick="triaLluna('Lluna negra')"><img src="img/lluna/lluna29.png"><div class="bottom-left font-16">Lluna negra</div></div>  
         </div>
       </div>
 
@@ -306,7 +314,7 @@
       <div id="nuvolositat">
         <img id="img_cobertura" src="img/25.png">
         <input type="range" id="cobertura" min="0" max="100" step="25" value="25" style="width:40vh" onChange="canvi_cobertura()">
-        <label style="width:40vh">Ajusta amb el cursor el grau de cobertura del cel a causa dels núvols.</label>
+        <label class="font-12" style="width:40vh">Ajusta amb el cursor el grau de cobertura del cel a causa dels núvols.</label>
         <button class="font-16" onClick="triaNuvolositat()">D'acord</button>
       </div>
 
@@ -333,8 +341,8 @@
           <button id="boto_estacions" class="boto-inf edumet" onClick="estacio();" title="Estacions"><i class="material-icons font-24">router</i><br><label class="etiqueta">Estació</label></button>
           <button id="boto_prediccio" class="boto-inf" style="color:graytext;" onClick="prediccio();" title="Predicció"><i class="material-icons font-24">cloud</i><br><label class="etiqueta">Prediccio</label></button>        
           <button id="boto_radar" class="boto-inf" style="color:graytext;" onClick="radar();" title="Radar"><i class="material-icons font-24">wifi_tethering</i><br><label class="etiqueta">Radar</label></button>
-          <button id="boto_observacions" class="boto-inf" style="color:graytext;" onClick="login();" title="Observacions"><i class="material-icons font-24">camera_alt</i><br><label class="etiqueta">Observa</label</button>
-          <button id="boto_registra" class="boto-inf" style="color:graytext;" onClick="registra();" title="Registra"><i class="material-icons font-24">edit</i><br><label class="etiqueta">Registra</label></button>
+          <button id="boto_observacions" class="boto-inf" style="color:graytext;" onClick="login('fenologia');" title="Observacions"><i class="material-icons font-24">camera_alt</i><br><label class="etiqueta">Observa</label</button>
+          <button id="boto_registra" class="boto-inf" style="color:graytext;" onClick="login('registra');" title="Registra"><i class="material-icons font-24">edit</i><br><label class="etiqueta">Registra</label></button>
         </div>  
         <input type="file" style='display:none;' accept="image/*" id="fitxer" name="fitxer" capture="camera"/>
         <input type='file' style='display:none;' accept="image/jpeg" id="fitxer_galeria" name="fitxer_galeria" />
