@@ -1,6 +1,6 @@
 window.onload = function() {
-  usuari = storage.getItem("user");
-  estacioAssignada = storage.getItem("user");
+  usuari = storage.getItem("usuari");
+  estacioAssignada = storage.getItem("usuari");
   var stringDatabase = storage.getItem("database");
   var online;
   map = L.map('map');
@@ -276,7 +276,7 @@ function mostraEstacions() {
         option.value = event.target.result[i]["Codi_estacio"];
         x.add(option);
       }
-      preferida = storage.getItem("estacio");
+      preferida = storage.getItem("preferida");
       if (preferida == null) {
         estacioActual = codiInicial;
         estacioPreferida = codiInicial;
@@ -329,7 +329,7 @@ function mostraEstacio() {
 function desaPreferida() {
   estacioPreferida = $("#estacio-nom").val();
   console.log("Preferida (Triada): " + estacioPreferida);
-  storage.setItem("estacio", estacioPreferida);  
+  storage.setItem("preferida", estacioPreferida);  
   $("#star").html("star");
   $("#star").css("color","yellow");
 }
@@ -551,7 +551,7 @@ function usuaris() {
   if (usuari == "" || usuari == null) {
     login('fenologia');
   } else {
-    if (confirm("Vols tancar la sessió ?")) {
+    if (confirm(storage.getItem("nom") + ", vols tancar la sessió ?")) {
       tancar_sessio();
     }
   }
@@ -562,10 +562,11 @@ function tancar_sessio() {
     var obsObjStore = db.transaction("Observacions", "readwrite").objectStore("Observacions");
     obsObjStore.clear();    
   } 
-  localStorage.removeItem("user");
+  storage.removeItem("usuari");
   usuari = "";
-  localStorage.removeItem("assignada");
+  storage.removeItem("assignada");
   estacioAssignada= "";
+  storage.removeItem("nom");
   resetObservacio();
   observacioActual = 0;
   estacio();
@@ -1377,8 +1378,15 @@ function valida(fragment) {
       console.log("Auth OK: " + usuari);
       console.log("Assignada: " + response);
       estacioAssignada = response;
-      storage.setItem("user", usuari);
-      storage.setItem("assignada", response);
+      indexedDB.open("eduMET").onsuccess = function(event) {
+        event.target.result.transaction(["Estacions"], "readonly").objectStore("Estacions").get(estacioAssignada).onsuccess = function(e) {
+          console.log("Nom: " + e.target.result["Nom_centre"]);
+          localStorage.setItem("nom", e.target.result["Nom_centre"]);
+          alert("Benvingut/da, " + e.target.result["Nom_centre"] + ".");
+        }
+      }
+      localStorage.setItem("usuari", usuari);
+      localStorage.setItem("assignada", response);
       baixaObsInicial();
       if(fragment == 'fenologia') {
         activa('fenologia');
@@ -1399,7 +1407,7 @@ function geoSuccess(position){
   longitudActual = position.coords.longitude;
 
   if(!estacioDesada) {
-    var estPreferida = storage.getItem("estacio");
+    var estPreferida = storage.getItem("preferida");
     if (estPreferida == null) {
       var distanciaPropera = 1000;
       var distanciaProva;
@@ -1417,7 +1425,7 @@ function geoSuccess(position){
           console.log("Preferida (Propera): " + event.target.result[estacioPropera]["Codi_estacio"] + " : " + event.target.result[estacioPropera]["Nom_centre"]);
           estacioActual = event.target.result[estacioPropera]["Codi_estacio"];
           estacioPreferida = estacioActual;
-          storage.setItem("estacio", estacioPreferida);
+          storage.setItem("preferida", estacioPreferida);
           estacioDesada = true;
           $("#estacio-nom").val(estacioPreferida);
           mostraEstacio();

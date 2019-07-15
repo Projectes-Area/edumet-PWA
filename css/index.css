@@ -1,10 +1,13 @@
 body {
-    font-size:12px;
+    font-size:2vh !important;
     font-family: Roboto,"Open Sans",Arial,Serif,Times;
     margin: 0px;
 }
 button, select, input, textarea {
     font-family: Roboto,"Open Sans",Arial,Serif,Times !important;
+}
+input {
+    font-size:2vh !important;
 }
 .wi-estacions {
     color:#418ac8;
@@ -36,23 +39,20 @@ button, select, input, textarea {
     animation: spin 1s linear infinite;
     animation-play-state: paused;
 }  
-.font-12 {
-    font-size:12px !important; 
+.font-2 {
+    font-size:2vh !important; 
 }
-.font-16 {
-    font-size:16px !important; 
+.font-3 {
+    font-size:3vh !important; 
 }
-.font-24 {
-    font-size:24px !important; 
+.font-4 {
+    font-size:4vh !important; 
 }
-.font-36{
-    font-size:36px !important; 
+.font-7{
+    font-size:7vh !important; 
 }
-.font-48{
-    font-size:48px !important; 
-}
-.font-96{
-    font-size:96px !important; 
+.font-18{
+    font-size:18vh !important; 
 }
 .mesures {
     display:flex; 
@@ -224,7 +224,6 @@ button, select, input, textarea {
     flex-direction:column;
     justify-content:center;
     align-items:center;
-    font-size:16px !important;
     height: 80vh;
 }
 #prediccio {
@@ -266,6 +265,31 @@ button, select, input, textarea {
     display:none;
     height:80vh;  
     flex-direction:column;  
+}
+#registra-boto-div {
+    height:10vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+#boto_desa_div {
+    display:flex;
+    height:10vh
+}
+#boto_desa_mapa {
+    width:100%;
+    margin:5px
+}
+#lloc-div {
+    display:flex;
+    align-items:center;
+    height:10vh;
+}
+#registra-capsalera-div {
+    display:flex;    
+    flex-wrap: wrap;
+    justify-content:space-evenly;
+    margin-top:5px;
 }
 #fila {
     height:5vh;
@@ -451,66 +475,6 @@ button, select, input, textarea {
     margin:10px;
 }
 
-@media (min-height: 750px) {
-    body, input, #valida, #estacio-nom, .boto-inf, .boto-sup, .font-12 {
-        font-size:16px !important;
-    }
-    .font-16 {
-        font-size:24px !important; 
-    }
-    .font-24 {
-        font-size:36px !important;
-    }
-    .font-36 {
-        font-size:48px !important;
-    }
-    .font-48 {
-        font-size:64px !important;
-    }
-    .font-96 {
-        font-size:128px !important;
-    }
-}
-@media (min-height: 1000px) {
-    body, input, #valida, #estacio-nom, .boto-inf, .boto-sup, .font-12 {
-        font-size:18px !important;
-    }
-    .font-16 {
-        font-size:32px !important; 
-    }
-    .font-24 {
-        font-size:48px !important;
-    }
-    .font-36 {
-        font-size:64px !important;
-    }
-    .font-48 {
-        font-size:96px !important;
-    }
-    .font-96 {
-        font-size:164px !important;
-    }
-}
-@media (min-height: 1200px) {
-    body, input, #valida, #estacio-nom, .boto-inf, .boto-sup, .font-12 {
-        font-size:24px !important;
-    }
-    .font-16 {
-        font-size:48px !important; 
-    }
-    .font-24 {
-        font-size:64px !important;
-    }
-    .font-36 {
-        font-size:96px !important;
-    }
-    .font-48 {
-        font-size:128px !important;
-    }
-    .font-96 {
-        font-size:216px !important;
-    }
-}
 @media (orientation:landscape) {
     #fitxa-div {
         flex-direction:row;
