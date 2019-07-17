@@ -11,12 +11,12 @@
       <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
       <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/weather-icons/2.0.10/css/weather-icons.min.css" />
       <link rel="stylesheet" href="https://unpkg.com/leaflet@1.5.1/dist/leaflet.css" integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ==" crossorigin=""/>
-      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
       <script src="https://unpkg.com/leaflet@1.5.1/dist/leaflet.js" integrity="sha512-GffPMF3RvMeYyc1LWMHtK8EbPv0iNZ8/oTtHPx9/cc2ILxQ+u905qIwdpULaqDkyBKgOaB57QTMg7ztg8Jm2Og==" crossorigin=""></script>
       <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-      <script src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
-      <script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
       <script src="https://cdn.jsdelivr.net/npm/exif-js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
       <title>eduMET</title>
     </head>
     <body >
@@ -40,7 +40,7 @@
         </div>
       </div>
       <div id="fenologia">
-        <div id="calendari" style="width:100%"></div>
+
         <div id="menu-fenologia">
           <button class="boto-sup font-2" onClick="fesFoto()" title="Fer una foto"><i class="material-icons font-7">add_a_photo</i></button>
           <button class="boto-sup font-2" onClick="triaFoto()" title="Triar una foto"><i class="material-icons font-7">attach_file</i></button>
@@ -49,6 +49,9 @@
           <button class="boto-sup font-2" onClick="actualitzaObservacio()" title="Penjar l'observació"><i class="material-icons font-7">cloud_upload</i></button>
           <button class="boto-sup font-2" onClick="observa()" title="Observacions realitzades"><i class="material-icons font-7">assignment</i></button>
         </div>
+        <div id="calendari-div" style="display:none">
+            <input id="calendari">
+          </div>
         <div id="foto-div"> 
           <img id="foto" src= "img/launcher-icon-4x.png" onClick="fotografia();">
         </div>
@@ -83,7 +86,7 @@
       </div>
       <div id="estacions">
         <div id="id_estacio">
-          <i id="star" class="material-icons font-7" style="color:lightgray" onClick="desaPreferida();">star_border</i>
+          <label for="estacio-nom"><i id="star" class="material-icons font-7" style="color:lightgray" onClick="desaPreferida();">star_border</i></label>
           <select id="estacio-nom" class="font-2" onChange="selectEstacio()"></select>
         </div>
         <div id="header">
@@ -92,7 +95,7 @@
             <div id="est_altitud"></div>
           </div>
           <div id="estacio-logo">
-            <img id=estacio-logo-div src="">
+            <img id=estacio-logo-div src="" alt="logo">
           </div>
         </div>
         <div id="map"></div>
@@ -239,37 +242,37 @@
 
       <div id="nuvols" class="evenly">
         <div class="fila-div">
-          <div class="quadre"><img src="img/nuvols/BIG_521555615022712_00.jpg" class="quadre-3x3" alt="Cirrus" title="Cirrus" onClick="triaNuvols('Cirrus')"><div class="bottom-left font-2 blanc">Cirrus</div></div>         
-          <div class="quadre"><img src="img/nuvols/BIG_568565615022712_00.jpg" class="quadre-3x3" alt="Cirrocúmuls" title="Cirrocúmuls" onClick="triaNuvols('Cirrocúmuls')"><div class="bottom-left font-2 blanc">Cirrocúmuls</div></div>
-          <div class="quadre"><img src="img/nuvols/BIG_037575615022712_00.jpg" class="quadre-3x3" alt="Altostrats"  title="Altostrats" onClick="triaNuvols('Altostrats')"><div class="bottom-left font-2 blanc">Altostrats</div></div>
+          <div class="quadre" onClick="triaNuvols('Cirrus')"><img src="img/nuvols/BIG_521555615022712_00.jpg" class="quadre-3x3" alt="Cirrus" title="Cirrus"><div class="bottom-left font-2 blanc">Cirrus</div></div>         
+          <div class="quadre" onClick="triaNuvols('Cirrocúmuls')"><img src="img/nuvols/BIG_568565615022712_00.jpg" class="quadre-3x3" alt="Cirrocúmuls" title="Cirrocúmuls"><div class="bottom-left font-2 blanc">Cirrocúmuls</div></div>
+          <div class="quadre" onClick="triaNuvols('Altostrats')"><img src="img/nuvols/BIG_037575615022712_00.jpg" class="quadre-3x3" alt="Altostrats"  title="Altostrats"><div class="bottom-left font-2 blanc">Altostrats</div></div>
         </div>
         <div class="fila-div">
-          <div class="quadre"><img src="img/nuvols/BIG_490575615022712_00.jpg" class="quadre-3x3" alt="Altocúmuls" title="Altocúmuls" onClick="triaNuvols('Altocúmuls')"><div class="bottom-left font-2 blanc">Altocúmuls</div></div> 
+          <div class="quadre" onClick="triaNuvols('Altocúmuls')"><img src="img/nuvols/BIG_490575615022712_00.jpg" class="quadre-3x3" alt="Altocúmuls" title="Altocúmuls"><div class="bottom-left font-2 blanc">Altocúmuls</div></div> 
           <video id="video" class="quadre-3x3"></video>
-          <div class="quadre"><img src="img/nuvols/BIG_005585615022712_00.jpg" class="quadre-3x3" alt="Nimbostrats" title="Nimbostrats" onClick="triaNuvols('Nimbostrats')"><div class="bottom-left font-2 blanc">Nimbostrats</div></div> 
+          <div class="quadre" onClick="triaNuvols('Nimbostrats')"><img src="img/nuvols/BIG_005585615022712_00.jpg" class="quadre-3x3" alt="Nimbostrats" title="Nimbostrats"><div class="bottom-left font-2 blanc">Nimbostrats</div></div> 
         </div>
         <div class="fila-div">
-          <div class="quadre"><img src="img/nuvols/BIG_693585615022712_00.jpg" class="quadre-3x3" alt="Cumulonimbus" title="Cumulonimbus" onClick="triaNuvols('Cumulonimbus')"><div class="bottom-left font-2 blanc">Cumulonimbus</div></div> 
-          <div class="quadre"><img src="img/nuvols/BIG_115595615022712_00.jpg" class="quadre-3x3" alt="Cúmuls" title="Cúmuls" onClick="triaNuvols('Cúmuls')"><div class="bottom-left font-2 blanc">Cúmuls</div></div> 
-          <div class="quadre"><img src="img/nuvols/BIG_630595615022712_00.jpg" class="quadre-3x3" alt="Estratocúmuls" title="Estratocúmuls" onClick="triaNuvols('Estratocúmuls')"><div class="bottom-left font-2 blanc">Estratocúmuls</div></div> 
+          <div class="quadre" onClick="triaNuvols('Cumulonimbus')"><img src="img/nuvols/BIG_693585615022712_00.jpg" class="quadre-3x3" alt="Cumulonimbus" title="Cumulonimbus"><div class="bottom-left font-2 blanc">Cumulonimbus</div></div> 
+          <div class="quadre" onClick="triaNuvols('Cúmuls')"><img src="img/nuvols/BIG_115595615022712_00.jpg" class="quadre-3x3" alt="Cúmuls" title="Cúmuls"><div class="bottom-left font-2 blanc">Cúmuls</div></div> 
+          <div class="quadre" onClick="triaNuvols('Estratocúmuls')"><img src="img/nuvols/BIG_630595615022712_00.jpg" class="quadre-3x3" alt="Estratocúmuls" title="Estratocúmuls"><div class="bottom-left font-2 blanc">Estratocúmuls</div></div> 
         </div>
       </div>
 
       <div id="vents" class="evenly">
           <div class="fila-div">
-            <div class="quadre"><img src="img/NO.png" class="quadre-3x3" alt="Mestral" onClick="triaVent('NO','NO - Mestral')"><div class="centered font-3">NO - Mestral</div></div>         
-            <div class="quadre"><img src="img/N.png" class="quadre-3x3" alt="Tramuntana" onClick="triaVent('N','N - Tramuntana')"><div class="centered font-3">N - Tramuntana</div></div>
-            <div class="quadre"><img src="img/NE.png" class="quadre-3x3" alt="Gregal"  onClick="triaVent('NE','NE - Gregal')"><div class="centered font-3">NE - Gregal</div></div>
+            <div class="quadre" onClick="triaVent('NO','NO - Mestral')"><img src="img/NO.png" class="quadre-3x3" alt="Mestral"><div class="centered font-3" >NO - Mestral</div></div>         
+            <div class="quadre" onClick="triaVent('N','N - Tramuntana')"><img src="img/N.png" class="quadre-3x3" alt="Tramuntana"><div class="centered font-3">N - Tramuntana</div></div>
+            <div class="quadre" onClick="triaVent('NE','NE - Gregal')"><img src="img/NE.png" class="quadre-3x3" alt="Gregal"><div class="centered font-3">NE - Gregal</div></div>
           </div>
           <div class="fila-div">
-            <div class="quadre"><img src="img/O.png" class="quadre-3x3" alt="Ponent" onClick="triaVent('O','O - Ponent')"><div class="centered font-3">O - Ponent</div></div> 
-            <div class="quadre"><img src="img/C.png" class="quadre-3x3" alt="Calma" onClick="triaVent('','-')"><div class="centered font-3">Calma</div></div> 
-            <div class="quadre"><img src="img/E.png" class="quadre-3x3" alt="Llevant" onClick="triaVent('E','E - Llevant')"><div class="centered font-3">E - Llevant</div></div> 
+            <div class="quadre" onClick="triaVent('O','O - Ponent')"><img src="img/O.png" class="quadre-3x3" alt="Ponent"><div class="centered font-3">O - Ponent</div></div> 
+            <div class="quadre" onClick="triaVent('','-')"><img src="img/C.png" class="quadre-3x3" alt="Calma"><div class="centered font-3">Calma</div></div> 
+            <div class="quadre" onClick="triaVent('E','E - Llevant')"><img src="img/E.png" class="quadre-3x3" alt="Llevant"><div class="centered font-3">E - Llevant</div></div> 
           </div>
           <div class="fila-div">
-            <div class="quadre"><img src="img/SO.png" class="quadre-3x3" alt="Lleveig" onClick="triaVent('SO','SO - Lleveig')"><div class="centered font-3">SO - Lleveig</div></div> 
-            <div class="quadre"><img src="img/S.png" class="quadre-3x3" alt="Migjorn" onClick="triaVent('S','S - Migjorn')"><div class="centered font-3">S - Migjorn</div></div> 
-            <div class="quadre"><img src="img/SE.png" class="quadre-3x3" alt="Xaloc" onClick="triaVent('SE','SE - Xaloc')"><div class="centered font-3">SE - Xaloc</div></div> 
+            <div class="quadre" onClick="triaVent('SO','SO - Lleveig')"><img src="img/SO.png" class="quadre-3x3" alt="Lleveig"><div class="centered font-3">SO - Lleveig</div></div> 
+            <div class="quadre" onClick="triaVent('S','S - Migjorn')"><img src="img/S.png" class="quadre-3x3" alt="Migjorn"><div class="centered font-3">S - Migjorn</div></div> 
+            <div class="quadre" onClick="triaVent('SE','SE - Xaloc')"><img src="img/SE.png" class="quadre-3x3" alt="Xaloc"><div class="centered font-3">SE - Xaloc</div></div> 
           </div>
         </div>
 
@@ -325,7 +328,8 @@
           <div class="quadre"><button id="boto-fenomens" class="font-3" onClick="triaFenomens()">D'acord</button></div> 
           <div class="quadre" onClick="clicaFenomen(4)"><img src="img/fen_atm/BIG_584325615022712_00.jpg" class="quadre-3x3"><div class="top-left font-3 blanc">Gebre</div><div class="centered"><i id="4" class="material-icons font-18 lightgreen" style="display:none">check</i></div></div>
         </div>
-        <div class="fila-div">
+        <div class="fila-div">        'https://cdn.jsdelivr.net/momentjs/latest/moment.min.js',
+          'https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js',
           <div class="quadre" onClick="clicaFenomen(5)"><img src="img/fen_atm/BIG_146335615022712_00.jpg" class="quadre-3x3"><div class="top-left font-3 blanc">Boira</div><div class="centered"><i id="5" class="material-icons font-18 lightgreen" style="display:none">check</i></div></div>  
           <div class="quadre" onClick="clicaFenomen(6)"><img src="img/fen_atm/BIG_396255615022712_00.jpg" class="quadre-3x3"><div class="top-left font-3 blanc">Arc de Sant Martí</div><div class="centered"><i id="6" class="material-icons font-18 lightgreen" style="display:none">check</i></div></div>
           <div class="quadre" onClick="clicaFenomen(7)"><img src="img/fen_atm/BIG_552435615022712_00.jpg" class="quadre-3x3"><div class="top-left font-3 blanc">Llamp</div><div class="centered"><i id="7" class="material-icons font-18 lightgreen" style="display:none">check</i></div></div>

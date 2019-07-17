@@ -71,13 +71,13 @@ self.addEventListener('install', function(e) {
         'https://unpkg.com/leaflet@1.5.1/dist/images/marker-icon-2x.png',
         'https://unpkg.com/leaflet@1.5.1/dist/images/marker-shadow.png',
         'https://cdn.jsdelivr.net/npm/exif-js',
-        'https://cdn.jsdelivr.net/momentjs/latest/moment.min.js',
-        'https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js',
+        'https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css',
         'https://fonts.googleapis.com/icon?family=Material+Icons',
         'https://fonts.gstatic.com/s/materialicons/v47/flUhRq6tzZclQEJ-Vdg-IuiaDsNcIhQ8tQ.woff2',
         'https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js',
         'https://cdnjs.cloudflare.com/ajax/libs/weather-icons/2.0.10/css/weather-icons.min.css',
-        'https://cdnjs.cloudflare.com/ajax/libs/weather-icons/2.0.10/font/weathericons-regular-webfont.woff2'
+        'https://cdnjs.cloudflare.com/ajax/libs/weather-icons/2.0.10/font/weathericons-regular-webfont.woff2',
+        'https://cdn.jsdelivr.net/npm/flatpickr'
       ]);
     })
   );
@@ -88,6 +88,9 @@ self.addEventListener('activate', event => {
 });
 
 function escombra() {
+
+  // OBSERVACIONS
+
   console.log("Service Worker: escombrant ...");
   var url_servidor = 'https://edumet.cat/edumet/meteo_proves/dades_recarregar.php';
   indexedDB.open("eduMET").onsuccess = function(event) {
@@ -182,7 +185,7 @@ function escombra() {
           });
         }
       }
-    }
+    }  
 
     // REGISTRES MANUALS
 
@@ -190,7 +193,6 @@ function escombra() {
     regObjStore.getAll().onsuccess = function(e) {
       for(i=0;i<e.target.result.length;i++) {   
         var JSONenvio = JSON.stringify(e.target.result[i]);
-        console.log(JSONenvio); 
         var url = url_servidor  + '?registre=' + e.target.result[i]["GUID"];
         fetch(url, {
           method:'POST',
@@ -200,9 +202,13 @@ function escombra() {
           body: JSONenvio
         })
         .then(response => {
-          // esborrar registre de la base de dades interna
+          console.log("Registre penjat");
           var url = new URL(response.url);
           registre = parseInt(url.searchParams.get("registre"));
+          indexedDB.open("eduMET").onsuccess = function(event) {
+            event.target.result.transaction(["Registres"], "readwrite").objectStore("Registres").delete(registre);   
+            console.log("Service worker: registre intern eliminat");
+          }
         })
         .catch(error => {
           console.log("Error (SW): penjar " + error);

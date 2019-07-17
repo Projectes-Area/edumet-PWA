@@ -43,59 +43,32 @@ window.onload = function() {
     mostraEstacions();
     getFenomens();
   }
-  var options = {
-    singleDatePicker: true,
-    startDate: moment(),
-    showDropdowns: true,
-    minYear: 2000,
-    timePicker: true,
-    timePicker24Hour: true,
-    timePickerSeconds: true,
-    locale: {
-      "format": "DD/MM/YYYY HH:mm:ss",
-      "separator": " - ",
-      "applyLabel": "Desa la data i l'hora",
-      "cancelLabel": "Cancel·la",
-      "customRangeLabel": "Custom",
-      "daysOfWeek": ["Di","Dl","Dm","Dc","Dj","Dv","Ds"],
-      "monthNames": ["Gener","Febrer","Març","Abril","Maig","Juny","Juliol","Agost","Setembre","Octubre","Novembre","Desembre"],
-      "firstDay": 1
-    }
+  if(usuari != "" && online) {
+    baixaObsAfegides();
   }
-  
+ 
   document.getElementById('fitxer_galeria').addEventListener("change", function(event) {
     readURL(this);
   });
   document.getElementById('fitxer').addEventListener("change", function(event) {
     readURL(this);
   });
-  $("#calendari").daterangepicker(options, function(start) {
-    var dia = start.format('YYYY-MM-DD');
-    var hora = start.format('HH:mm:ss'); 
-    flagDataTriada = true;
-    desaData(dia,hora);
-  });
-  $("#calendari").on('show.daterangepicker', function(ev, picker) {
-    flagDataTriada = false;
-  });
-  $("#calendari").on('apply.daterangepicker', function(ev, picker) {
-    if(!flagDataTriada) {
-      getTime();
-      desaData(Data_UTC,Hora_UTC);
+  calendar = flatpickr("#calendari", {
+    enableTime: true,
+    dateFormat: "dd-mm-YYYY HH:MM",
+    defaultDate: Date.now(),
+    onClose: function(dateObj, dateStr, instance){
+      if(dateStr != "") {
+        getTime(new Date(dateObj));
+        desaData(Data_UTC,Hora_UTC);
+      }
+      $("#calendari-div").css("display","none");
     }
   });
-  $("#data_registre").daterangepicker(options, function(start) {
-    Data_UTC = start.format('YYYY-MM-DD');
-    Hora_UTC = start.format('HH:mm:ss'); 
-    flagDataRegistre = true;
-  });
-  $("#data_registre").on('show.daterangepicker', function(ev, picker) {
-    flagDataRegistre = false;
-  });
-  $("#data_registre").on('apply.daterangepicker', function(ev, picker) {
-    if(!flagDataRegistre) {
-      getTime();
-    }
+  $("#data_registre").flatpickr({
+    enableTime: true,
+    dateFormat: "dd-mm-YYYY HH:MM",
+    defaultDate: Date.now(),
   });
 };
 
@@ -140,11 +113,12 @@ var origen;
 var hasWebcam = false;
 var isWebcamAlreadyCaptured = false;
 var fen_atm = ["Pluja","Calamarsa","Neu","Rosada","Gebre","Boira","Arc de Sant Martí","Llamp"];
-
 var Vent_Beaufort = "";
 var Vent_Dir_actual = "";
 var Nuvulositat = "";
 var Pres_tend_barometre = "";
+var calendar;
+
 
 var MediaDevices = [];
 var canEnumerate = false;
@@ -196,10 +170,6 @@ function baixaFenomens() {
   .then(response => {
     console.log("Fenomens: Baixats");
     var x = document.getElementById("fenomen");
-    /*var option = document.createElement("option");
-    option.text = "Tria el tipus de fenomen";
-    option.value = "0";    
-    x.add(option);*/
     for(i=0;i<response.length;i++){
       fenomens[response[i]["Id_feno"]] = response[i];
       option = document.createElement("option");
@@ -378,7 +348,7 @@ function buidaMesures() {
 
 function registra() {
   activa('registra');
-  getTime();
+  getTime(new Date(Date.now()));
   indexedDB.open("eduMET").onsuccess = function(event) {
     event.target.result.transaction(["Estacions"], "readonly").objectStore("Estacions").get(estacioAssignada).onsuccess = function(e) {
       $("#nom_estacio").val(e.target.result["Nom_centre"]);
@@ -495,54 +465,65 @@ function triaFenomens(){
 }
 
 function penja_registre() {
-  if($("#tend_bar").val() == null) {
-    Pres_tend_barometre = "";
-  } else {
-    Pres_tend_barometre = $("#tend_bar").val();
+  var tempCheck = true;
+  if($("#temp_max").val() < $("#temp_actual").val()) {
+    tempCheck = false;
+    alert("La temperatura màxima no pot ser inferior a la temperatura actual.")
   }
-  var envio = { 
-    tab: "salvarObservacio",
-    Codi_estacio: estacioAssignada,
-    Codi_grup: usuari,
-    Observadors: $("#autor").val(),
-    Data_UTC: Data_UTC,
-    Hora_UTC: Hora_UTC,
-    Sortida_sol: $("#sun_rise").html(),
-    Posta_sol: $("#sun_set").html(),
-    Fase_lluna: $("#fase_lunar").html(),
-    Temp_Ext: $("#temp_actual").val(),
-    Temp_Ext_Max: $("#temp_max").val(),
-    Temp_Ext_Min: $("#temp_min").val(),
-    Hum_Ext: $("#humitat").val(),
-    Pressio: $("#pressio").val(),
-    Pres_tend_barometre: Pres_tend_barometre,
-    Vent_Vel: $("#vent").val(),
-    Vent_Beaufort: Vent_Beaufort,
-    Vent_Dir_actual: Vent_Dir_actual,
-    Precip_acum_avui: $("#precipitacio").val(),
-    Nuvulositat: Nuvulositat,
-    Tipus_nuvols: $("#tipus_nuvols").html(),
-    Fenomens_observats: $("#llista_fenomens").html()
+  if($("#temp_min").val() > $("#temp_actual").val()) {
+    tempCheck = false;
+    alert("La temperatura mínima no pot ser superior a la temperatura actual.")
   }
-  var JSONenvio = JSON.stringify(envio);
-  console.log(JSONenvio);
-  alert("S'han enregistrat les dades al servidor eduMET.");     
-  fetch(url_servidor,{
-    method:'POST',
-    headers:{
-      'Content-Type': 'application/json; charset=UTF-8'
-      },
-    body: JSONenvio
-  })
-  .then()
-  .catch(error => {
-    console.log("Error: " + error);
-    indexedDB.open("eduMET").onsuccess = function(event) { 
-      var db = event.target.result;    
-      var regObjStore = db.transaction("Registres", "readwrite").objectStore("Registres");
-        regObjStore.add(envio);
-    };
-  });
+  if(tempCheck) {
+    if($("#tend_bar").val() == null) {
+      Pres_tend_barometre = "";
+    } else {
+      Pres_tend_barometre = $("#tend_bar").val();
+    }
+    var envio = { 
+      tab: "salvarObservacio",
+      Codi_estacio: estacioAssignada,
+      Codi_grup: usuari,
+      Observadors: $("#autor").val(),
+      Data_UTC: Data_UTC,
+      Hora_UTC: Hora_UTC,
+      Sortida_sol: $("#sun_rise").html(),
+      Posta_sol: $("#sun_set").html(),
+      Fase_lluna: $("#fase_lunar").html(),
+      Temp_Ext: $("#temp_actual").val(),
+      Temp_Ext_Max: $("#temp_max").val(),
+      Temp_Ext_Min: $("#temp_min").val(),
+      Hum_Ext: $("#humitat").val(),
+      Pressio: $("#pressio").val(),
+      Pres_tend_barometre: Pres_tend_barometre,
+      Vent_Vel: $("#vent").val(),
+      Vent_Beaufort: Vent_Beaufort,
+      Vent_Dir_actual: Vent_Dir_actual,
+      Precip_acum_avui: $("#precipitacio").val(),
+      Nuvulositat: Nuvulositat,
+      Tipus_nuvols: $("#tipus_nuvols").html(),
+      Fenomens_observats: $("#llista_fenomens").html()
+    }
+    var JSONenvio = JSON.stringify(envio);
+    console.log(JSONenvio);
+    alert("El registre de dades s'ha penjat al servidor eduMET.");     
+    fetch(url_servidor,{
+      method:'POST',
+      headers:{
+        'Content-Type': 'application/json; charset=UTF-8'
+        },
+      body: JSONenvio
+    })
+    .then()
+    .catch(error => {
+      console.log("Error: " + error);
+      indexedDB.open("eduMET").onsuccess = function(event) { 
+        var db = event.target.result;    
+        var regObjStore = db.transaction("Registres", "readwrite").objectStore("Registres");
+          regObjStore.add(envio);
+      };
+    });
+  }
 }
 
 // OBSERVACIONS
@@ -718,7 +699,8 @@ function triaData(){
         if(e.target.result["Data_observacio"] != "") {
           alert("Aquesta observació es va realitzar el dia " + formatDate(e.target.result["Data_observacio"])+ " a les " + e.target.result["Hora_observacio"] +".");
         } else {
-          $("#calendari").click();
+          $("#calendari-div").css("display","flex");
+          calendar.open();
         }
       }
     }
@@ -761,8 +743,7 @@ function baixaObsInicial() {
   .then(response => JSON.parse(response))
   .then(response => {
     indexedDB.open("eduMET").onsuccess = function(event) { 
-      var db = event.target.result;    
-      var obsObjStore = db.transaction("Observacions", "readwrite").objectStore("Observacions");
+      var obsObjStore = event.target.result.transaction("Observacions", "readwrite").objectStore("Observacions");
       for(i=0;i<response.length;i++){
         response[i]["En_cua"] = "";
         response[i]["Penjada"] = 1;
@@ -784,6 +765,7 @@ function baixaObsAfegides() {
       var obsObjStore = event.target.result.transaction("Observacions", "readwrite").objectStore("Observacions");
       obsObjStore.getAll().onsuccess = function(event) {        
         if(!(response === null)){
+          var numNoves = 0;
           for(var i=0;i<response.length;i++){
             var nova = true;
             for(var j=0;j<event.target.result.length;j++){
@@ -792,12 +774,15 @@ function baixaObsAfegides() {
               }
             }
             if(nova){
+              numNoves++;
               response[i]["En_cua"] = "";
               response[i]["Penjada"] = 1;
-              fetch(url_imatges + response[i]["Fotografia_observacio"]);
-              obsObjStore.add(response[i]);              
+              obsObjStore.add(response[i]);
+              console.log("Observació nova ID " + response[i]["ID"]);
+              fetch(url_imatges + response[i]["Fotografia_observacio"]);             
             }
-          }     
+          }
+          console.log("Noves observacions: " + numNoves)     
         }
       }
     }
@@ -1062,7 +1047,7 @@ function llistaObservacions() {
 }
 
 function desaObservacio(string64){  
-  getTime();
+  getTime(new Date(Date.now()));
 
   var fotoData = "";
   var fotoHora = "";
@@ -1551,8 +1536,9 @@ function ConvertDMSToDD(degrees, minutes, seconds, direction) {
   return dd;
 }
 
-function getTime() {
-  var ara = new Date(Date.now());
+function getTime(date) {
+  //var ara = new Date(Date.now());
+  var ara = date;
   var any = ara.getFullYear();
   var mes = (ara.getMonth() + 1).toString();
   var dia = ara.getDate().toString();
