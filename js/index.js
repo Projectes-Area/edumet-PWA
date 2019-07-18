@@ -1,8 +1,8 @@
 window.onload = function() {
   usuari = storage.getItem("usuari");
   estacioAssignada = storage.getItem("usuari");
-  var stringDatabase = storage.getItem("database");
-  var online;
+  let stringDatabase = storage.getItem("database");
+  let online;
   map = L.map('map');
   if (!(navigator.onLine)) {
     online = false;
@@ -11,7 +11,7 @@ window.onload = function() {
     } else {
       alert("No es pot connectar a Internet. Algunes característiques de l'App no estaran disponibles.");
       map.setView([41.7292826, 1.8225154], 10);
-      fetch("https://edumet.cat/edumet/app/json/municipis.geojson")
+      fetch("json/municipis.geojson", {credentials: 'same-origin'})
       .then(response => response.json())
       .then(response => {
         L.geoJSON(response,{style:{"color": "#0000FF","weight": 1,"opacity": 0.5}}).addTo(map);
@@ -25,13 +25,12 @@ window.onload = function() {
       maxZoom: 19,
       attribution: 'Wikimedia'
     }).addTo(map);
-
   };   
-  //var ara = new Date();
-  //var dies = (ara - new Date(stringDatabase)) / 36000000;
+  //let ara = new Date();
+  //let dies = (ara - new Date(stringDatabase)) / 36000000;
   if(stringDatabase == null && online) {
     indexedDB.open("eduMET").onupgradeneeded = function(event) { 
-      var db = event.target.result;    
+      let db = event.target.result;    
       db.createObjectStore("Fenomens", {keyPath: "Id_feno"});
       db.createObjectStore("Estacions", {keyPath: "Codi_estacio"});
       db.createObjectStore("Observacions", {keyPath: "GUID", autoIncrement:true});
@@ -55,7 +54,7 @@ window.onload = function() {
   });
   calendar = flatpickr("#calendari", {
     enableTime: true,
-    dateFormat: "dd-mm-YYYY HH:MM",
+    time_24hr: true,
     defaultDate: Date.now(),
     onClose: function(dateObj, dateStr, instance){
       if(dateStr != "") {
@@ -67,61 +66,59 @@ window.onload = function() {
   });
   $("#data_registre").flatpickr({
     enableTime: true,
-    dateFormat: "dd-mm-YYYY HH:MM",
+    time_24hr: true,
     defaultDate: Date.now(),
   });
 };
 
-var storage = window.localStorage;
-var usuari = "";
-var contrasenya;
-var estacioActual;
-var estacioPreferida;
-var estacioAssignada = "";
-var fenomens = [];
-var latitudActual;
-var longitudActual;
-var url_servidor = 'https://edumet.cat/edumet/meteo_proves/dades_recarregar.php';
-var url_imatges = 'https://edumet.cat/edumet/meteo_proves/imatges/fenologia/';
-var INEinicial = "081234";
-var codiInicial = "08903085";
-var mobilLocalitzat = false;
-var ExifData;
-var ExifHora;
-var ExifLongitud;
-var ExifLongitud;
-var observacioActual = 0;
-var observacioFitxa;
-var fitxaMapa;
-var marcadorFitxa;
-var marcadorUbica;
-var vistaActual;
-var vistaOrigen;
-var obsActualitzades = false;
-var marcador = [];
-var watchID;
-var estacioDesada = false;
-var colorEdumet = "#418ac8";
-var map;
-var slideIndex;
-var flagRadar = false;
-var flagDataTriada;
-var flagDataRegistre;
-var timeOut;
-var midaFoto = 800;
-var origen;
-var hasWebcam = false;
-var isWebcamAlreadyCaptured = false;
-var fen_atm = ["Pluja","Calamarsa","Neu","Rosada","Gebre","Boira","Arc de Sant Martí","Llamp"];
-var Vent_Beaufort = "";
-var Vent_Dir_actual = "";
-var Nuvulositat = "";
-var Pres_tend_barometre = "";
-var calendar;
-
-
-var MediaDevices = [];
-var canEnumerate = false;
+const url_servidor = 'https://edumet.cat/edumet/meteo_proves/dades_recarregar.php';
+const url_imatges = 'https://edumet.cat/edumet/meteo_proves/imatges/fenologia/';
+const codiInicial = "08903085";
+const colorEdumet = "#418ac8";
+const midaFoto = 800;
+const fen_atm = ["Pluja","Calamarsa","Neu","Rosada","Gebre","Boira","Arc de Sant Martí","Llamp"];
+let storage = window.localStorage;
+let usuari = "";
+let contrasenya;
+let estacioActual;
+let estacioPreferida;
+let estacioAssignada = "";
+let fenomens = [];
+let latitudActual;
+let longitudActual;
+let INEinicial = "081234";
+let mobilLocalitzat = false;
+let ExifData;
+let ExifHora;
+let ExifLatitud;
+let ExifLongitud;
+let observacioActual = 0;
+let observacioFitxa;
+let fitxaMapa;
+let marcadorFitxa;
+let marcadorUbica;
+let vistaActual;
+let vistaOrigen;
+let obsActualitzades = false;
+let marcador = [];
+let watchID;
+let estacioDesada = false;
+let map;
+let slideIndex;
+let flagRadar = false;
+let flagDataTriada;
+let flagDataRegistre;
+let timeOut;
+let origen;
+let hasWebcam = false;
+let isWebcamAlreadyCaptured = false;
+let Vent_Beaufort = "";
+let Vent_Dir_actual = "";
+let Nuvulositat = "";
+let Pres_tend_barometre = "";
+let calendar;
+let MediaDevices = [];
+let canEnumerate = false;
 
 if (navigator.mediaDevices && navigator.mediaDevices.enumerateDevices) {
   navigator.enumerateDevices = function(callback) {
@@ -163,23 +160,23 @@ function back() {
 // FENOMENS FENOLOGICS
 
 function baixaFenomens() {
-  var url = url_servidor + "?tab=llistaFenoFenologics";
+  let url = url_servidor + "?tab=llistaFenoFenologics";
   fetch(url)
   .then(response => response.text())
   .then(response =>  JSON.parse(response))
   .then(response => {
     console.log("Fenomens: Baixats");
-    var x = document.getElementById("fenomen");
+    let x = document.getElementById("fenomen");
     for(i=0;i<response.length;i++){
       fenomens[response[i]["Id_feno"]] = response[i];
       option = document.createElement("option");
-      option.text = response[i]["Bloc_feno"] + ': ' + response[i]["Titol_feno"];
+      option.text = `${response[i]["Bloc_feno"]}: ${response[i]["Titol_feno"]}`;
       option.value = response[i]["Id_feno"];
       x.add(option);
     }
     indexedDB.open("eduMET").onsuccess = function(event) { 
-      var db = event.target.result;    
-      var fenObjStore = db.transaction("Fenomens", "readwrite").objectStore("Fenomens");
+      let db = event.target.result;    
+      let fenObjStore = db.transaction("Fenomens", "readwrite").objectStore("Fenomens");
       for(i=0;i<response.length;i++){
         fenObjStore.add(response[i]);
       }
@@ -196,12 +193,12 @@ function getFenomens() {
 }
 function assignaFenomens(response) {
   fenomens = [];
-  var x = document.getElementById("fenomen");
+  let x = document.getElementById("fenomen");
 
   for(i=0;i<response.length;i++){
     fenomens[response[i]["Id_feno"]] = response[i];
     option = document.createElement("option");
-    option.text = response[i]["Bloc_feno"] + ': ' + response[i]["Titol_feno"];;
+    option.text = `${response[i]["Bloc_feno"]}: ${response[i]["Titol_feno"]}`;
     option.value = response[i]["Id_feno"];
     x.add(option);
   }
@@ -210,15 +207,15 @@ function assignaFenomens(response) {
 // ESTACIONS METEOROLÒGIQUES
 
 function baixaEstacions() {
-  var url = url_servidor + "?tab=cnjEstApp&xarxaEst=D";
+  let url = url_servidor + "?tab=cnjEstApp&xarxaEst=D";
   fetch(url)
   .then(response => response.text())
   .then(response => JSON.parse(response))
   .then(response => {
     console.log("Estacions: Baixades");  
     indexedDB.open("eduMET").onsuccess = function(event) { 
-      var db = event.target.result;    
-      var estObjStore = db.transaction("Estacions", "readwrite").objectStore("Estacions");
+      let db = event.target.result;    
+      let estObjStore = db.transaction("Estacions", "readwrite").objectStore("Estacions");
       for(i=0;i<response.length;i++){
         estObjStore.add(response[i]);
       }
@@ -230,7 +227,7 @@ function baixaEstacions() {
 
 function mostraEstacions() {
   watchID = navigator.geolocation.watchPosition(geoSuccess, geoFail);
-  var x = document.getElementById("estacio-nom");
+  let x = document.getElementById("estacio-nom");
   indexedDB.open("eduMET").onsuccess = function(event) {
     event.target.result.transaction(["Estacions"], "readonly").objectStore("Estacions").getAll().onsuccess = function(event) {
       for(i=0;i<event.target.result.length;i++){
@@ -241,7 +238,7 @@ function mostraEstacions() {
           $("#estacio-nom").val(this.Codi_estacio);
           mostra(this.Codi_estacio);
         });   
-        var option = document.createElement("option");
+        let option = document.createElement("option");
         option.text = event.target.result[i]["Nom_centre"];
         option.value = event.target.result[i]["Codi_estacio"];
         x.add(option);
@@ -250,11 +247,11 @@ function mostraEstacions() {
       if (preferida == null) {
         estacioActual = codiInicial;
         estacioPreferida = codiInicial;
-        console.log("Preferida (Per defecte): " + estacioPreferida);
+        console.log(`Preferida (Per defecte): ${estacioPreferida}`);
       } else {
         estacioActual = preferida;
         estacioPreferida = preferida;
-        console.log("Preferida (Desada): " + estacioPreferida);
+        console.log(`Preferida (Desada): ${estacioPreferida}`);
         $("#estacio-nom").val(estacioPreferida);
       }
       mostraEstacio();
@@ -276,7 +273,7 @@ function mostraEstacio() {
       event.target.result.transaction(["Estacions"], "readonly").objectStore("Estacions").get(estacioActual).onsuccess = function(e) {
       $("#est_poblacio").html(e.target.result["Poblacio"]);
       $("#est_altitud").html("Altitud: " + e.target.result["Altitud"] + " m");
-      var URLlogo = "https://edumet.cat/edumet-data/" + e.target.result["Codi_estacio"] + "/estacio/profile1/imatges/fotocentre.jpg";
+      let URLlogo = `https://edumet.cat/edumet-data/${e.target.result["Codi_estacio"]}/estacio/profile1/imatges/fotocentre.jpg`;
       $("#estacio-logo-div").attr("src", URLlogo);
       if(navigator.onLine){
         getMesures();
@@ -298,29 +295,29 @@ function mostraEstacio() {
 
 function desaPreferida() {
   estacioPreferida = $("#estacio-nom").val();
-  console.log("Preferida (Triada): " + estacioPreferida);
+  console.log(`Preferida (Triada): ${estacioPreferida}`);
   storage.setItem("preferida", estacioPreferida);  
   $("#star").html("star");
   $("#star").css("color","yellow");
 }
 
 function getMesures() {
-  var url = url_servidor + "?tab=mobilApp&codEst=" + estacioActual;
+  let url = url_servidor + "?tab=mobilApp&codEst=" + estacioActual;
   fetch(url)
   .then(response => response.text())
   .then(response => JSON.parse(response))
   .then(response => {     
-    $("#temperatura").html(response[0]["Temp_ext_actual"]+ " ºC <label style='color:red'>" + response[0]["Temp_ext_max_avui"] + " ºC <label style='color:cyan'>" + response[0]["Temp_ext_min_avui"] + " ºC</label>");
-    $("#lHumitat").html(response[0]["Hum_ext_actual"] + "%");
-    $("#lPressio").html(response[0]["Pres_actual"] + " HPa");
+    $("#temperatura").html(`${response[0]["Temp_ext_actual"]} ºC <label style='color:red'>${response[0]["Temp_ext_max_avui"]} ºC <label style='color:cyan'>${response[0]["Temp_ext_min_avui"]} ºC</label>`);
+    $("#lHumitat").html(`${response[0]["Hum_ext_actual"]} %`);
+    $("#lPressio").html(`${response[0]["Pres_actual"]} HPa`);
     $("#sunrise").html(response[0]["Sortida_sol"].slice(0,5));
     $("#sunset").html(response[0]["Posta_sol"].slice(0,5));
-    $("#lPluja").html(response[0]["Precip_acum_avui"] + " mm");
-    $("#lVent").html(response[0]["Vent_vel_actual"] + " Km/h");    
+    $("#lPluja").html(`${response[0]["Precip_acum_avui"]} mm`);
+    $("#lVent").html(`${response[0]["Vent_vel_actual"]} Km/h`);    
     INEinicial = response[0]["codi_INE"];
-    var stringDataFoto = response[0]["Data_UTC"] + 'T' + response[0]["Hora_UTC"];
-    var interval = (new Date() - new Date(stringDataFoto)) / 3600000;
-    $("#data_mesura").html("Actualitzat a les " + response[0]["Hora_UTC"] + " del " + formatDate(response[0]["Data_UTC"]));
+    let stringDataFoto = `${response[0]["Data_UTC"]}T${response[0]["Hora_UTC"]}`;
+    let interval = (new Date() - new Date(stringDataFoto)) / 3600000;
+    $("#data_mesura").html(`Actualitzat a les ${response[0]["Hora_UTC"]} del ${formatDate(response[0]["Data_UTC"])}`);
     if(interval < 2) {
       $("#data_mesura").css("color","#006633");
     } else {
@@ -330,7 +327,7 @@ function getMesures() {
   .catch(reason => {
     $("#data_mesura").html("L'estació no proporciona les dades ...");
     buidaMesures() ;
-    console.log("Error:" + reason);
+    console.log(`Error: ${reason}`);
   });
 }
 function buidaMesures() {
@@ -352,7 +349,7 @@ function registra() {
   indexedDB.open("eduMET").onsuccess = function(event) {
     event.target.result.transaction(["Estacions"], "readonly").objectStore("Estacions").get(estacioAssignada).onsuccess = function(e) {
       $("#nom_estacio").val(e.target.result["Nom_centre"]);
-      var url = url_servidor + "?tab=mobilApp&codEst=" + estacioAssignada;
+      let url = url_servidor + "?tab=mobilApp&codEst=" + estacioAssignada;
       fetch(url)
       .then(response => response.text())
       .then(response => JSON.parse(response))
@@ -361,7 +358,7 @@ function registra() {
         $("#sun_set").html(response[0]["Posta_sol"].slice(0,5));
       })
       .catch(reason => {
-        console.log("Error:" + reason);
+        console.log(`Error: ${reason}`);
       });
     }
   }
@@ -387,7 +384,7 @@ function registra_nuvols() {
   }
 }
 function mira() {
-  var video = document.getElementById('video');
+  let video = document.getElementById('video');
   const videoConstraints = {
     facingMode: 'environment'
   };
@@ -438,7 +435,7 @@ function triaNuvolositat(){
   back();
 }
 function clicaFenomen(num){
-  var valor = $("#" + num);
+  let valor = $("#" + num);
   if (valor.css("display") == "none") {
     valor.css("display","flex");
   } else {
@@ -446,8 +443,8 @@ function clicaFenomen(num){
   }
 }
 function triaFenomens(){
-  var numFenomens = 0;
-  var llista = "";
+  let numFenomens = 0;
+  let llista = "";
   for(i=0;i<fen_atm.length;i++){
     if($("#" + i).css("display") == "flex") {
       numFenomens++;
@@ -465,14 +462,18 @@ function triaFenomens(){
 }
 
 function penja_registre() {
-  var tempCheck = true;
-  if($("#temp_max").val() < $("#temp_actual").val()) {
+  let tempCheck = true;
+  if(($("#temp_max").val() != "") && ($("#temp_actual").val() != "") && ($("#temp_max").val()) < $("#temp_actual").val()) {
     tempCheck = false;
     alert("La temperatura màxima no pot ser inferior a la temperatura actual.")
   }
-  if($("#temp_min").val() > $("#temp_actual").val()) {
+  if(($("#temp_min").val() != "") && ($("#temp_actual").val() != "") && ($("#temp_min").val() > $("#temp_actual").val())) {
     tempCheck = false;
     alert("La temperatura mínima no pot ser superior a la temperatura actual.")
+  }
+  if(($("#temp_max").val() != "") && ($("#temp_min").val() != "") && ($("#temp_max").val() < $("#temp_min").val())) {
+    tempCheck = false;
+    alert("La temperatura màxima no pot ser inferior a la temperatura mínima.")
   }
   if(tempCheck) {
     if($("#tend_bar").val() == null) {
@@ -480,7 +481,7 @@ function penja_registre() {
     } else {
       Pres_tend_barometre = $("#tend_bar").val();
     }
-    var envio = { 
+    let envio = { 
       tab: "salvarObservacio",
       Codi_estacio: estacioAssignada,
       Codi_grup: usuari,
@@ -504,7 +505,7 @@ function penja_registre() {
       Tipus_nuvols: $("#tipus_nuvols").html(),
       Fenomens_observats: $("#llista_fenomens").html()
     }
-    var JSONenvio = JSON.stringify(envio);
+    let JSONenvio = JSON.stringify(envio);
     console.log(JSONenvio);
     alert("El registre de dades s'ha penjat al servidor eduMET.");     
     fetch(url_servidor,{
@@ -516,10 +517,10 @@ function penja_registre() {
     })
     .then()
     .catch(error => {
-      console.log("Error: " + error);
+      console.log(`Error: ${error}`);
       indexedDB.open("eduMET").onsuccess = function(event) { 
-        var db = event.target.result;    
-        var regObjStore = db.transaction("Registres", "readwrite").objectStore("Registres");
+        let db = event.target.result;    
+        let regObjStore = db.transaction("Registres", "readwrite").objectStore("Registres");
           regObjStore.add(envio);
       };
     });
@@ -539,8 +540,8 @@ function usuaris() {
 }
 function tancar_sessio() {
   indexedDB.open("eduMET").onsuccess = function(event) {
-    var db = event.target.result;
-    var obsObjStore = db.transaction("Observacions", "readwrite").objectStore("Observacions");
+    let db = event.target.result;
+    let obsObjStore = db.transaction("Observacions", "readwrite").objectStore("Observacions");
     obsObjStore.clear();    
   } 
   storage.removeItem("usuari");
@@ -554,7 +555,7 @@ function tancar_sessio() {
 }
 
 function fesFoto() {
-  console.log("webcam: " + hasWebcam);
+  console.log(`webcam: ${hasWebcam}`);
   if(hasWebcam) {
     origen = "camera";
     $("#fitxer").click();
@@ -571,7 +572,7 @@ function triaFoto() {
 function readURL(input) { 
   if(input.files[0] != undefined) {
     fitxerImg = input.files[0].name;
-    var extn = fitxerImg.substring(fitxerImg.lastIndexOf('.') + 1).toLowerCase();
+    let extn = fitxerImg.substring(fitxerImg.lastIndexOf('.') + 1).toLowerCase();
     if (extn == "jpg" || extn == "jpeg") { 
       ExifData = ""; 
       ExifHora = ""
@@ -579,34 +580,34 @@ function readURL(input) {
       ExifLongitud = "";
       EXIF.getData(input.files[0], function() {
         if(this.exifdata.DateTimeOriginal != undefined) {
-          var splitData = this.exifdata.DateTimeOriginal.split(" ");
+          let splitData = this.exifdata.DateTimeOriginal.split(" ");
           ExifData = formatDateGPS(splitData[0]);
           ExifHora = splitData[1];
-          console.log("EXIF Data: " + ExifData + ", " + ExifHora);
+          console.log(`EXIF Data: ${ExifData}, ${ExifHora}`);
         }
         if(this.exifdata.GPSLatitude != undefined) {     
-          var latDegree = this.exifdata.GPSLatitude[0].numerator/this.exifdata.GPSLatitude[0].denominator;
-          var latMinute = this.exifdata.GPSLatitude[1].numerator/this.exifdata.GPSLatitude[1].denominator;
-          var latSecond = this.exifdata.GPSLatitude[2].numerator/this.exifdata.GPSLatitude[2].denominator;
-          var latDirection = this.exifdata.GPSLatitudeRef;
+          let latDegree = this.exifdata.GPSLatitude[0].numerator/this.exifdata.GPSLatitude[0].denominator;
+          let latMinute = this.exifdata.GPSLatitude[1].numerator/this.exifdata.GPSLatitude[1].denominator;
+          let latSecond = this.exifdata.GPSLatitude[2].numerator/this.exifdata.GPSLatitude[2].denominator;
+          let latDirection = this.exifdata.GPSLatitudeRef;
           ExifLatitud = ConvertDMSToDD(latDegree, latMinute, latSecond, latDirection);        
-          var lonDegree = this.exifdata.GPSLongitude[0].numerator/this.exifdata.GPSLongitude[0].denominator;
-          var lonMinute = this.exifdata.GPSLongitude[1].numerator;this.exifdata.GPSLongitude[1].denominator;
-          var lonSecond = this.exifdata.GPSLongitude[2].numerator/this.exifdata.GPSLongitude[2].denominator;
-          var lonDirection = this.exifdata.GPSLongitudeRef;
+          let lonDegree = this.exifdata.GPSLongitude[0].numerator/this.exifdata.GPSLongitude[0].denominator;
+          let lonMinute = this.exifdata.GPSLongitude[1].numerator;this.exifdata.GPSLongitude[1].denominator;
+          let lonSecond = this.exifdata.GPSLongitude[2].numerator/this.exifdata.GPSLongitude[2].denominator;
+          let lonDirection = this.exifdata.GPSLongitudeRef;
           ExifLongitud = ConvertDMSToDD(lonDegree, lonMinute, lonSecond, lonDirection);
           console.log("EXIF GPS: "+ ExifLatitud + ", "+ ExifLongitud);        
         }    
-        var canvas = document.getElementById("canvas");
-        var ctx = canvas.getContext("2d");
-        var img = new Image;
+        let canvas = document.getElementById("canvas");
+        let ctx = canvas.getContext("2d");
+        let img = new Image;
         img.src = URL.createObjectURL(input.files[0]);
         img.onload = function() {
-          var iw=img.width;
-          var ih=img.height;
-          var scale=Math.min((midaFoto/iw),(midaFoto/ih));
-          var iwScaled=iw*scale;
-          var ihScaled=ih*scale;
+          let iw=img.width;
+          let ih=img.height;
+          let scale=Math.min((midaFoto/iw),(midaFoto/ih));
+          let iwScaled=iw*scale;
+          let ihScaled=ih*scale;
           canvas.width=iwScaled;
           canvas.height=ihScaled;
           ctx.drawImage(img,0,0,iwScaled,ihScaled);
@@ -614,7 +615,7 @@ function readURL(input) {
           $("#foto").attr("src", canvas.toDataURL("image/jpeg",0.5));
           $("#descripcio").val("");
           $("#fenomen").val("0");
-          var string64 = canvas.toDataURL("image/jpeg",0.5);            
+          let string64 = canvas.toDataURL("image/jpeg",0.5);            
           desaObservacio(string64);
         }
       });
@@ -633,8 +634,8 @@ function triaLloc() {
     indexedDB.open("eduMET").onsuccess = function(event) {
       event.target.result.transaction(["Observacions"], "readwrite").objectStore("Observacions").get(observacioActual).onsuccess = function(e) {
         activa("lloc");
-        var laLatitud;
-        var laLongitud;
+        let laLatitud;
+        let laLongitud;
         if(e.target.result["Latitud"] != "") {
           $("#desc_mapa").text("Aquest és el lloc des d'on es va fer l'observació.");
           $("#boto_desa_mapa").text("D'acord").attr("onClick","activa('fenologia')");
@@ -662,7 +663,7 @@ function triaLloc() {
             }).addTo(mapaUbica);
           } else{
             mapaUbica.setView(new L.LatLng(laLatitud, laLongitud), 10);
-            fetch("https://edumet.cat/edumet/app/json/municipis.geojson")
+            fetch("json/municipis.geojson", {credentials: 'same-origin'})
             .then(response => response.json())
             .then(response => {
               L.geoJSON(response,{style:{"color": "#0000FF","weight": 1,"opacity": 0.5}}).addTo(mapaUbica);
@@ -670,9 +671,9 @@ function triaLloc() {
           }
         } catch (error) {
           if(navigator.onLine){
-            var zoom = 15;
+            let zoom = 15;
           } else {
-            var zoom = 10;
+            let zoom = 10;
           }
           mapaUbica.invalidateSize();
           mapaUbica.setView(new L.LatLng(laLatitud,laLongitud), zoom);
@@ -697,7 +698,7 @@ function triaData(){
     indexedDB.open("eduMET").onsuccess = function(event) {
       event.target.result.transaction(["Observacions"], "readwrite").objectStore("Observacions").get(observacioActual).onsuccess = function(e) {
         if(e.target.result["Data_observacio"] != "") {
-          alert("Aquesta observació es va realitzar el dia " + formatDate(e.target.result["Data_observacio"])+ " a les " + e.target.result["Hora_observacio"] +".");
+          alert(`Aquesta observació es va realitzar el dia ${formatDate(e.target.result["Data_observacio"])} a les ${e.target.result["Hora_observacio"]}.`);
         } else {
           $("#calendari-div").css("display","flex");
           calendar.open();
@@ -709,10 +710,10 @@ function triaData(){
 
 function desaData(dia, hora) {
   indexedDB.open("eduMET").onsuccess = function(event) {
-    var objStore = event.target.result.transaction(["Observacions"], "readwrite").objectStore("Observacions");
-    var request = objStore.get(observacioActual);
+    let objStore = event.target.result.transaction(["Observacions"], "readwrite").objectStore("Observacions");
+    let request = objStore.get(observacioActual);
     request.onsuccess = function() {
-      var data = request.result;
+      let data = request.result;
       data.Data_observacio =  dia;
       data.Hora_observacio =  hora;
       objStore.put(data);
@@ -723,10 +724,10 @@ function desaData(dia, hora) {
 
 function desaUbicacio() {
   indexedDB.open("eduMET").onsuccess = function(event) {
-    var objStore = event.target.result.transaction(["Observacions"], "readwrite").objectStore("Observacions");
-    var request = objStore.get(observacioActual);
+    let objStore = event.target.result.transaction(["Observacions"], "readwrite").objectStore("Observacions");
+    let request = objStore.get(observacioActual);
     request.onsuccess = function() {
-      var data = request.result;
+      let data = request.result;
       data.Latitud =  marcadorUbica.getLatLng().lat;
       data.Longitud =  marcadorUbica.getLatLng().lng;
       objStore.put(data);
@@ -737,13 +738,13 @@ function desaUbicacio() {
 }
 
 function baixaObsInicial() {
-  var url = url_servidor + "?usuari=" + usuari + "&tab=visuFenoApp";
+  let url = url_servidor + "?usuari=" + usuari + "&tab=visuFenoApp";
   fetch(url)
   .then(response => response.text())
   .then(response => JSON.parse(response))
   .then(response => {
     indexedDB.open("eduMET").onsuccess = function(event) { 
-      var obsObjStore = event.target.result.transaction("Observacions", "readwrite").objectStore("Observacions");
+      let obsObjStore = event.target.result.transaction("Observacions", "readwrite").objectStore("Observacions");
       for(i=0;i<response.length;i++){
         response[i]["En_cua"] = "";
         response[i]["Penjada"] = 1;
@@ -756,19 +757,19 @@ function baixaObsInicial() {
 }
 
 function baixaObsAfegides() {
-  var url = url_servidor + "?usuari=" + usuari + "&tab=visuFenoApp";
+  let url = url_servidor + "?usuari=" + usuari + "&tab=visuFenoApp";
   fetch(url)
   .then(response => response.text())
   .then(response => JSON.parse(response))
   .then(response => {
     indexedDB.open("eduMET").onsuccess = function(event) {
-      var obsObjStore = event.target.result.transaction("Observacions", "readwrite").objectStore("Observacions");
+      let obsObjStore = event.target.result.transaction("Observacions", "readwrite").objectStore("Observacions");
       obsObjStore.getAll().onsuccess = function(event) {        
         if(!(response === null)){
-          var numNoves = 0;
-          for(var i=0;i<response.length;i++){
-            var nova = true;
-            for(var j=0;j<event.target.result.length;j++){
+          let numNoves = 0;
+          for(let i=0;i<response.length;i++){
+            let nova = true;
+            for(let j=0;j<event.target.result.length;j++){
               if(event.target.result[j]["ID"] == response[i]["ID"]){
                 nova = false;
               }
@@ -778,7 +779,7 @@ function baixaObsAfegides() {
               response[i]["En_cua"] = "";
               response[i]["Penjada"] = 1;
               obsObjStore.add(response[i]);
-              console.log("Observació nova ID " + response[i]["ID"]);
+              console.log(`Observació nova ID ${response[i]["ID"]}`);
               fetch(url_imatges + response[i]["Fotografia_observacio"]);             
             }
           }
@@ -794,8 +795,8 @@ function enviaObservacio() {
     event.target.result.transaction(["Observacions"], "readwrite").objectStore("Observacions").get(observacioActual).onsuccess = function(e) {
       if(navigator.onLine) {
         if(e.target.result["Penjada"] == "0") {  
-          var imatge64 =  e.target.result["Imatge"].replace(/^data:image\/[a-z]+;base64,/, "");                    
-          var envio = { 
+          let imatge64 =  e.target.result["Imatge"].replace(/^data:image\/[a-z]+;base64,/, "");                    
+          let envio = { 
               tab: "salvarFenoApp",
               usuari: usuari,
               dia: e.target.result["Data_observacio"],
@@ -806,7 +807,7 @@ function enviaObservacio() {
               descripcio: e.target.result["Descripcio_observacio"],
               fitxer: imatge64
           }
-          var JSONenvio = JSON.stringify(envio);
+          let JSONenvio = JSON.stringify(envio);
           fetch(url_servidor,{
             method:'POST',
             headers:{
@@ -817,10 +818,10 @@ function enviaObservacio() {
           .then(response => response.text())
           .then(response => {  
             indexedDB.open("eduMET").onsuccess = function(event) {
-              var objStore = event.target.result.transaction(["Observacions"], "readwrite").objectStore("Observacions");
-              var request = objStore.get(observacioActual);
+              let objStore = event.target.result.transaction(["Observacions"], "readwrite").objectStore("Observacions");
+              let request = objStore.get(observacioActual);
               request.onsuccess = function() {
-                var data = request.result;
+                let data = request.result;
                 data.ID =  response.trim();
                 data.En_cua = "";
                 data.Penjada = 1;
@@ -833,14 +834,14 @@ function enviaObservacio() {
             posaEnCua("penjar");
           });
         } else {
-          var envio = { 
+          let envio = { 
             tab: "modificarFenoApp",
             id: e.target.result["ID"],
             id_feno: e.target.result["Id_feno"],
             descripcio: e.target.result["Descripcio_observacio"]
           }
-          var JSONenvio = JSON.stringify(envio);
-          var url = url_servidor + '?observacio=' + e.target.result["GUID"];
+          let JSONenvio = JSON.stringify(envio);
+          let url = url_servidor + '?observacio=' + e.target.result["GUID"];
           fetch(url,{
             method:'POST',
             headers:{
@@ -865,18 +866,18 @@ function enviaObservacio() {
 function posaEnCua(motiu) {
   console.log("Offline: Posant l'observació en cua");
   indexedDB.open("eduMET").onsuccess = function(event) {
-    var objStore = event.target.result.transaction(["Observacions"], "readwrite").objectStore("Observacions");
+    let objStore = event.target.result.transaction(["Observacions"], "readwrite").objectStore("Observacions");
     if(motiu == "penjar") {
-      var request = objStore.get(observacioActual);
+      let request = objStore.get(observacioActual);
       alert("Sense connexió. L'observació es penjarà quan et connectis a Internet.");
     }
     if(motiu == "eliminar") {
-      var request = objStore.get(observacioFitxa);
+      let request = objStore.get(observacioFitxa);
       alert("Sense connexió. L'observació s'eliminarà quan et connectis a Internet.");
       resetObservacio();
     }
     request.onsuccess = function() {
-      var data = request.result;
+      let data = request.result;
       data.En_cua = motiu;
       objStore.put(data);
     }
@@ -887,7 +888,7 @@ function editaObservacio() {
   observacioActual = observacioFitxa;
   indexedDB.open("eduMET").onsuccess = function(event) {
     event.target.result.transaction(["Observacions"], "readonly").objectStore("Observacions").get(observacioActual).onsuccess = function(e) {
-      var foto = e.target.result["Fotografia_observacio"];
+      let foto = e.target.result["Fotografia_observacio"];
       if(foto == "0") {
         $("#foto").attr("src", e.target.result["Imatge"]);
       } else {
@@ -911,17 +912,17 @@ function eliminaObservacio() {
 }
 function elimina() {
   indexedDB.open("eduMET").onsuccess = function(event) {
-    var db = event.target.result.transaction(["Observacions"], "readwrite");
+    let db = event.target.result.transaction(["Observacions"], "readwrite");
     obsObjStore = db.objectStore("Observacions");
     obsObjStore.get(observacioFitxa).onsuccess = function(e) {
       if(e.target.result["Penjada"] == "1") {
         if (!(navigator.onLine)) {
           posaEnCua("eliminar");
         } else {           
-          var url = url_servidor + "?usuari=" + usuari + "&id=" + e.target.result["ID"] + "&tab=eliminarFenUsu&observacio=" + e.target.result["GUID"];
+          let url = url_servidor + "?usuari=" + usuari + "&id=" + e.target.result["ID"] + "&tab=eliminarFenUsu&observacio=" + e.target.result["GUID"];
           fetch(url)
           .then(response => {
-            var url = new URL(response.url);
+            let url = new URL(response.url);
             observacio = parseInt(url.searchParams.get("observacio"));
             indexedDB.open("eduMET").onsuccess = function(event) {
               event.target.result.transaction(["Observacions"], "readwrite").objectStore("Observacions").delete(observacio);
@@ -960,10 +961,10 @@ function actualitzaObservacio() {
     alert("Si us plau, primer fes o tria la foto corresponent a l'observació.");
   } else {
     indexedDB.open("eduMET").onsuccess = function(event) {
-      var objStore = event.target.result.transaction(["Observacions"], "readwrite").objectStore("Observacions");
-      var request = objStore.get(observacioActual);
+      let objStore = event.target.result.transaction(["Observacions"], "readwrite").objectStore("Observacions");
+      let request = objStore.get(observacioActual);
       request.onsuccess = function() {
-        var data = request.result;
+        let data = request.result;
         if($("#fenomen").val()!=0){
           data.Id_feno =  $("#fenomen").val();
         }
@@ -973,7 +974,7 @@ function actualitzaObservacio() {
         objStore.put(data);
         indexedDB.open("eduMET").onsuccess = function(event) {
           event.target.result.transaction(["Observacions"], "readonly").objectStore("Observacions").get(observacioActual).onsuccess = function(e) {
-            var llistaMissing = "";
+            let llistaMissing = "";
             if(e.target.result["Data_observacio"] == ""){
               llistaMissing+="• La data i l'hora de l'observació\n";
             }
@@ -1000,10 +1001,10 @@ function actualitzaObservacio() {
 }
 
 function llistaObservacions() {  
-  var llista = '';
+  let llista = '';
   indexedDB.open("eduMET").onsuccess = function(event) {
     event.target.result.transaction(["Observacions"], "readonly").objectStore("Observacions").getAll().onsuccess = function(event) {
-      var obs = event.target.result;
+      let obs = event.target.result;
       obs.sort(function(a,b){
         if (a["Data_observacio"] == "") {
           return -1;
@@ -1012,16 +1013,16 @@ function llistaObservacions() {
         }
       });
       for(i=0;i<obs.length;i++){
-        llista+= '<div style="display:flex; align-items:center;" onClick="fitxa(' + obs[i]["GUID"] +')"><div style="width:25%"><img src="';
-        var foto = obs[i]["Fotografia_observacio"];
+        llista+= `<div style="display:flex; align-items:center;" onClick="fitxa(${obs[i]["GUID"]})"><div style="width:25%"><img src="`;
+        let foto = obs[i]["Fotografia_observacio"];
         if(foto == 0) {
-          llista+=  obs[i]["Imatge"];
+          llista+= obs[i]["Imatge"];
         } else {
           llista+= url_imatges + foto;
         }
         llista+= '" style="width:10vh; height:10vh" /></div><label style="width:25%">'; 
         if(obs[i]["Data_observacio"] != "") {
-          llista+= formatDate(obs[i]["Data_observacio"]) + '<br>' + obs[i]["Hora_observacio"];
+          llista+= `${formatDate(obs[i]["Data_observacio"])}<br>${obs[i]["Hora_observacio"]}`;
         }
         llista+= '</label><label style="width:25%">';        
         if(obs[i]["Id_feno"] != "0") {
@@ -1029,7 +1030,7 @@ function llistaObservacions() {
         } else {
           llista+= 'Sense identificar';
         }
-        llista+= '</label><div style="width:25%"><i id="' + obs[i]["GUID"] + '" class="material-icons font-36" style="color:';     
+        llista+= `</label><div style="width:25%"><i id="${obs[i]["GUID"]}" class="material-icons font-36" style="color:`;     
         if(obs[i]["Penjada"] == "1") {
           llista+= 'limegreen';
         } else {
@@ -1049,10 +1050,10 @@ function llistaObservacions() {
 function desaObservacio(string64){  
   getTime(new Date(Date.now()));
 
-  var fotoData = "";
-  var fotoHora = "";
-  var fotoLatitud = "";
-  var fotoLongitud = "";
+  let fotoData = "";
+  let fotoHora = "";
+  let fotoLatitud = "";
+  let fotoLongitud = "";
 
   if (origen == "camera") {
     fotoData = Data_UTC;
@@ -1072,7 +1073,7 @@ function desaObservacio(string64){
     fotoLongitud = ExifLongitud;
   }
 
-  var nou_registre = [{
+  let nou_registre = [{
     En_cua:"",
     Penjada:0,
     Data_observacio:fotoData,
@@ -1088,9 +1089,9 @@ function desaObservacio(string64){
   }];
 
   indexedDB.open("eduMET").onsuccess = function(event) { 
-    var db = event.target.result;    
-    var obsObjStore = db.transaction("Observacions", "readwrite").objectStore("Observacions");
-    var request = obsObjStore.add(nou_registre[0]);
+    let db = event.target.result;    
+    let obsObjStore = db.transaction("Observacions", "readwrite").objectStore("Observacions");
+    let request = obsObjStore.add(nou_registre[0]);
     request.onsuccess = function (e) {
         observacioActual = e.target.result;
     };
@@ -1099,11 +1100,6 @@ function desaObservacio(string64){
 
 function activa(fragment) {
   flagRadar = false;
-  /*if (vistaActual == 'radar'){
-    flagRadar= false;
-    clearTimeout(timeOut);
-    radar();
-  }*/
   $("#fenologia").css("display","none");
   $("#estacions").css("display","none");
   $("#radar").css("display","none");
@@ -1196,12 +1192,12 @@ function estacio() {
 function radar() {
   if(navigator.onLine) {
     activa('radar');
-    var url = url_servidor + "?tab=radar";
+    let url = url_servidor + "?tab=radar";
     fetch(url)
     .then(response => response.text())
     .then(response =>  JSON.parse(response))
     .then(response => {
-      var stringDiv ='';
+      let stringDiv ='';
       for(i=0;i<response.length;i++) {
         stringDiv+='<div class="mySlides"><img class="imgSlides" src="https://edumet.cat/edumet-data/meteocat/radar/';
         stringDiv+= response[i];
@@ -1222,8 +1218,8 @@ function radar() {
   }
 }
 function showSlides() {
-  var slides = document.getElementsByClassName("mySlides");
-  var dots = document.getElementsByClassName("dot");
+  let slides = document.getElementsByClassName("mySlides");
+  let dots = document.getElementsByClassName("dot");
   for (i = 0; i < slides.length; i++) {
     slides[i].style.display = "none";  
   }
@@ -1242,8 +1238,8 @@ function showSlides() {
 function prediccio() {
   if(navigator.onLine) {
     activa('prediccio');
-    var frame = document.getElementById('frame');
-    var loader = document.getElementById('loaderPrediccio');
+    let frame = document.getElementById('frame');
+    let loader = document.getElementById('loaderPrediccio');
     loader.style.animationPlayState = "running";
     frame.onload = function() {
       loader.style.animationPlayState = "paused";
@@ -1260,7 +1256,7 @@ function observa() {
   llistaObservacions();
 }
 function fotografia() {
-  var veureFoto = true;
+  let veureFoto = true;
   if((vistaActual == 'fenologia') && (observacioActual == "")) {
     veureFoto = false;
     fesFoto();
@@ -1282,27 +1278,28 @@ function fitxa(observacio) {
   indexedDB.open("eduMET").onsuccess = function(event) {
     event.target.result.transaction(["Observacions"], "readonly").objectStore("Observacions").get(observacioFitxa).onsuccess = function(e) {
       if(e.target.result["Id_feno"] != "0") {
-        $("#fenomen-nom").html(fenomens[e.target.result["Id_feno"]]["Bloc_feno"] + ': ' + fenomens[e.target.result["Id_feno"]]["Titol_feno"]);
+        $("#fenomen-nom").html(`${fenomens[e.target.result["Id_feno"]]["Bloc_feno"]}: ${fenomens[e.target.result["Id_feno"]]["Titol_feno"]}`);
       } else {
         $("#fenomen-nom").html("Sense identificar");
       }
       if(e.target.result["Data_observacio"] != "") {
-        $("#dataHora").text(formatDate(e.target.result["Data_observacio"]) + '  -  ' + e.target.result["Hora_observacio"]);
+        $("#dataHora").text(`${formatDate(e.target.result["Data_observacio"])}  -  ${e.target.result["Hora_observacio"]}`);
       }
-      var foto = e.target.result["Fotografia_observacio"];
+      let foto = e.target.result["Fotografia_observacio"];
         if(foto == 0) {
           $("#fitxa-foto").attr("src", e.target.result["Imatge"]);
         } else {
           $("#fitxa-foto").attr("src", url_imatges + foto);
         }
       $("#fitxa-text").text(e.target.result["Descripcio_observacio"]);
+      let online;
       if(navigator.onLine) {
-        var online = true;
+        online = true;
       } else {
-        var online = false;
+        online = false;
       }
-      var laLatitud = e.target.result["Latitud"];
-      var laLongitud = e.target.result["Longitud"];
+      let laLatitud = e.target.result["Latitud"];
+      let laLongitud = e.target.result["Longitud"];
       if(laLatitud == "") {
         if(mobilLocalitzat) {
           laLatitud = latitudActual;
@@ -1323,7 +1320,7 @@ function fitxa(observacio) {
           }).addTo(fitxaMapa);
         } else{
           fitxaMapa.setView(new L.LatLng(laLatitud, laLongitud), 10);
-          fetch("https://edumet.cat/edumet/app/json/municipis.geojson")
+          fetch("json/municipis.geojson", {credentials: 'same-origin'})
           .then(response => response.json())
           .then(response => {
             L.geoJSON(response,{style:{"color": "#0000FF","weight": 1,"opacity": 0.5}}).addTo(fitxaMapa);
@@ -1331,9 +1328,9 @@ function fitxa(observacio) {
         }
       } catch (error) {
         if(online){
-          var zoom = 15;
+          let zoom = 15;
         } else {
-          var zoom = 10;
+          let zoom = 10;
         }
         fitxaMapa.invalidateSize();
         fitxaMapa.setView(new L.LatLng(laLatitud,laLongitud), zoom);
@@ -1350,7 +1347,7 @@ function fitxa(observacio) {
 function valida(fragment) {
   usuari = $("#usuari").val();
   contrasenya = $("#password").val();
-  var url = url_servidor + "?ident=" + usuari + "&psw=" + contrasenya + "&tab=registrar_se_app"
+  let url = url_servidor + "?ident=" + usuari + "&psw=" + contrasenya + "&tab=registrar_se_app"
   fetch(url)
   .then(response => response.text())
   .then(response => response.trim())
@@ -1360,14 +1357,14 @@ function valida(fragment) {
       usuari = "";
       alert("Usuari i/o contrasenya incorrectes. Si us plau, torna-ho a provar.");
     } else {
-      console.log("Auth OK: " + usuari);
-      console.log("Assignada: " + response);
+      console.log(`Auth OK: ${usuari}`);
+      console.log(`Assignada: ${response}`);
       estacioAssignada = response;
       indexedDB.open("eduMET").onsuccess = function(event) {
         event.target.result.transaction(["Estacions"], "readonly").objectStore("Estacions").get(estacioAssignada).onsuccess = function(e) {
-          console.log("Nom: " + e.target.result["Nom_centre"]);
+          console.log(`Nom: ${e.target.result["Nom_centre"]}.`);
           localStorage.setItem("nom", e.target.result["Nom_centre"]);
-          alert("Benvingut/da, " + e.target.result["Nom_centre"] + ".");
+          alert(`Benvingut/da, ${e.target.result["Nom_centre"]}.`);
         }
       }
       localStorage.setItem("usuari", usuari);
@@ -1392,11 +1389,11 @@ function geoSuccess(position){
   longitudActual = position.coords.longitude;
 
   if(!estacioDesada) {
-    var estPreferida = storage.getItem("preferida");
+    let estPreferida = storage.getItem("preferida");
     if (estPreferida == null) {
-      var distanciaPropera = 1000;
-      var distanciaProva;
-      var estacioPropera = 0;
+      let distanciaPropera = 1000;
+      let distanciaProva;
+      let estacioPropera = 0;
       indexedDB.open("eduMET").onsuccess = function(event) {
         event.target.result.transaction(["Estacions"], "readonly").objectStore("Estacions").getAll().onsuccess = function(event) {
           console.log("numEstacions:" + event.target.result.length);
@@ -1407,7 +1404,7 @@ function geoSuccess(position){
               estacioPropera = i;
             }
           }
-          console.log("Preferida (Propera): " + event.target.result[estacioPropera]["Codi_estacio"] + " : " + event.target.result[estacioPropera]["Nom_centre"]);
+          console.log(`Preferida (Propera): ${event.target.result[estacioPropera]["Codi_estacio"]} : ${event.target.result[estacioPropera]["Nom_centre"]}`);
           estacioActual = event.target.result[estacioPropera]["Codi_estacio"];
           estacioPreferida = estacioActual;
           storage.setItem("preferida", estacioPreferida);
@@ -1421,8 +1418,8 @@ function geoSuccess(position){
 
   if(!mobilLocalitzat) {
     mobilLocalitzat = true; 
-    console.log("GeoSuccess: " + latitudActual + ", " + longitudActual);
-    var greenIcon = L.icon({
+    console.log(`GeoSuccess: ${latitudActual}, ${longitudActual}`);
+    let greenIcon = L.icon({
       iconUrl: 'img/marker-icon-green.png',
       iconAnchor: [12, 41],
       shadowUrl: 'https://unpkg.com/leaflet@1.5.1/dist/images/marker-shadow.png',
@@ -1432,16 +1429,16 @@ function geoSuccess(position){
 } 
 
 function getDistanceFromLatLonInKm(lat1,lon1,lat2,lon2) {
-  var R = 6371; // Radius of the earth in km
-  var dLat = deg2rad(lat2-lat1);
-  var dLon = deg2rad(lon2-lon1); 
-  var a = 
+  let R = 6371; // Radius of the earth in km
+  let dLat = deg2rad(lat2-lat1);
+  let dLon = deg2rad(lon2-lon1); 
+  let a = 
     Math.sin(dLat/2) * Math.sin(dLat/2) +
     Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * 
     Math.sin(dLon/2) * Math.sin(dLon/2)
     ; 
-  var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
-  var d = R * c; // Distance in km
+  let c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
+  let d = R * c; // Distance in km
   return d;
 }
 function deg2rad(deg) {
@@ -1449,8 +1446,8 @@ function deg2rad(deg) {
 }
 
 function formatDate(dia) {
-  var parts = dia.split('-');
-  var d = new Date(parts[0], parts[1] - 1, parts[2]); 
+  let parts = dia.split('-');
+  let d = new Date(parts[0], parts[1] - 1, parts[2]); 
   month = '' + (d.getMonth() + 1);
   day = '' + d.getDate();
   year = d.getFullYear();
@@ -1459,8 +1456,8 @@ function formatDate(dia) {
   return [day, month, year].join('-');
 }
 function formatDateGPS(dia) {
-  var parts = dia.split(':');
-  var d = new Date(parts[0], parts[1] - 1, parts[2]); 
+  let parts = dia.split(':');
+  let d = new Date(parts[0], parts[1] - 1, parts[2]); 
   month = '' + (d.getMonth() + 1);
   day = '' + d.getDate();
   year = d.getFullYear();
@@ -1488,14 +1485,14 @@ function checkDeviceSupport(callback) {
   MediaDevices = [];
   navigator.enumerateDevices(function(devices) {
     devices.forEach(function(_device) {
-      var device = {};
-      for (var d in _device) {
+      let device = {};
+      for (let d in _device) {
         device[d] = _device[d];
       }
       if (device.kind === 'video') {
           device.kind = 'videoinput';
       }
-      var skip;
+      let skip;
       MediaDevices.forEach(function(d) {
         if (d.id === device.id && d.kind === device.kind) {
             skip = true;
@@ -1529,7 +1526,7 @@ function checkDeviceSupport(callback) {
 }
 
 function ConvertDMSToDD(degrees, minutes, seconds, direction) {    
-  var dd = degrees + (minutes/60) + (seconds/3600);    
+  let dd = degrees + (minutes/60) + (seconds/3600);    
   if (direction == "S" || direction == "W") {
       dd = dd * -1; 
   }    
@@ -1537,14 +1534,12 @@ function ConvertDMSToDD(degrees, minutes, seconds, direction) {
 }
 
 function getTime(date) {
-  //var ara = new Date(Date.now());
-  var ara = date;
-  var any = ara.getFullYear();
-  var mes = (ara.getMonth() + 1).toString();
-  var dia = ara.getDate().toString();
-  var hora = ara.getHours().toString();
-  var minut = ara.getMinutes().toString();
-  var segon = ara.getSeconds().toString();
+  let any = date.getFullYear();
+  let mes = (date.getMonth() + 1).toString();
+  let dia = date.getDate().toString();
+  let hora = date.getHours().toString();
+  let minut = date.getMinutes().toString();
+  let segon = date.getSeconds().toString();
   if (mes.length < 2) mes = '0' + mes;
   if (dia.length < 2) dia = '0' + dia;
   if (hora.length < 2) hora = '0' + hora;

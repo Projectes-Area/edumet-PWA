@@ -64,7 +64,7 @@ self.addEventListener('install', function(e) {
         'img/nuvols/BIG_693585615022712_00.jpg',
         'img/nuvols/BIG_115595615022712_00.jpg',
         'img/nuvols/BIG_630595615022712_00.jpg',
-        'https://edumet.cat/edumet/app/json/municipis.geojson',
+        'json/municipis.geojson',
         'https://unpkg.com/leaflet@1.5.1/dist/leaflet.css',
         'https://unpkg.com/leaflet@1.5.1/dist/leaflet.js',
         'https://unpkg.com/leaflet@1.5.1/dist/images/marker-icon.png',

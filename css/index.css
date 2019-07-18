@@ -9,7 +9,6 @@ button, select, input, textarea {
 input {
     font-size:2vh !important;
 }
-
 .wi-estacions {
     color:#418ac8;
     margin-right:7px;
@@ -257,15 +256,10 @@ input {
     align-items:center;
     height:80vh;
 }
-#observacions, #fitxa, #lloc, #nuvols, #vents, #beaufort, #lluna, #fenomens, #nuvolositat {
+#observacions, #fitxa, #lloc, #nuvols, #vents, #beaufort, #lluna, #fenomens, #nuvolositat, #registra {
     display:none;
     height:80vh;    
     flex-direction:column;
-}
-#registra {
-    display:none;
-    height:80vh;  
-    flex-direction:column;  
 }
 #registra-boto-div {
     height:10vh;
@@ -275,11 +269,11 @@ input {
 }
 #boto_desa_div {
     display:flex;
-    height:10vh
+    height:10vh;
 }
 #boto_desa_mapa {
     width:100%;
-    margin:5px
+    margin:5px;
 }
 #lloc-div {
     display:flex;
@@ -357,7 +351,7 @@ input {
 }
 #estacio-logo {
     height:100%;
-    text-align: right;
+    text-align:right;
 }
 #estacio-nom {
     height:5vh;
