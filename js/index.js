@@ -42,6 +42,7 @@ window.onload = function() {
     mostraEstacions();
     getFenomens();
   }
+  activa("estacions");
   if(usuari != "" && online) {
     baixaObsAfegides();
   }
@@ -286,7 +287,7 @@ function mostraEstacio() {
   }
   if(estacioActual == estacioPreferida) {
     $("#star").html("star");
-    $("#star").css("color","yellow");
+    $("#star").css("color","firebrick");
   } else {
     $("#star").html("star_border");
     $("#star").css("color","lightgray");
@@ -298,7 +299,7 @@ function desaPreferida() {
   console.log(`Preferida (Triada): ${estacioPreferida}`);
   storage.setItem("preferida", estacioPreferida);  
   $("#star").html("star");
-  $("#star").css("color","yellow");
+  $("#star").css("color","firebrick");
 }
 
 function getMesures() {
@@ -307,7 +308,7 @@ function getMesures() {
   .then(response => response.text())
   .then(response => JSON.parse(response))
   .then(response => {     
-    $("#temperatura").html(`${response[0]["Temp_ext_actual"]} ºC <label style='color:red'>${response[0]["Temp_ext_max_avui"]} ºC <label style='color:cyan'>${response[0]["Temp_ext_min_avui"]} ºC</label>`);
+    $("#temperatura").html(`${response[0]["Temp_ext_actual"]} ºC <label style='color:firebrick'>${response[0]["Temp_ext_max_avui"]} ºC <label style='color:blue'>${response[0]["Temp_ext_min_avui"]} ºC</label>`);
     $("#lHumitat").html(`${response[0]["Hum_ext_actual"]} %`);
     $("#lPressio").html(`${response[0]["Pres_actual"]} HPa`);
     $("#sunrise").html(response[0]["Sortida_sol"].slice(0,5));
@@ -321,7 +322,7 @@ function getMesures() {
     if(interval < 2) {
       $("#data_mesura").css("color","#006633");
     } else {
-      $("#data_mesura").css("color","#FF0000");
+      $("#data_mesura").css("color","firebrick");
     }
   })
   .catch(reason => {
@@ -1117,16 +1118,11 @@ function activa(fragment) {
   $("#lluna").css("display","none");
   $("#fenomens").css("display","none");
   $("#" + fragment).css("display","flex");
-  $("#boto_estacions").css("color","graytext");
-  $("#boto_observacions").css("color","graytext");
-  $("#boto_registra").css("color","graytext");
-  $("#boto_prediccio").css("color","graytext");
-  $("#boto_radar").css("color","graytext");
+  $(".boto-inf").css("color","graytext");
   switch (fragment) {
     case "estacions":
       boto = $("#boto_estacions");
       break;
-    case "login":
     case "fenologia":
     case "observacions":
     case "fitxa":
@@ -1150,7 +1146,9 @@ function activa(fragment) {
     default:
       break;
   }
-  boto.css("color", colorEdumet);  
+  if (fragment != "login") {
+    boto.css("color", colorEdumet); 
+  }
   vistaActual = fragment;
 }
 
