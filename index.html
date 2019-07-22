@@ -170,27 +170,27 @@
                 <div id="temperatures">
                   <div>
                     <i class="wi wi-thermometer font-3 edumet"></i>
-                    <input type="number" class="just_dreta" min="-30" max="60" step="0.1" placeholder="actual" id="temp_actual"> 
-                    <input type="number" class="just_dreta" min="-30" max="60" step="0.1" placeholder="max" id="temp_max" style="color:firebrick"> 
-                    <input type="number" class="just_dreta" min="-30" max="60" step="0.1" placeholder="min" id="temp_min" style="color:blue"> ºC
+                    <input type="number" class="just_dreta font-2" min="-30" max="60" step="0.1" placeholder="actual" id="temp_actual"> 
+                    <input type="number" class="just_dreta font-2" min="-30" max="60" step="0.1" placeholder="max" id="temp_max" style="color:firebrick"> 
+                    <input type="number" class="just_dreta font-2" min="-30" max="60" step="0.1" placeholder="min" id="temp_min" style="color:blue"> ºC
                   </div>
                   <div>
                     <i class="wi wi-humidity font-3 edumet"></i>
-                    <input type="number" class="just_dreta" min="0" max="100" placeholder="humitat" id="humitat"> %
+                    <input type="number" class="just_dreta font-2" min="0" max="100" placeholder="humitat" id="humitat"> %
                   </div>
                 </div>
                 <div id="humitat-pressio">
                   <div>
                     <i class="wi wi-strong-wind font-3 edumet"></i>
-                    <input type="number" class="just_dreta" min="0" max="200" placeholder="vent" id="vent"> km/h
+                    <input type="number" class="just_dreta font-2" min="0" max="200" placeholder="vent" id="vent"> km/h
                   </div>
                   <div>
                     <i class="wi wi-umbrella font-3 edumet"></i>
-                    <input type="number" class="just_dreta" min="0" max="45" placeholder="pluja" id="precipitacio"> mm
+                    <input type="number" class="just_dreta font-2" min="0" max="45" placeholder="pluja" id="precipitacio"> mm
                   </div>
                   <div>
                     <i class="wi wi-barometer font-3 edumet"></i>
-                    <input type="number" class="just_dreta" min="975" max="1045" placeholder="pressió" id="pressio"> HPa
+                    <input type="number" class="just_dreta font-2" min="975" max="1045" placeholder="pressió" id="pressio"> HPa
                   </div>
                 </div>
                 <div id="tend-bar-div">
@@ -320,19 +320,19 @@
 
         <div id="fenomens" class="evenly">
           <div class="fila-div">
-            <div class="quadre" onClick="clicaFenomen(0)"><img src="img/fen_atm/BIG_459395615022712_00.jpg" class="quadre-3x3"><div class="top-left font-3 blanc">Pluja</div><div class="centered"><i id="0" class="material-icons font-18 lightgreen" style="display:none">check</i></div></div>         
-            <div class="quadre" onClick="clicaFenomen(1)"><img src="img/fen_atm/BIG_006495615022712_00.jpg" class="quadre-3x3"><div class="top-left font-3 blanc">Calamarsa</div><div class="centered"><i id="1" class="material-icons font-18 lightgreen" style="display:none">check</i></div></div>
-            <div class="quadre" onClick="clicaFenomen(2)"><img src="img/fen_atm/BIG_177515615022712_00.jpg" class="quadre-3x3"><div class="top-left font-3 blanc">Neu</div><div class="centered"><i id="2" class="material-icons font-18 lightgreen" style="display:none">check</i></div></div>
+            <div class="quadre" onClick="clicaFenomen(0)"><img src="img/fen_atm/BIG_459395615022712_00.jpg" class="quadre-3x3"><div class="top-left font-3 blanc">Pluja</div><div class="centered"><i id="f0" class="material-icons font-18 lightgreen" style="display:none">check</i></div></div>         
+            <div class="quadre" onClick="clicaFenomen(1)"><img src="img/fen_atm/BIG_006495615022712_00.jpg" class="quadre-3x3"><div class="top-left font-3 blanc">Calamarsa</div><div class="centered"><i id="f1" class="material-icons font-18 lightgreen" style="display:none">check</i></div></div>
+            <div class="quadre" onClick="clicaFenomen(2)"><img src="img/fen_atm/BIG_177515615022712_00.jpg" class="quadre-3x3"><div class="top-left font-3 blanc">Neu</div><div class="centered"><i id="f2" class="material-icons font-18 lightgreen" style="display:none">check</i></div></div>
           </div>
           <div class="fila-div">
-            <div class="quadre" onClick="clicaFenomen(3)"><img src="img/fen_atm/BIG_459315615022712_00.jpg" class="quadre-3x3"><div class="top-left font-3 blanc">Rosada</div><div class="centered"><i id="3" class="material-icons font-18 lightgreen" style="display:none">check</i></div></div>
+            <div class="quadre" onClick="clicaFenomen(3)"><img src="img/fen_atm/BIG_459315615022712_00.jpg" class="quadre-3x3"><div class="top-left font-3 blanc">Rosada</div><div class="centered"><i id="f3" class="material-icons font-18 lightgreen" style="display:none">check</i></div></div>
             <div class="quadre"><button id="boto-fenomens" class="font-3" onClick="triaFenomens()">D'acord</button></div> 
-            <div class="quadre" onClick="clicaFenomen(4)"><img src="img/fen_atm/BIG_584325615022712_00.jpg" class="quadre-3x3"><div class="top-left font-3 blanc">Gebre</div><div class="centered"><i id="4" class="material-icons font-18 lightgreen" style="display:none">check</i></div></div>
+            <div class="quadre" onClick="clicaFenomen(4)"><img src="img/fen_atm/BIG_584325615022712_00.jpg" class="quadre-3x3"><div class="top-left font-3 blanc">Gebre</div><div class="centered"><i id="f4" class="material-icons font-18 lightgreen" style="display:none">check</i></div></div>
           </div>
           <div class="fila-div">
-            <div class="quadre" onClick="clicaFenomen(5)"><img src="img/fen_atm/BIG_146335615022712_00.jpg" class="quadre-3x3"><div class="top-left font-3 blanc">Boira</div><div class="centered"><i id="5" class="material-icons font-18 lightgreen" style="display:none">check</i></div></div>  
-            <div class="quadre" onClick="clicaFenomen(6)"><img src="img/fen_atm/BIG_396255615022712_00.jpg" class="quadre-3x3"><div class="top-left font-3 blanc">Arc de Sant Martí</div><div class="centered"><i id="6" class="material-icons font-18 lightgreen" style="display:none">check</i></div></div>
-            <div class="quadre" onClick="clicaFenomen(7)"><img src="img/fen_atm/BIG_552435615022712_00.jpg" class="quadre-3x3"><div class="top-left font-3 blanc">Llamp</div><div class="centered"><i id="7" class="material-icons font-18 lightgreen" style="display:none">check</i></div></div>
+            <div class="quadre" onClick="clicaFenomen(5)"><img src="img/fen_atm/BIG_146335615022712_00.jpg" class="quadre-3x3"><div class="top-left font-3 blanc">Boira</div><div class="centered"><i id="f5" class="material-icons font-18 lightgreen" style="display:none">check</i></div></div>  
+            <div class="quadre" onClick="clicaFenomen(6)"><img src="img/fen_atm/BIG_396255615022712_00.jpg" class="quadre-3x3"><div class="top-left font-3 blanc">Arc de Sant Martí</div><div class="centered"><i id="f6" class="material-icons font-18 lightgreen" style="display:none">check</i></div></div>
+            <div class="quadre" onClick="clicaFenomen(7)"><img src="img/fen_atm/BIG_552435615022712_00.jpg" class="quadre-3x3"><div class="top-left font-3 blanc">Llamp</div><div class="centered"><i id="f7" class="material-icons font-18 lightgreen" style="display:none">check</i></div></div>
           </div>
         </div>
       </main>

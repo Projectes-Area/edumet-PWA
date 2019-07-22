@@ -62,10 +62,10 @@ window.onload = function() {
         getTime(new Date(dateObj));
         desaData(Data_UTC,Hora_UTC);
       }
-      $("#calendari-div").css("display","none");
+      document.querySelector("#calendari-div").style.display = "none";
     }
   });
-  $("#data_registre").flatpickr({
+  document.querySelector("#data_registre").flatpickr({
     enableTime: true,
     time_24hr: true,
     defaultDate: Date.now(),
@@ -236,7 +236,7 @@ function mostraEstacions() {
         marcador[i].i = i
         marcador[i].Codi_estacio = event.target.result[i]["Codi_estacio"];
         marcador[i].on('click',function(e) {
-          $("#estacio-nom").val(this.Codi_estacio);
+          document.querySelector("#estacio-nom").value = this.Codi_estacio;
           mostra(this.Codi_estacio);
         });   
         let option = document.createElement("option");
@@ -253,7 +253,7 @@ function mostraEstacions() {
         estacioActual = preferida;
         estacioPreferida = preferida;
         console.log(`Preferida (Desada): ${estacioPreferida}`);
-        $("#estacio-nom").val(estacioPreferida);
+        document.querySelector("#estacio-nom").value = estacioPreferida;
       }
       mostraEstacio();
     };
@@ -265,41 +265,41 @@ function mostra(Codi_estacio) {
 }
 
 function selectEstacio() {  
-  estacioActual = $("#estacio-nom").val();
+  estacioActual = document.querySelector("#estacio-nom").value;
   mostraEstacio();
 }
 
 function mostraEstacio() {
   indexedDB.open("eduMET").onsuccess = function(event) {
       event.target.result.transaction(["Estacions"], "readonly").objectStore("Estacions").get(estacioActual).onsuccess = function(e) {
-      $("#est_poblacio").html(e.target.result["Poblacio"]);
-      $("#est_altitud").html("Altitud: " + e.target.result["Altitud"] + " m");
+      document.querySelector("#est_poblacio").innerHTML = e.target.result["Poblacio"];
+      document.querySelector("#est_altitud").innerHTML = "Altitud: " + e.target.result["Altitud"] + " m";
       let URLlogo = `https://edumet.cat/edumet-data/${e.target.result["Codi_estacio"]}/estacio/profile1/imatges/fotocentre.jpg`;
-      $("#estacio-logo-div").attr("src", URLlogo);
+      document.querySelector("#estacio-logo-div").src = URLlogo;
       if(navigator.onLine){
         getMesures();
       } else {
-        $("#data_mesura").html("Sense connexió a Internet");
+        document.querySelector("#data_mesura").innerHTML = "Sense connexió a Internet";
         buidaMesures();
       }
       map.setView(new L.LatLng(e.target.result["Latitud"], e.target.result["Longitud"]));
     }
   }
   if(estacioActual == estacioPreferida) {
-    $("#star").html("star");
-    $("#star").css("color","firebrick");
+    document.querySelector("#star").innerHTML = "star";
+    document.querySelector("#star").style.color = "firebrick";
   } else {
-    $("#star").html("star_border");
-    $("#star").css("color","lightgray");
+    document.querySelector("#star").innerHTML = "star_border";
+    document.querySelector("#star").style.color = "lightgray";
   }
 }
 
 function desaPreferida() {
-  estacioPreferida = $("#estacio-nom").val();
+  estacioPreferida = document.querySelector("#estacio-nom").value;
   console.log(`Preferida (Triada): ${estacioPreferida}`);
   storage.setItem("preferida", estacioPreferida);  
-  $("#star").html("star");
-  $("#star").css("color","firebrick");
+  document.querySelector("#star").innerHTML = "star";
+  document.querySelector("#star").style.color = "firebrick";
 }
 
 function getMesures() {
@@ -308,38 +308,38 @@ function getMesures() {
   .then(response => response.text())
   .then(response => JSON.parse(response))
   .then(response => {     
-    $("#temperatura").html(`${response[0]["Temp_ext_actual"]} ºC <label style='color:firebrick'>${response[0]["Temp_ext_max_avui"]} ºC <label style='color:blue'>${response[0]["Temp_ext_min_avui"]} ºC</label>`);
-    $("#lHumitat").html(`${response[0]["Hum_ext_actual"]} %`);
-    $("#lPressio").html(`${response[0]["Pres_actual"]} HPa`);
-    $("#sunrise").html(response[0]["Sortida_sol"].slice(0,5));
-    $("#sunset").html(response[0]["Posta_sol"].slice(0,5));
-    $("#lPluja").html(`${response[0]["Precip_acum_avui"]} mm`);
-    $("#lVent").html(`${response[0]["Vent_vel_actual"]} Km/h`);    
+    document.querySelector("#temperatura").innerHTML = `${response[0]["Temp_ext_actual"]} ºC <label style='color:firebrick'>${response[0]["Temp_ext_max_avui"]} ºC <label style='color:blue'>${response[0]["Temp_ext_min_avui"]} ºC</label>`;
+    document.querySelector("#lHumitat").innerHTML = `${response[0]["Hum_ext_actual"]} %`;
+    document.querySelector("#lPressio").innerHTML = `${response[0]["Pres_actual"]} HPa`;
+    document.querySelector("#sunrise").innerHTML = response[0]["Sortida_sol"].slice(0,5);
+    document.querySelector("#sunset").innerHTML = response[0]["Posta_sol"].slice(0,5);
+    document.querySelector("#lPluja").innerHTML = `${response[0]["Precip_acum_avui"]} mm`;
+    document.querySelector("#lVent").innerHTML = `${response[0]["Vent_vel_actual"]} Km/h`;    
     INEinicial = response[0]["codi_INE"];
     let stringDataFoto = `${response[0]["Data_UTC"]}T${response[0]["Hora_UTC"]}`;
     let interval = (new Date() - new Date(stringDataFoto)) / 3600000;
-    $("#data_mesura").html(`Actualitzat a les ${response[0]["Hora_UTC"]} del ${formatDate(response[0]["Data_UTC"])}`);
+    document.querySelector("#data_mesura").innerHTML = `Actualitzat a les ${response[0]["Hora_UTC"]} del ${formatDate(response[0]["Data_UTC"])}`;
     if(interval < 2) {
-      $("#data_mesura").css("color","#006633");
+      document.querySelector("#data_mesura").style.color = "#006633";
     } else {
-      $("#data_mesura").css("color","firebrick");
+      document.querySelector("#data_mesura").style.color = "firebrick";
     }
   })
   .catch(reason => {
-    $("#data_mesura").html("L'estació no proporciona les dades ...");
+    document.querySelector("#data_mesura").innerHTML = "L'estació no proporciona les dades ...";
     buidaMesures() ;
     console.log(`Error: ${reason}`);
   });
 }
 function buidaMesures() {
-  $("#data_mesura").css("color","#FF0000");
-  $("#temperatura").html("");
-  $("#lHumitat").html("");
-  $("#lPressio").html("");
-  $("#sunrise").html("");
-  $("#sunset").html("");
-  $("#lPpluja").html("");
-  $("#lVent").html("");  
+  document.querySelector("#data_mesura").style.color = "#FF0000";
+  document.querySelector("#temperatura").innerHTML = "";
+  document.querySelector("#lHumitat").innerHTML = "";
+  document.querySelector("#lPressio").innerHTML = "";
+  document.querySelector("#sunrise").innerHTML = "";
+  document.querySelector("#sunset").innerHTML = "";
+  document.querySelector("#lPpluja").innerHTML = "";
+  document.querySelector("#lVent").innerHTML = "";  
 }
 
 // REGISTRA
@@ -349,14 +349,14 @@ function registra() {
   getTime(new Date(Date.now()));
   indexedDB.open("eduMET").onsuccess = function(event) {
     event.target.result.transaction(["Estacions"], "readonly").objectStore("Estacions").get(estacioAssignada).onsuccess = function(e) {
-      $("#nom_estacio").val(e.target.result["Nom_centre"]);
+      document.querySelector("#nom_estacio").value = e.target.result["Nom_centre"];
       let url = url_servidor + "?tab=mobilApp&codEst=" + estacioAssignada;
       fetch(url)
       .then(response => response.text())
       .then(response => JSON.parse(response))
       .then(response => {     
-        $("#sun_rise").html(response[0]["Sortida_sol"].slice(0,5));
-        $("#sun_set").html(response[0]["Posta_sol"].slice(0,5));
+        document.querySelector("#sun_rise").innerHTML = response[0]["Sortida_sol"].slice(0,5);
+        document.querySelector("#sun_set").innerHTML = response[0]["Posta_sol"].slice(0,5);
       })
       .catch(reason => {
         console.log(`Error: ${reason}`);
@@ -408,46 +408,46 @@ function registra_nuvolositat() {
   activa('nuvolositat');
 }
 function canvi_cobertura() {
-  cob = $("#cobertura").val();
-  $("#img_cobertura").attr("src","img/" + cob + ".png");
+  cob = document.querySelector("#cobertura").value;
+  document.querySelector("#img_cobertura").src = "img/" + cob + ".png";
 }
 
 function triaVent(vent, desc){
   Vent_Dir_actual = vent
-  $("#dir_vent").text(desc);
+  document.querySelector("#dir_vent").textContent = desc;
   back();
 }
 function triaLluna(lluna){
-  $("#fase_lunar").text(lluna);
+  document.querySelector("#fase_lunar").textContent = lluna;
   back();
 }
 function triaBeaufort(beaufort, desc){
   Vent_Beaufort =  beaufort;
-  $("#intensitat_vent").text(desc);
+  document.querySelector("#intensitat_vent").textContent = desc;
   back();
 }
 function triaNuvols(nuvols){
-  $("#tipus_nuvols").text(nuvols);
+  document.querySelector("#tipus_nuvols").textContent = nuvols;
   back();
 }
 function triaNuvolositat(){
-  Nuvulositat = $("#cobertura").val()
-  $("#cob_nuvols").text(Nuvulositat + " %");
+  Nuvulositat = document.querySelector("#cobertura").value;
+  document.querySelector("#cob_nuvols").textContent = Nuvulositat + " %";
   back();
 }
 function clicaFenomen(num){
-  let valor = $("#" + num);
-  if (valor.css("display") == "none") {
-    valor.css("display","flex");
+  let valor = document.querySelector("#f" + num);
+  if (valor.style.display == "none") {
+    valor.style.display = "flex";
   } else {
-    valor.css("display","none");
+    valor.style.display = "none";
   }
 }
 function triaFenomens(){
   let numFenomens = 0;
   let llista = "";
   for(i=0;i<fen_atm.length;i++){
-    if($("#" + i).css("display") == "flex") {
+    if(document.querySelector("#f" + i).style.display == "flex") {
       numFenomens++;
       llista+= fen_atm[i] + ", ";
     };
@@ -455,56 +455,56 @@ function triaFenomens(){
   if (numFenomens>0) {
     llista = llista.slice(0, -2);
     llista+= ".";
-    $("#llista_fenomens").text(llista);
+    document.querySelector("#llista_fenomens").textContent = llista;
   } else {
-    $("#llista_fenomens").text("");
+    document.querySelector("#llista_fenomens").textContent = "";
   }
   back();
 }
 
 function penja_registre() {
   let tempCheck = true;
-  if(($("#temp_max").val() != "") && ($("#temp_actual").val() != "") && ($("#temp_max").val()) < $("#temp_actual").val()) {
+  if((document.querySelector("#temp_max").value != "") && (document.querySelector("#temp_actual").value != "") && (document.querySelector("#temp_max").value < document.querySelector("#temp_actual").value)) {
     tempCheck = false;
     alert("La temperatura màxima no pot ser inferior a la temperatura actual.")
   }
-  if(($("#temp_min").val() != "") && ($("#temp_actual").val() != "") && ($("#temp_min").val() > $("#temp_actual").val())) {
+  if((document.querySelector("#temp_min").value!= "") && (document.querySelector("#temp_actual").value != "") && (document.querySelector("#temp_min").value > document.querySelector("#temp_actual").value)) {
     tempCheck = false;
     alert("La temperatura mínima no pot ser superior a la temperatura actual.")
   }
-  if(($("#temp_max").val() != "") && ($("#temp_min").val() != "") && ($("#temp_max").val() < $("#temp_min").val())) {
+  if((document.querySelector("#temp_max").value != "") && (document.querySelector("#temp_min").value != "") && (document.querySelector("#temp_max").value < document.querySelector("#temp_min").value)) {
     tempCheck = false;
     alert("La temperatura màxima no pot ser inferior a la temperatura mínima.")
   }
   if(tempCheck) {
-    if($("#tend_bar").val() == null) {
+    if(document.querySelector("#tend_bar").value == null) {
       Pres_tend_barometre = "";
     } else {
-      Pres_tend_barometre = $("#tend_bar").val();
+      Pres_tend_barometre = document.querySelector("#tend_bar").value;
     }
     let envio = { 
       tab: "salvarObservacio",
       Codi_estacio: estacioAssignada,
       Codi_grup: usuari,
-      Observadors: $("#autor").val(),
+      Observadors: document.querySelector("#autor").value,
       Data_UTC: Data_UTC,
       Hora_UTC: Hora_UTC,
-      Sortida_sol: $("#sun_rise").html(),
-      Posta_sol: $("#sun_set").html(),
-      Fase_lluna: $("#fase_lunar").html(),
-      Temp_Ext: $("#temp_actual").val(),
-      Temp_Ext_Max: $("#temp_max").val(),
-      Temp_Ext_Min: $("#temp_min").val(),
-      Hum_Ext: $("#humitat").val(),
-      Pressio: $("#pressio").val(),
+      Sortida_sol: document.querySelector("#sun_rise").innerHTML,
+      Posta_sol: document.querySelector("#sun_set").innerHTML,
+      Fase_lluna: document.querySelector("#fase_lunar").innerHTML,
+      Temp_Ext: document.querySelector("#temp_actual").value,
+      Temp_Ext_Max: document.querySelector("#temp_max").value,
+      Temp_Ext_Min: document.querySelector("#temp_min").value,
+      Hum_Ext: document.querySelector("#humitat").value,
+      Pressio: document.querySelector("#pressio").value,
       Pres_tend_barometre: Pres_tend_barometre,
-      Vent_Vel: $("#vent").val(),
+      Vent_Vel: document.querySelector("#vent").value,
       Vent_Beaufort: Vent_Beaufort,
       Vent_Dir_actual: Vent_Dir_actual,
-      Precip_acum_avui: $("#precipitacio").val(),
+      Precip_acum_avui: document.querySelector("#precipitacio").value,
       Nuvulositat: Nuvulositat,
-      Tipus_nuvols: $("#tipus_nuvols").html(),
-      Fenomens_observats: $("#llista_fenomens").html()
+      Tipus_nuvols: document.querySelector("#tipus_nuvols").innerHTML,
+      Fenomens_observats: document.querySelector("#llista_fenomens").innerHTML
     }
     let JSONenvio = JSON.stringify(envio);
     console.log(JSONenvio);
@@ -613,9 +613,9 @@ function readURL(input) {
           canvas.height=ihScaled;
           ctx.drawImage(img,0,0,iwScaled,ihScaled);
           canvas.style.display = "none";
-          $("#foto").attr("src", canvas.toDataURL("image/jpeg",0.5));
-          $("#descripcio").val("");
-          $("#fenomen").val("0");
+          document.querySelector("#foto").src = canvas.toDataURL("image/jpeg",0.5);
+          document.querySelector("#descripcio").value = "";
+          document.querySelector("#fenomen").value = "0";
           let string64 = canvas.toDataURL("image/jpeg",0.5);            
           desaObservacio(string64);
         }
@@ -638,13 +638,15 @@ function triaLloc() {
         let laLatitud;
         let laLongitud;
         if(e.target.result["Latitud"] != "") {
-          $("#desc_mapa").text("Aquest és el lloc des d'on es va fer l'observació.");
-          $("#boto_desa_mapa").text("D'acord").attr("onClick","activa('fenologia')");
+          document.querySelector("#desc_mapa").textContent = "Aquest és el lloc des d'on es va fer l'observació.";
+          document.querySelector("#boto_desa_mapa").textContent = "D'acord";
+          $("#boto_desa_mapa").attr("onClick","activa('fenologia')");
           laLatitud = e.target.result["Latitud"];
           laLongitud = e.target.result["Longitud"];
         } else {
-          $("#desc_mapa").text("Arrossega el marcador fins al lloc on vas fer la foto de l'observació i desa la ubicació.");
-          $("#boto_desa_mapa").text("Desa la ubicació").attr("onClick","desaUbicacio()");
+          document.querySelector("#desc_mapa").textContent = "Arrossega el marcador fins al lloc on vas fer la foto de l'observació i desa la ubicació.";
+          document.querySelector("#boto_desa_mapa").textContent = "Desa la ubicació";
+          $("#boto_desa_mapa").attr("onClick","desaUbicacio()");
           if(mobilLocalitzat) {
             laLatitud = latitudActual;
             laLongitud = longitudActual;
@@ -701,7 +703,7 @@ function triaData(){
         if(e.target.result["Data_observacio"] != "") {
           alert(`Aquesta observació es va realitzar el dia ${formatDate(e.target.result["Data_observacio"])} a les ${e.target.result["Hora_observacio"]}.`);
         } else {
-          $("#calendari-div").css("display","flex");
+          document.querySelector("#calendari-div").style.display = "flex";
           calendar.open();
         }
       }
@@ -891,15 +893,15 @@ function editaObservacio() {
     event.target.result.transaction(["Observacions"], "readonly").objectStore("Observacions").get(observacioActual).onsuccess = function(e) {
       let foto = e.target.result["Fotografia_observacio"];
       if(foto == "0") {
-        $("#foto").attr("src", e.target.result["Imatge"]);
+        document.querySelector("#foto").src = e.target.result["Imatge"];
       } else {
-        $("#foto").attr("src", url_imatges + foto);
+        document.querySelector("#foto").src = url_imatges + foto;
       }
-      $("#fenomen").val(e.target.result["Id_feno"]);
+      document.querySelector("#fenomen").value = e.target.result["Id_feno"];
       if(e.target.result["Descripcio_observacio"] == "Sense descriure"){
-        $("#descripcio").val("");
+        document.querySelector("#descripcio").value = "";
       } else {
-        $("#descripcio").val(e.target.result["Descripcio_observacio"]);
+        document.querySelector("#descripcio").value = e.target.result["Descripcio_observacio"];
       }
       activa('fenologia');
     }
@@ -950,9 +952,9 @@ function resetObservacio() {
   activa('observacions');
   llistaObservacions();  
   if(observacioActual == observacioFitxa) {
-    $("#foto").attr("src","img/launcher-icon-4x.png");
-    $("#descripcio").val("");
-    $("#fenomen").val("0");
+    document.querySelector("#foto").src = "img/launcher-icon-4x.png";
+    document.querySelector("#descripcio").value = "";
+    document.querySelector("#fenomen").value = "0";
     observacioActual = "";
   }
 }
@@ -966,11 +968,11 @@ function actualitzaObservacio() {
       let request = objStore.get(observacioActual);
       request.onsuccess = function() {
         let data = request.result;
-        if($("#fenomen").val()!=0){
-          data.Id_feno =  $("#fenomen").val();
+        if(document.querySelector("#fenomen").value != 0){
+          data.Id_feno =  document.querySelector("#fenomen").value;
         }
-        if($("#descripcio").val()!=""){
-          data.Descripcio_observacio = $("#descripcio").val();
+        if(document.querySelector("#descripcio").value != ""){
+          data.Descripcio_observacio = document.querySelector("#descripcio").value;
         }
         objStore.put(data);
         indexedDB.open("eduMET").onsuccess = function(event) {
@@ -1043,7 +1045,7 @@ function llistaObservacions() {
         }
         llista+= '">check</i></div></div>'; 
       }
-      $("#llistat").html(llista);
+      document.querySelector("#llistat").innerHTML = llista;
     };
   }
 }
@@ -1101,53 +1103,54 @@ function desaObservacio(string64){
 
 function activa(fragment) {
   flagRadar = false;
-  $("#fenologia").css("display","none");
-  $("#estacions").css("display","none");
-  $("#radar").css("display","none");
-  $("#prediccio").css("display","none");
-  $("#observacions").css("display","none");
-  $("#fitxa").css("display","none");
-  $("#login").css("display","none");
-  $("#fotografia").css("display","none");
-  $("#registra").css("display","none");
-  $("#lloc").css("display","none");
-  $("#nuvols").css("display","none");
-  $("#nuvolositat").css("display","none");
-  $("#vents").css("display","none");
-  $("#beaufort").css("display","none");
-  $("#lluna").css("display","none");
-  $("#fenomens").css("display","none");
-  $("#" + fragment).css("display","flex");
+  document.querySelector("#fenologia").style.display = "none";
+  document.querySelector("#estacions").style.display = "none";
+  document.querySelector("#radar").style.display = "none";
+  document.querySelector("#prediccio").style.display = "none";
+  document.querySelector("#observacions").style.display = "none";
+  document.querySelector("#fitxa").style.display = "none";
+  document.querySelector("#login").style.display = "none";
+  document.querySelector("#fotografia").style.display = "none";
+  document.querySelector("#registra").style.display = "none";
+  document.querySelector("#lloc").style.display = "none";
+  document.querySelector("#nuvols").style.display = "none";
+  document.querySelector("#nuvolositat").style.display = "none";
+  document.querySelector("#vents").style.display = "none";
+  document.querySelector("#beaufort").style.display = "none";
+  document.querySelector("#lluna").style.display = "none";
+  document.querySelector("#fenomens").style.display = "none";
+  document.querySelector("#" + fragment).style.display = "flex";
+  //document.querySelectorAll(".boto-inf").style.color = "graytext";
   $(".boto-inf").css("color","graytext");
   switch (fragment) {
     case "estacions":
-      boto = $("#boto_estacions");
+      boto = document.querySelector("#boto_estacions");
       break;
     case "fenologia":
     case "observacions":
     case "fitxa":
     case "fotografia":
     case "lloc":
-      boto = $("#boto_observacions");
+      boto = document.querySelector("#boto_observacions");
       break;
     case "registra":
     case "nuvols":
     case "nuvolositat":
     case "vents":
     case "fenomens":
-      boto = $("#boto_registra");
+      boto = document.querySelector("#boto_registra");
       break;
     case "prediccio":
-      boto = $("#boto_prediccio");
+      boto = document.querySelector("#boto_prediccio");
       break;
     case "radar":
-      boto = $("#boto_radar");
+      boto = document.querySelector("#boto_radar");
       break;
     default:
       break;
   }
   if (fragment != "login") {
-    boto.css("color", colorEdumet); 
+    boto.style.color = colorEdumet; 
   }
   vistaActual = fragment;
 }
@@ -1162,8 +1165,8 @@ function login(fragment) {
     $("#valida").click(function(event) {
         valida(fragment);
     });
-    $("#usuari").val("");
-    $("#password").val("");
+    document.querySelector("#usuari").value = "";
+    document.querySelector("#password").value = "";
     if (navigator.onLine) {
       activa('login');
     } else {
@@ -1201,12 +1204,12 @@ function radar() {
         stringDiv+= response[i];
         stringDiv+='"></div>';
       }
-      $("#slideshow-container").html(stringDiv);
+      document.querySelector("#slideshow-container").innerHTML = stringDiv;
       stringDiv ='';
       for(i=0;i<response.length;i++) {
         stringDiv+='<span class="dot"></span>';
       }
-      $("#puntets").html(stringDiv);
+      document.querySelector("#puntets").innerHTML = stringDiv;
       slideIndex = 0;
       flagRadar = true;
       showSlides();    
@@ -1263,9 +1266,9 @@ function fotografia() {
     vistaOrigen = vistaActual;
     activa('fotografia');
     if(vistaOrigen == 'fenologia') {
-      $("#fotoGran").attr("src", $("#foto").attr("src"));
+      document.querySelector("#fotoGran").src = document.querySelector("#foto").src;
     } else {
-      $("#fotoGran").attr("src", $("#fitxa-foto").attr("src"));
+      document.querySelector("#fotoGran").src = document.querySelector("#fitxa-foto").src;
     }
   }
 }
@@ -1276,20 +1279,20 @@ function fitxa(observacio) {
   indexedDB.open("eduMET").onsuccess = function(event) {
     event.target.result.transaction(["Observacions"], "readonly").objectStore("Observacions").get(observacioFitxa).onsuccess = function(e) {
       if(e.target.result["Id_feno"] != "0") {
-        $("#fenomen-nom").html(`${fenomens[e.target.result["Id_feno"]]["Bloc_feno"]}: ${fenomens[e.target.result["Id_feno"]]["Titol_feno"]}`);
+        document.querySelector("#fenomen-nom").innerHTML = `${fenomens[e.target.result["Id_feno"]]["Bloc_feno"]}: ${fenomens[e.target.result["Id_feno"]]["Titol_feno"]}`;
       } else {
-        $("#fenomen-nom").html("Sense identificar");
+        document.querySelector("#fenomen-nom").innerHTML = "Sense identificar";
       }
       if(e.target.result["Data_observacio"] != "") {
-        $("#dataHora").text(`${formatDate(e.target.result["Data_observacio"])}  -  ${e.target.result["Hora_observacio"]}`);
+        document.querySelector("#dataHora").textContent = `${formatDate(e.target.result["Data_observacio"])}  -  ${e.target.result["Hora_observacio"]}`;
       }
       let foto = e.target.result["Fotografia_observacio"];
         if(foto == 0) {
-          $("#fitxa-foto").attr("src", e.target.result["Imatge"]);
+          document.querySelector("#fitxa-foto").src = e.target.result["Imatge"];
         } else {
-          $("#fitxa-foto").attr("src", url_imatges + foto);
+          document.querySelector("#fitxa-foto").src = url_imatges + foto;
         }
-      $("#fitxa-text").text(e.target.result["Descripcio_observacio"]);
+      document.querySelector("#fitxa-text").textContent = e.target.result["Descripcio_observacio"];
       let online;
       if(navigator.onLine) {
         online = true;
@@ -1343,8 +1346,8 @@ function fitxa(observacio) {
 }
 
 function valida(fragment) {
-  usuari = $("#usuari").val();
-  contrasenya = $("#password").val();
+  usuari = document.querySelector("#usuari").value;
+  contrasenya = document.querySelector("#password").value;
   let url = url_servidor + "?ident=" + usuari + "&psw=" + contrasenya + "&tab=registrar_se_app"
   fetch(url)
   .then(response => response.text())
@@ -1407,7 +1410,7 @@ function geoSuccess(position){
           estacioPreferida = estacioActual;
           storage.setItem("preferida", estacioPreferida);
           estacioDesada = true;
-          $("#estacio-nom").val(estacioPreferida);
+          document.querySelector("#estacio-nom").value = estacioPreferida;
           mostraEstacio();
         };
       };
