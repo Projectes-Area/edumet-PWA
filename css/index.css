@@ -1,13 +1,10 @@
 body {
-    font-size:2vh !important;
+    font-size:2vmax;
     font-family: Roboto,"Open Sans",Arial,Serif,Times;
     margin: 0px;
 }
-button, select, input, textarea {
+button, input, textarea {
     font-family: Roboto,"Open Sans",Arial,Serif,Times !important;
-}
-input {
-    font-size:2vh !important;
 }
 .wi-estacions {
     color:#418ac8;
@@ -40,19 +37,22 @@ input {
     animation-play-state: paused;
 }  
 .font-2 {
-    font-size:2vh !important; 
+    font-size:2vmax !important; 
 }
 .font-3 {
-    font-size:3vh !important; 
+    font-size:3vmax !important; 
 }
 .font-4 {
-    font-size:4vh !important; 
+    font-size:4vmax !important; 
 }
-.font-7{
-    font-size:7vh !important; 
+.font-6 {
+    font-size:6vmax !important; 
+}
+.font-7 {
+    font-size:7vmax !important; 
 }
 .font-18{
-    font-size:18vh !important; 
+    font-size:18vmax !important; 
 }
 .mesures {
     display:flex; 
@@ -450,6 +450,8 @@ input {
 }
 #star{
     margin-left:5px;
+    font-size:7vh;
+    color:lightgray;
 }
 #img_cobertura {
     width:auto;

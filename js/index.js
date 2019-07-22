@@ -1031,7 +1031,7 @@ function llistaObservacions() {
         } else {
           llista+= 'Sense identificar';
         }
-        llista+= `</label><div style="width:25%"><i id="${obs[i]["GUID"]}" class="material-icons font-36" style="color:`;     
+        llista+= `</label><div style="width:25%"><i id="${obs[i]["GUID"]}" class="material-icons font-4" style="color:`;     
         if(obs[i]["Penjada"] == "1") {
           llista+= 'limegreen';
         } else {
