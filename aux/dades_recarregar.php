@@ -60,7 +60,7 @@ if (isset($_REQUEST['anys'])) {
 switch ($tab) {
 
 case "radar":
-  $carpeta="../../edumet-data/meteocat/radar/";
+  $carpeta="../edumet-data/meteocat/radar/";
   $row_img=scandir($carpeta,1);
   $llista=array_slice($row_img, 1, 10);
   $llista=array_reverse($llista);
@@ -76,15 +76,21 @@ case "cnjEst":
     $xarxaEst="t";      
   }
 
+  if (isset($_REQUEST['tipusXarxa'])) {
+    $tipusXarxa=$_REQUEST["tipusXarxa"];  
+  } else {
+    $tipusXarxa="auto";      
+  }
+
   if ($xarxaEst=='Totes'){
     $xarxaEst="t";      
   }
 
-  $sql="Select Id_estacio,Codi_estacio,Nom_centre,Poblacio, Latitud, Longitud, Altitud, Situacio_estacio, Codi_clima, concat('Est-',substr(concat('0',Id_estacio),-2)) as Abreviatura from meteo_estacions where Situacio_estacio='O' and mapes like '%".$cnjEst."%' and tipus_web like '%".$xarxaEst."%' order by Situacio_estacio,`Nom_Centre`,`Poblacio`";
+  $sql="Select Id_estacio,Codi_estacio,Nom_centre,Poblacio, Latitud, Longitud, Altitud, Situacio_estacio, Codi_clima, concat('Est-',substr(concat('0',Id_estacio),-2)) as Abreviatura from meteo_estacions where Situacio_estacio='O' and mapes like '%".$cnjEst."%' and tipus_web like '%".$xarxaEst."%' and Xarxes_edumet like '%".$tipusXarxa."%'  order by Situacio_estacio,`Nom_Centre`,`Poblacio`";
   $result=mysqli_query($link, $sql);
   //echo "<br>".$sql."<br>";
     $l=0;
-    while ($row = mysqli_fetch_row($result)) {
+    while ($row = mysqli_fetch_assoc($result)) {
       $row_est[$l]=$row;
       $l++;
     }
@@ -103,8 +109,13 @@ case "cnjEst":
     if ($xarxaEst=='Totes'){
       $xarxaEst="t";      
     }
-    
-    $sql="Select Id_estacio,Codi_estacio,Nom_centre,Poblacio, Latitud, Longitud, Altitud, Situacio_estacio, Codi_clima, concat('Est-',substr(concat('0',Id_estacio),-2)) as Abreviatura from meteo_estacions where Situacio_estacio='O' and mapes like '%".$cnjEst."%' and tipus_web like '%".$xarxaEst."%' order by Situacio_estacio,`Nom_Centre`,`Poblacio`";
+
+// NO CANVIAR !!!!!!!!!
+
+    //$xarxaEst="obser";
+    //$xarxaEst="auto";  
+    $sql="Select Id_estacio,Codi_estacio,Nom_centre,Poblacio, Latitud, Longitud, Altitud, Situacio_estacio, Codi_clima, concat('Est-',substr(concat('0',Id_estacio),-2)) as Abreviatura from meteo_estacions where Situacio_estacio='O' and mapes like '%".$cnjEst."%'  order by Situacio_estacio,`Nom_Centre`,`Poblacio`";
+    //$sql="Select Id_estacio,Codi_estacio,Nom_centre,Poblacio, Latitud, Longitud, Altitud, Situacio_estacio, Codi_clima, concat('Est-',substr(concat('0',Id_estacio),-2)) as Abreviatura from meteo_estacions where Situacio_estacio='O' and mapes like '%".$cnjEst."%' and Xarxes_edumet like '%".$xarxaEst."%' order by Situacio_estacio,`Nom_Centre`,`Poblacio`";
     $result=mysqli_query($link, $sql);
     //echo "<br>".$sql."<br>";
       $l=0;
@@ -140,11 +151,12 @@ case "cnjEst":
 
 case "centresObser" :
   //carregar grups
-  $sql="Select  Id_estacio,Codi_estacio,Nom_centre,Poblacio, Latitud, Longitud, Situacio_estacio, Altitud, Codi_clima, Abreviatura, Adreca from meteo_obs_centres where Codi_estacio='".$codiEstacio."'";
+  //$sql="Select  Id_estacio,Codi_estacio,Nom_centre,Poblacio, Latitud, Longitud, Situacio_estacio, Altitud, Codi_clima, Abreviatura, Adreca from meteo_obs_centres where Codi_estacio='".$codiEstacio."'";
+  $sql="Select  * from meteo_estacions where Codi_estacio='".$codiEstacio."'";
   $result=mysqli_query($link, $sql);
   //echo "<br>".$sql."<br>";
   $l=0;
-  while ($row = mysqli_fetch_row($result)) {
+  while ($row = mysqli_fetch_assoc($result)) {
     $row_cen[$l]=$row;
     $l++;
   }
@@ -157,11 +169,15 @@ case "grupsObser" :
   //$sql="Select * from meteo_obs_grups where Codi_estacio='".$codiEstacio."' Order by Codi_grup";
   $sql="Select identificador,contrasenya,nom,correu,codi_estacio  from meteo_usuaris where Codi_estacio='".$codiEstacio."' and nivell='6' Order by Nom";
   $result=mysqli_query($link, $sql);
+  $row_grp=mysqli_fetch_all($result,MYSQLI_BOTH) ;
+  //echo $sql;  
+  /*/
   $l=0;
   while ($row = mysqli_fetch_row($result)) {
     $row_grp[$l]=$row;
     $l++;
   }
+  //*/
   //var_dump($row_grp);
   echo json_encode($row_grp);
   break;
@@ -198,11 +214,7 @@ case "tbEstacioObser" :
   //Carrega de les estacions
   $sql="Select est.*, Codi_koppen, Descripcio_clima, Diagrama_climatic, Viquipedia from meteo_estacions as est left join meteo_climes as clim on est.Codi_clima = clim.Codi_clima where Codi_estacio= '".$codiEstacio."'";
   $result=mysqli_query($link, $sql);
-  $row_est = mysqli_fetch_all($result, MYSQLI_BOTH );
-  $nRegEst=mysqli_num_rows($result);
-  $nCmpEst=count(mysqli_fetch_fields($result));
-  $rwEstFields=mysqli_fetch_fields($result);
-  //var_dump($row_est);
+  $row_est = mysqli_fetch_assoc($result);
   echo json_encode($row_est);
   break;
 
@@ -212,36 +224,23 @@ case "tbActualsObser" :
   //$avui= date(d,m,Y);
 
   $avui = date('Y-m-j');
-  //$dia = time()-(365*24*60*60); //Te resta un dia (2*24*60*60) te resta dos y //asi...
   $dia = time()-(10*24*60*60); //Te resta un dia (2*24*60*60) te resta dos y //asi...
   $mes=time()-(30*24*60*60); //Te resta un dia (2*24*60*60) te resta dos y //asi...
   $any = time()-(365*24*60*60); //Te resta un dia (2*24*60*60) te resta dos y //asi...
-  //$dataFiltre = date('d-m-Y', $dia); //Formatea dia
-  $dataFiltre = date('Y-m-d', $dia); //Formatea dia
-  //$dataFiltre = date('Y-m-d', $mes); //Formatea dia
-
-  //$sql="Select ".$columnes." from meteo_obs_dades where Codi_estacio='".$codiEstacio."' and data_UTC >= '".$dataFiltre."' order by `Data_UTC`  DESC, `Hora_UTC`  DESC";
-  //$sql="Select ".$columnes." from meteo_obs_dades where Codi_estacio='".$codiEstacio."' and data_UTC >= '".$dataFiltre."' order by `Data_UTC`  DESC, `Hora_UTC`  DESC";
-  $sql="Select ".$columnes." from meteo_obs_dades where Codi_estacio='".$codiEstacio."' order by `Data_UTC`  DESC, `Hora_UTC`  DESC limit 0,1";
+    $dataFiltre = date('Y-m-d', $dia); //Formatea dia
+  
+  //$sql="Select ".$columnes." from meteo_obs_dades as obs ";
+  $sql="Select * from meteo_estacions as est ";    
+  $sql .="left join meteo_obs_dades as obs on est.Codi_estacio=obs.Codi_estacio "  ;
+  $sql .="where est.Codi_estacio='".$codiEstacio."' order by `Data_UTC`  DESC, `Hora_UTC`  DESC limit 0,1";
   $result=mysqli_query($link, $sql);
   //echo "<br>".$sql;
-  //trespassar dades  del nom dels camps
-  $c=0;
-  $fieldinfo=mysqli_fetch_fields($result);
-  foreach ($fieldinfo as $val) {
-    $row_act[0][$c]=$val->name;
-    $c=$c+1;
+  while ($row = mysqli_fetch_assoc($result)) {
+      $row_act=$row;
   }
 
-    $l=1;
-    while ($row = mysqli_fetch_row($result)) {
-      $row_act[$l]=$row;
-      $l++;
-    }
-    //echo "<script type='text/javascript'>var row_act=eval(".json_encode($row_act).")</script>";
-    echo json_encode($row_act);
-//    exit;
-    break;
+  echo json_encode($row_act);
+  break;
 
 
 case "tbResumDiaObser" :
@@ -375,18 +374,13 @@ case "dadesFenologiques" :
   $codiFenologic=$_REQUEST["codiFenologic"];
 
   //Carrega de les estacions
-  $sql="Select * from meteo_obs_fenologia_dades where Codi_fenologic= '".$codiFenologic."' Order By data_observacio DESC" ;
+  $sql="Select * from meteo_obs_fenologia_dades as feno ";
+  $sql .=" inner join meteo_usuaris as usu on usu.Identificador = feno.Observador ";
+  $sql .=" where Id_feno= '".$codiFenologic."' Order By data_observacio DESC" ;
   $result=mysqli_query($link, $sql);
-    //trespassar dades  del nom dels camps
-  $c=0;
-  $fieldinfo=mysqli_fetch_fields($result);
-  foreach ($fieldinfo as $val) {
-    $row_fen[0][$c]=$val->name;
-    $c=$c+1;
-  }
 
-  $l=1;
-  while ($row = mysqli_fetch_row($result)) {
+  $l=0;
+  while ($row = mysqli_fetch_assoc($result)) {
     $row_fen[$l]=$row;
     $l++;
   }
@@ -422,26 +416,45 @@ case "tbActuals" :
   //$dataFiltre = date('Y-m-d', $mes); //Formatea dia
 
   //$sql="Select ".$columnes." from meteo_dades_actuals where Codi_estacio='".$codiEstacio."' and data_UTC >= '".$dataFiltre."' order by `Data_UTC`  DESC, `Hora_UTC`  DESC limit 1";
-  $sql="Select ".$columnes." from meteo_dades_diaries_resum where Codi_estacio='".$codiEstacio."' and data_UTC >= '".$dataFiltre."' order by `Data_UTC`  DESC, `Hora_UTC`  DESC limit 1";
-  $result=mysqli_query($link, $sql);
+  //$sql="Select ".$columnes." from meteo_dades_diaries_resum where Codi_estacio='".$codiEstacio."' and data_UTC >= '".$dataFiltre."' order by `Data_UTC`  DESC, `Hora_UTC`  DESC limit 1";
+  //$result=mysqli_query($link, $sql);
   //echo "<br>".$sql;
-  //trespassar dades  del nom dels camps
-  $c=0;
-  $fieldinfo=mysqli_fetch_fields($result);
-  foreach ($fieldinfo as $val) {
-    $row_act[0][$c]=$val->name;
-    $c=$c+1;
+
+
+  $sql="Select *,".$columnes." from meteo_estacions as est ";    
+  $sql .="left join meteo_dades_diaries_resum as obs on est.Codi_estacio=obs.Codi_estacio "  ;
+  $sql .="where est.Codi_estacio='".$codiEstacio."' and data_UTC >= '".$dataFiltre."' order by `Data_UTC`  DESC, `Hora_UTC`  DESC limit 1";  
+  $result=mysqli_query($link, $sql);
+  //echo "<br>".$sql;  
+
+
+
+  while ($row = mysqli_fetch_assoc($result)) {
+    $row_act=$row;
   }
 
-    $l=1;
-    while ($row = mysqli_fetch_row($result)) {
-      $row_act[$l]=$row;
-      $l++;
-    }
-    //echo "<script type='text/javascript'>var row_act=eval(".json_encode($row_act).")</script>";
-    echo json_encode($row_act);
+  //actualitzar la màxima i minima del dia. les que hi ha a la taula de cada registre són les del l'hora 
+  $sql="SELECT min(`Temp_Ext_Min`),max(`Temp_Ext_Max`) FROM `meteo_dades_diaries_resum` where Codi_estacio='".$codiEstacio."' and data_UTC = '".$dataFiltre."' group by `Data_UTC`";
+  $result=mysqli_query($link, $sql);
+
+
+
+  while ($row = mysqli_fetch_row($result)) {
+    $row_act["Temp_ext_min_avui"]=$row[0];
+    $row_act["Temp_ext_max_avui"]=$row[1];
+  }
+
+
+
+  //echo "<script type='text/javascript'>var row_act=eval(".json_encode($row_act).")</script>";
+  echo json_encode($row_act);
 //    exit;
-    break;
+  break;
+
+
+
+
+
 
 
 case "tbResumDia" :
@@ -1723,20 +1736,111 @@ case "eliminarFenUsu":
 
 case "visuObsFeno":
     $id=$_REQUEST["id"];
-    $sql="Select * from meteo_obs_fenologia_dades where id='".$id."'";
+    $sql="Select ID, Data_observacio, Hora_observacio, Latitud, Longitud, Observador, obs.Id_feno, Descripcio_observacio, Fotografia_observacio, Data_registre, Bloc_feno, Codi_feno, Titol_feno, Descripcio_feno, Icona_feno, Fitxa_feno, Enllac_feno, Seguiment, nom, Components_grup ";
+    $sql .=" from meteo_obs_fenologia_dades as obs ";
+    $sql .=" inner join meteo_obs_fenologia as cod on obs.Id_feno=cod.Id_feno ";
+    $sql .=" inner join meteo_usuaris as usu on obs.Observador=usu.identificador ";
+    $sql .=" where id='".$id."' ";
+    $sql .=" order by data_registre desc";
+
+
+
     $result=mysqli_query($link, $sql);
     //echo "<br>".$sql;
 
     $l=0;
-    while ($row = mysqli_fetch_row($result)) {
+    //while ($row = mysqli_fetch_row($result)) {
+    while ($row = mysqli_fetch_assoc($result)){   
         $row_feno[$l]=$row;
       $l++;
     }
     echo json_encode($row_feno);
     break;
 
-}
 
+
+case "altaEstacio":
+//alta noves estacions 
+
+    if (isset($_REQUEST["codiEstacio"])) {$codiEstacio=$_REQUEST["codiEstacio"];} else {$codiEstacio="";};
+    if (isset($_REQUEST["nomEstacio"])) {$nomEstacio=$_REQUEST["nomEstacio"];} else {$nomEstacio="";};    
+    if (isset($_REQUEST["adrEstacio"])) {$adrEstacio=$_REQUEST["adrEstacio"];} else {$adrEstacio="";};    
+    if (isset($_REQUEST["munEstacio"])) {$munEstacio=$_REQUEST["munEstacio"];} else {$munEstacio="";};        
+    if (isset($_REQUEST["crrEstacio"])) {$crrEstacio=$_REQUEST["crrEstacio"];} else {$crrEstacio="";};    
+    if (isset($_REQUEST["telEstacio"])) {$telEstacio=$_REQUEST["telEstacio"];} else {$telEstacio="";};                
+    if (isset($_REQUEST["latlEstacio"])) {$latEstacio=$_REQUEST["latEstacio"];} else {$latEstacio="";};                
+    if (isset($_REQUEST["lonEstacio"])) {$lonEstacio=$_REQUEST["lonEstacio"];} else {$lonEstacio="";};                
+    if (isset($_REQUEST["altEstacio"])) {$altEstacio=$_REQUEST["altEstacio"];} else {$altEstacio="";};                            
+    if (isset($_REQUEST["xrxEstacio"])) {$xrxEstacio=$_REQUEST["xrxEstacio"];} else {$xrxEstacio="";};                                
+    if (isset($_REQUEST["psw"])) {$psw=$_REQUEST["psw"];} else {$psw=generateRandomString(6);};
+    if (isset($_REQUEST["cntNom"])) {$cntNom=$_REQUEST["cntNom"];} else {$cntNom="";};
+    if (isset($_REQUEST["cntCrr"])) {$cntCrr=$_REQUEST["cntCrr"];} else {$cntCrr="";};    
+    if (isset($_REQUEST["cntTel"])) {$cntTel=$_REQUEST["cntTel"];} else {$cntTel="";};        
+    if (isset($_REQUEST["cntAlt"])) {$cntAlt=$_REQUEST["cntAlt"];} else {$cntAlt="";};            
+
+
+
+    $sql="Select * from meteo_centres where `Codi_centre`='".$codiEstacio."'";
+    $result=mysqli_query($link, $sql);
+    //echo "<br>".$sql;
+
+    while ($row_est = mysqli_fetch_assoc($result)) {
+        $row=$row_est;
+    }
+
+    if ($result === TRUE) {
+      $resposta="Codi trobat a la taula de centres: ".$codiEstacio;
+    } else {
+      $resposta="Codi No trobat a la taula de centres: ".$codiEstacio;      
+    }
+
+    //Entrar les dades 
+    if ($row["Codi_centre"]==$codiEstacio){
+      $correu_centre=substr($row["Codi_centre"],1,7)."@xtec.cat";
+      switch (substr($correu_centre,0,1)){
+        case "8":
+          $correu_centre ="a".$correu_centre;
+          break;
+        case "7":
+          $correu_centre ="b".$correu_centre;
+          break;          
+        case "5":
+          $correu_centre ="c".$correu_centre;
+          break;          
+        case "3":
+          $correu_centre ="e".$correu_centre;
+          break;          
+      }
+
+
+      //alta en estacions
+      $sql="INSERT INTO `meteo_estacions` (`Codi_estacio`,`Nom_centre`,`Adreca`,`Poblacio`,`Codi_comarca`,`Comarca`,`Telefon`,`correu`,`Latitud`,`Longitud`,`any_connexio_xarxa`,`Situacio_estacio`,`Abreviatura`,`Mapes`,`tipus_web`,`Xarxes_edumet`) ";
+      $sql .="VALUES ";
+      //$sql .="(".$row["Codi centre"].",".$row["Denominació completa"].",".$row["Adreça"].",".$row["Codi postal"].",".$row["Nom municipi"].",".$row["Codi comarca"].",".$row["Nom comarca"].",".$row["Telèfon"].",".$row["E-mail centre"].",".$row["Coordenades GEO X"].",".$row["Coordenades GEO Y"].",'2019','O','Est-','cat,','edumet,','obser,')";
+      $sql .='("'.$row["Codi_centre"].'","'.$row["Nom_centre"].'","'.$row["Adreça"].'","'.$row["Nom_municipi"].'","'.$row["Codi_comarca"].'","'.$row["Nom_comarca"].'","'.$row["Telèfon"].'","'.$correu_centre.'","'.$row["Lat"].'","'.$row["Lon"].'","2019","O","Est-","cat,","edumet,","obser,")';      
+      $result=mysqli_query($link,$sql);
+      //echo "<br>".$sql;
+      if ($result === true) {
+          $resposta .=utf8_encode("\nCreada la nova estació: ").$codiEstacio;
+          //alta en usuaris
+          $sql="INSERT INTO `meteo_usuaris` (`Actiu`,`nivell`,`identificador`,`contrasenya`,`nom`,`correu`,`Tipus`,`Tipus_estacio`,`Codi_estacio`,`Contacte_nom`,`Contacte_correu`,`Contacte_telefon`,`Altres_contactes`) ";
+          $sql .="VALUES ";
+          $sql .='("1","3","'.$row["Codi_centre"].'","'.$psw.'","'.$row["Nom_centre"].'","'.$correu_centre.'","Obser","","'.$row["Codi_centre"].'","'.$cntNom.'","'.$cntCrr.'","'.$cntTel.'","'.$contacte_altres.'")';      
+          $result=mysqli_query($link, $sql);
+
+          if ($result === TRUE) {
+              $resposta .="\n----Usuari creat correctament: ".$codiEstacio;
+          } else {
+              $resposta .="\nError al crear l'usuari: \n".$link->error."\n".stripslashes($sql)  ;
+          }
+      } else {
+          $resposta="\nError al crear l'estació: \n".$link->error."\n".stripslashes($sql) ;
+      }
+
+    }
+    echo json_encode($resposta);
+    break;
+}
 
 
 
@@ -1825,6 +1929,16 @@ function redimensionar($img_name,$filename,$new_w,$new_h,$ext) {
 }
 
 
+
+function generateRandomString($length = 4) {
+    $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    $charactersLength = strlen($characters);
+    $randomString = '';
+    for ($i = 0; $i < $length; $i++) {
+        $randomString .= $characters[rand(0, $charactersLength - 1)];
+    }
+    return $randomString;
+}
 
 
 ?>

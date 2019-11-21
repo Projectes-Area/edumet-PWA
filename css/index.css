@@ -182,6 +182,13 @@ button, input, textarea {
 .active {
     background-color: #717171;
 }
+.blink {
+    animation-duration: 1s;
+    animation-name: blink;
+    animation-iteration-count: infinite;
+    animation-direction: alternate;
+    animation-timing-function: ease-in-out;
+}
 .just_dreta{
     text-align:right;
     width:3em;
@@ -528,4 +535,12 @@ button, input, textarea {
 @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
+}
+@keyframes blink {
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: 0;
+    }
 }

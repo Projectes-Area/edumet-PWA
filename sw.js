@@ -74,7 +74,6 @@ self.addEventListener('install', function(e) {
         'https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css',
         'https://fonts.googleapis.com/icon?family=Material+Icons',
         'https://fonts.gstatic.com/s/materialicons/v47/flUhRq6tzZclQEJ-Vdg-IuiaDsNcIhQ8tQ.woff2',
-        'https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js',
         'https://cdnjs.cloudflare.com/ajax/libs/weather-icons/2.0.10/css/weather-icons.min.css',
         'https://cdnjs.cloudflare.com/ajax/libs/weather-icons/2.0.10/font/weathericons-regular-webfont.woff2',
         'https://cdn.jsdelivr.net/npm/flatpickr'
@@ -92,7 +91,7 @@ function escombra() {
   // OBSERVACIONS
 
   console.log("Service Worker: escombrant ...");
-  var url_servidor = 'https://edumet.cat/edumet/meteo_proves/dades_recarregar.php';
+  var url_servidor = 'https://edumet.cat/meteo/dades_recarregar.php';
   indexedDB.open("eduMET").onsuccess = function(event) {
     var obsObjStore = event.target.result.transaction(["Observacions"], "readwrite").objectStore("Observacions");
     obsObjStore.getAll().onsuccess = function(e) {

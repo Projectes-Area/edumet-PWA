@@ -72,8 +72,8 @@ window.onload = function() {
   });
 };
 
-const url_servidor = 'https://edumet.cat/edumet/meteo_proves/dades_recarregar.php';
-const url_imatges = 'https://edumet.cat/edumet/meteo_proves/imatges/fenologia/';
+const url_servidor = 'https://edumet.cat/meteo/dades_recarregar.php';
+const url_imatges = 'https://edumet.cat/meteo/imatges/fenologia/';
 const codiInicial = "08903085";
 const colorEdumet = "#418ac8";
 const midaFoto = 800;
@@ -208,7 +208,7 @@ function assignaFenomens(response) {
 // ESTACIONS METEOROLÒGIQUES
 
 function baixaEstacions() {
-  let url = url_servidor + "?tab=cnjEstApp&xarxaEst=D";
+  let url = url_servidor + "?tab=cnjEstApp&xarxaEst=auto&cnjEst=cat";
   fetch(url)
   .then(response => response.text())
   .then(response => JSON.parse(response))
@@ -308,7 +308,7 @@ function getMesures() {
   .then(response => response.text())
   .then(response => JSON.parse(response))
   .then(response => {     
-    document.querySelector("#temperatura").innerHTML = `${response[0]["Temp_ext_actual"]} ºC <label style='color:firebrick'>${response[0]["Temp_ext_max_avui"]} ºC <label style='color:blue'>${response[0]["Temp_ext_min_avui"]} ºC</label>`;
+    document.querySelector("#temperatura").innerHTML = `<label>${response[0]["Temp_ext_actual"]} ºC</label><label style='color:firebrick;margin-left:10px'>${response[0]["Temp_ext_max_avui"]} ºC</label><label style='color:blue;margin-left:10px'>${response[0]["Temp_ext_min_avui"]} ºC</label>`;
     document.querySelector("#lHumitat").innerHTML = `${response[0]["Hum_ext_actual"]} %`;
     document.querySelector("#lPressio").innerHTML = `${response[0]["Pres_actual"]} HPa`;
     document.querySelector("#sunrise").innerHTML = response[0]["Sortida_sol"].slice(0,5);
@@ -321,24 +321,30 @@ function getMesures() {
     document.querySelector("#data_mesura").innerHTML = `Actualitzat a les ${response[0]["Hora_UTC"]} del ${formatDate(response[0]["Data_UTC"])}`;
     if(interval < 2) {
       document.querySelector("#data_mesura").style.color = "#006633";
+      document.querySelector("#data_mesura").style.background = "transparent";
+      document.querySelector("#data_mesura").classList.remove('blink');
     } else {
-      document.querySelector("#data_mesura").style.color = "firebrick";
+      document.querySelector("#data_mesura").style.color = "white";
+      document.querySelector("#data_mesura").style.background = "red";
+      document.querySelector("#data_mesura").classList.add('blink');
     }
   })
   .catch(reason => {
     document.querySelector("#data_mesura").innerHTML = "L'estació no proporciona les dades ...";
     buidaMesures() ;
-    console.log(`Error: ${reason}`);
+    //console.log(`Error: ${reason}`);
   });
 }
 function buidaMesures() {
-  document.querySelector("#data_mesura").style.color = "#FF0000";
+  document.querySelector("#data_mesura").style.color = "red";
+  document.querySelector("#data_mesura").style.background = "transparent";
+  document.querySelector("#data_mesura").classList.remove('blink');
   document.querySelector("#temperatura").innerHTML = "";
   document.querySelector("#lHumitat").innerHTML = "";
   document.querySelector("#lPressio").innerHTML = "";
   document.querySelector("#sunrise").innerHTML = "";
   document.querySelector("#sunset").innerHTML = "";
-  document.querySelector("#lPpluja").innerHTML = "";
+  document.querySelector("#lPluja").innerHTML = "";
   document.querySelector("#lVent").innerHTML = "";  
 }
 
@@ -411,7 +417,6 @@ function canvi_cobertura() {
   cob = document.querySelector("#cobertura").value;
   document.querySelector("#img_cobertura").src = "img/" + cob + ".png";
 }
-
 function triaVent(vent, desc){
   Vent_Dir_actual = vent
   document.querySelector("#dir_vent").textContent = desc;
@@ -463,68 +468,89 @@ function triaFenomens(){
 }
 
 function penja_registre() {
-  let tempCheck = true;
-  if((document.querySelector("#temp_max").value != "") && (document.querySelector("#temp_actual").value != "") && (document.querySelector("#temp_max").value < document.querySelector("#temp_actual").value)) {
-    tempCheck = false;
-    alert("La temperatura màxima no pot ser inferior a la temperatura actual.")
-  }
-  if((document.querySelector("#temp_min").value!= "") && (document.querySelector("#temp_actual").value != "") && (document.querySelector("#temp_min").value > document.querySelector("#temp_actual").value)) {
-    tempCheck = false;
-    alert("La temperatura mínima no pot ser superior a la temperatura actual.")
-  }
-  if((document.querySelector("#temp_max").value != "") && (document.querySelector("#temp_min").value != "") && (document.querySelector("#temp_max").value < document.querySelector("#temp_min").value)) {
-    tempCheck = false;
-    alert("La temperatura màxima no pot ser inferior a la temperatura mínima.")
-  }
-  if(tempCheck) {
-    if(document.querySelector("#tend_bar").value == null) {
-      Pres_tend_barometre = "";
-    } else {
-      Pres_tend_barometre = document.querySelector("#tend_bar").value;
+  let lluny = true;
+  if(mobilLocalitzat) {
+    indexedDB.open("eduMET").onsuccess = function(event) {
+      event.target.result.transaction(["Estacions"], "readonly").objectStore("Estacions").get(estacioAssignada).onsuccess = function(e) {
+        let distanciaActual = getDistanceFromLatLonInKm(latitudActual, longitudActual, e.target.result["Latitud"], e.target.result["Longitud"]);
+        distanciaActual =  Math.floor(distanciaActual*10) / 10;
+        if (distanciaActual < 1000) {
+          lluny = false
+        }
+        let distanciaInformada = distanciaActual.toString();
+        console.log(`Distància (Km): ${distanciaInformada}`);
+
+        if(lluny) {
+          alert(`Estàs a ${distanciaInformada} Km de l'estació meteorològica que tens assignada. Si us plau, registra les dades des de l'estació.`)
+        } else {
+          let tempCheck = true;
+          if((document.querySelector("#temp_max").value != "") && (document.querySelector("#temp_actual").value != "") && (parseFloat(document.querySelector("#temp_max").value) < parseFloat(document.querySelector("#temp_actual").value))) {
+            tempCheck = false;
+            alert("La temperatura màxima no pot ser inferior a la temperatura actual.")
+          }
+          if((document.querySelector("#temp_min").value!= "") && (document.querySelector("#temp_actual").value != "") && (parseFloat(document.querySelector("#temp_min").value) > parseFloat(document.querySelector("#temp_actual").value))) {
+            tempCheck = false;
+            alert("La temperatura mínima no pot ser superior a la temperatura actual.")
+          }
+          if((document.querySelector("#temp_max").value != "") && (document.querySelector("#temp_min").value != "") && (parseFloat(document.querySelector("#temp_max").value) < parseFloat(document.querySelector("#temp_min").value))) {
+            tempCheck = false;
+            alert("La temperatura màxima no pot ser inferior a la temperatura mínima.")
+          }
+          if(tempCheck) {
+            if(document.querySelector("#tend_bar").value == null) {
+              Pres_tend_barometre = "";
+            } else {
+              Pres_tend_barometre = document.querySelector("#tend_bar").value;
+            }
+            let envio = { 
+              tab: "salvarObservacio",
+              Codi_estacio: estacioAssignada,
+              Codi_grup: usuari,
+              Observadors: document.querySelector("#autor").value,
+              Data_UTC: Data_UTC,
+              Hora_UTC: Hora_UTC,
+              Sortida_sol: document.querySelector("#sun_rise").innerHTML,
+              Posta_sol: document.querySelector("#sun_set").innerHTML,
+              Fase_lluna: document.querySelector("#fase_lunar").innerHTML,
+              Temp_Ext: document.querySelector("#temp_actual").value,
+              Temp_Ext_Max: document.querySelector("#temp_max").value,
+              Temp_Ext_Min: document.querySelector("#temp_min").value,
+              Hum_Ext: document.querySelector("#humitat").value,
+              Pressio: document.querySelector("#pressio").value,
+              Pres_tend_barometre: Pres_tend_barometre,
+              Vent_Vel: document.querySelector("#vent").value,
+              Vent_Beaufort: Vent_Beaufort,
+              Vent_Dir_actual: Vent_Dir_actual,
+              Precip_acum_avui: document.querySelector("#precipitacio").value,
+              Nuvulositat: Nuvulositat,
+              Tipus_nuvols: document.querySelector("#tipus_nuvols").innerHTML,
+              Fenomens_observats: document.querySelector("#llista_fenomens").innerHTML
+            }
+            let JSONenvio = JSON.stringify(envio);
+            console.log(JSONenvio);
+            alert("El registre de dades s'ha penjat al servidor eduMET.");     
+            fetch(url_servidor,{
+              method:'POST',
+              headers:{
+                'Content-Type': 'application/json; charset=UTF-8'
+                },
+              body: JSONenvio
+            })
+            .then()
+            .catch(error => {
+              console.log(`Error: ${error}`);
+              indexedDB.open("eduMET").onsuccess = function(event) { 
+                let db = event.target.result;    
+                let regObjStore = db.transaction("Registres", "readwrite").objectStore("Registres");
+                  regObjStore.add(envio);
+              };
+            });
+          }
+        }
+      }
     }
-    let envio = { 
-      tab: "salvarObservacio",
-      Codi_estacio: estacioAssignada,
-      Codi_grup: usuari,
-      Observadors: document.querySelector("#autor").value,
-      Data_UTC: Data_UTC,
-      Hora_UTC: Hora_UTC,
-      Sortida_sol: document.querySelector("#sun_rise").innerHTML,
-      Posta_sol: document.querySelector("#sun_set").innerHTML,
-      Fase_lluna: document.querySelector("#fase_lunar").innerHTML,
-      Temp_Ext: document.querySelector("#temp_actual").value,
-      Temp_Ext_Max: document.querySelector("#temp_max").value,
-      Temp_Ext_Min: document.querySelector("#temp_min").value,
-      Hum_Ext: document.querySelector("#humitat").value,
-      Pressio: document.querySelector("#pressio").value,
-      Pres_tend_barometre: Pres_tend_barometre,
-      Vent_Vel: document.querySelector("#vent").value,
-      Vent_Beaufort: Vent_Beaufort,
-      Vent_Dir_actual: Vent_Dir_actual,
-      Precip_acum_avui: document.querySelector("#precipitacio").value,
-      Nuvulositat: Nuvulositat,
-      Tipus_nuvols: document.querySelector("#tipus_nuvols").innerHTML,
-      Fenomens_observats: document.querySelector("#llista_fenomens").innerHTML
-    }
-    let JSONenvio = JSON.stringify(envio);
-    console.log(JSONenvio);
-    alert("El registre de dades s'ha penjat al servidor eduMET.");     
-    fetch(url_servidor,{
-      method:'POST',
-      headers:{
-        'Content-Type': 'application/json; charset=UTF-8'
-        },
-      body: JSONenvio
-    })
-    .then()
-    .catch(error => {
-      console.log(`Error: ${error}`);
-      indexedDB.open("eduMET").onsuccess = function(event) { 
-        let db = event.target.result;    
-        let regObjStore = db.transaction("Registres", "readwrite").objectStore("Registres");
-          regObjStore.add(envio);
-      };
-    });
+  } else {
+    alert("No tenim dades de la teva ubicació actual. Si us plau, activa GPS.");
   }
 }
 
@@ -559,15 +585,15 @@ function fesFoto() {
   console.log(`webcam: ${hasWebcam}`);
   if(hasWebcam) {
     origen = "camera";
-    $("#fitxer").click();
+    document.querySelector("#fitxer").click();
   } else {
     origen = "galeria";
-    $("#fitxer_galeria").click();
+    document.querySelector("#fitxer_galeria").click();
   }
 }
 function triaFoto() {
   origen = "galeria";
-  $("#fitxer_galeria").click();
+  document.querySelector("#fitxer_galeria").click();
 }
 
 function readURL(input) { 
@@ -640,13 +666,17 @@ function triaLloc() {
         if(e.target.result["Latitud"] != "") {
           document.querySelector("#desc_mapa").textContent = "Aquest és el lloc des d'on es va fer l'observació.";
           document.querySelector("#boto_desa_mapa").textContent = "D'acord";
-          $("#boto_desa_mapa").attr("onClick","activa('fenologia')");
+          document.querySelector("#boto_desa_mapa").addEventListener('click', () => {
+            activa('fenologia');
+          });
           laLatitud = e.target.result["Latitud"];
           laLongitud = e.target.result["Longitud"];
         } else {
           document.querySelector("#desc_mapa").textContent = "Arrossega el marcador fins al lloc on vas fer la foto de l'observació i desa la ubicació.";
           document.querySelector("#boto_desa_mapa").textContent = "Desa la ubicació";
-          $("#boto_desa_mapa").attr("onClick","desaUbicacio()");
+          document.querySelector("#boto_desa_mapa").addEventListener('click', () => {
+            desaUbicacio();
+          });
           if(mobilLocalitzat) {
             laLatitud = latitudActual;
             laLongitud = longitudActual;
@@ -1120,8 +1150,10 @@ function activa(fragment) {
   document.querySelector("#lluna").style.display = "none";
   document.querySelector("#fenomens").style.display = "none";
   document.querySelector("#" + fragment).style.display = "flex";
-  //document.querySelectorAll(".boto-inf").style.color = "graytext";
-  $(".boto-inf").css("color","graytext");
+  var elsBotons = document.querySelectorAll(".boto-inf");
+  for(i=0;i<elsBotons.length;i++) {
+    elsBotons[i].style.color = "graytext";
+  }
   switch (fragment) {
     case "estacions":
       boto = document.querySelector("#boto_estacions");
@@ -1157,12 +1189,12 @@ function activa(fragment) {
 
 function login(fragment) {
   if (usuari == "" || usuari == null) {
-    $("#password").keyup(function(event) {
+    document.querySelector("#password").addEventListener('keyup',(event) => {
       if (event.keyCode === 13) {
         valida(fragment);
       }
     });
-    $("#valida").click(function(event) {
+    document.querySelector("#valida").addEventListener('click', () => {
         valida(fragment);
     });
     document.querySelector("#usuari").value = "";
@@ -1199,14 +1231,14 @@ function radar() {
     .then(response =>  JSON.parse(response))
     .then(response => {
       let stringDiv ='';
-      for(i=0;i<response.length;i++) {
+      for(i=0;i<response.length-2;i++) {
         stringDiv+='<div class="mySlides"><img class="imgSlides" src="https://edumet.cat/edumet-data/meteocat/radar/';
         stringDiv+= response[i];
         stringDiv+='"></div>';
       }
       document.querySelector("#slideshow-container").innerHTML = stringDiv;
       stringDiv ='';
-      for(i=0;i<response.length;i++) {
+      for(i=0;i<response.length-2;i++) {
         stringDiv+='<span class="dot"></span>';
       }
       document.querySelector("#puntets").innerHTML = stringDiv;
@@ -1248,6 +1280,7 @@ function prediccio() {
       frame.style.display = "flex";      
     }
     frame.src = 'https://static-m.meteo.cat/ginys/municipal8d?language=ca&color=2c3e50&tempFormat=ºC&location=' + INEinicial;
+    //frame.src = 'https://m.meteo.cat/?codi=' + INEinicial;
   } else {
     alert("Opció no disponible sense connexió a Internet.");
   }
